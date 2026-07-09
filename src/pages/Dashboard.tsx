@@ -44,7 +44,7 @@ function AdminCoachDashboard() {
         competitionApi.getAll(),
       ])
       setCounts({
-        athletes: athletes.length,
+        athletes: athletes.data.length,
         coaches: coaches.length,
         gyms: gyms.length,
         competitions: competitions.length,
@@ -342,13 +342,17 @@ function AthleteDashboard({ userId }: { userId: string }) {
             <p className="text-muted-foreground text-sm">No estas inscrito en ninguna competencia</p>
           ) : (
             <div className="space-y-2">
-              {profile.competitions.map((comp) => (
-                <div key={comp.id} className="flex items-center justify-between border-b pb-2 last:border-0">
+              {profile.competitions.map((comp, index) => (
+                <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
                   <div>
-                    <p className="text-sm font-medium">{comp.name}</p>
-                    <p className="text-xs text-muted-foreground">{comp.location}</p>
+                    <p className="text-sm font-medium">{comp.competition}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {comp.division.mode} - {comp.division.category} - {comp.division.weight}kg
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">{formatDate(comp.date)}</p>
+                  <Badge variant={comp.status === 'ACTIVE' ? 'default' : 'secondary'}>
+                    {comp.status}
+                  </Badge>
                 </div>
               ))}
             </div>
