@@ -337,20 +337,20 @@ function AthleteDashboard({ userId }: { userId: string }) {
           <CardTitle>Mis Competencias</CardTitle>
           <CardDescription>Competencias en las que participas</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-hidden">
           {!profile.competitions || profile.competitions.length === 0 ? (
             <p className="text-muted-foreground text-sm">No estas inscrito en ninguna competencia</p>
           ) : (
             <div className="space-y-2">
               {profile.competitions.map((comp, index) => (
-                <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
-                  <div>
-                    <p className="text-sm font-medium">{comp.competition}</p>
-                    <p className="text-xs text-muted-foreground">
+                <div key={index} className="flex items-center justify-between gap-4 border-b pb-2 last:border-0 min-w-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate">{comp.competition}</p>
+                    <p className="text-xs text-muted-foreground truncate">
                       {comp.division.mode} - {comp.division.category} - {comp.division.weight}kg
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <Badge variant={comp.status === 'ACTIVE' ? 'default' : 'secondary'}>
                       {comp.status}
                     </Badge>
