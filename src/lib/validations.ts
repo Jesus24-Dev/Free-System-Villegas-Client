@@ -19,7 +19,7 @@ export const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   surname: z.string().min(2, 'Surname must be at least 2 characters'),
   birthday: z.string().min(1, 'Birthday is required'),
-  gender: z.enum(['M', 'F'], { required_error: 'Gender is required' }),
+  gender: z.enum(['M', 'F'], { message: 'Gender is required' }),
 })
 
 export const personSchema = z.object({
@@ -27,8 +27,8 @@ export const personSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   surname: z.string().min(2, 'Surname must be at least 2 characters'),
   birthday: z.string().min(1, 'Birthday is required'),
-  gender: z.enum(['M', 'F'], { required_error: 'Gender is required' }),
-  status: z.enum(['ACTIVE', 'INACTIVE'], { required_error: 'Status is required' }),
+  gender: z.enum(['M', 'F'], { message: 'Gender is required' }),
+  status: z.enum(['ACTIVE', 'INACTIVE'], { message: 'Status is required' }),
 })
 
 export const gymSchema = z.object({
@@ -52,7 +52,7 @@ export const competitionSchema = z.object({
   date: z.string().min(1, 'Date is required'),
   location: z.string().min(5, 'Location must be at least 5 characters'),
   status: z.enum(['UPCOMING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'], {
-    required_error: 'Status is required',
+    message: 'Status is required',
   }),
 })
 
@@ -61,8 +61,8 @@ export const competitionDivisionSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   weight_min: z.number().min(0, 'Minimum weight must be positive'),
   weight_max: z.number().min(0, 'Maximum weight must be positive'),
-  gender: z.enum(['M', 'F'], { required_error: 'Gender is required' }),
-  mode: z.enum(['KUMITE', 'KATA', 'BOTH'], { required_error: 'Mode is required' }),
+  gender: z.enum(['M', 'F'], { message: 'Gender is required' }),
+  mode: z.enum(['KUMITE', 'KATA', 'BOTH'], { message: 'Mode is required' }),
 })
 
 export const competitionRegistrationSchema = z.object({
@@ -70,7 +70,7 @@ export const competitionRegistrationSchema = z.object({
   athlete_id: z.string().min(1, 'Athlete is required'),
   division_id: z.string().min(1, 'Division is required'),
   status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED'], {
-    required_error: 'Status is required',
+    message: 'Status is required',
   }),
 })
 
@@ -89,7 +89,7 @@ export const pagoMovilSchema = z.object({
   date: z.string().min(1, 'Date is required'),
   reference: z.string().min(1, 'Reference is required'),
   status: z.enum(['PENDING', 'CONFIRMED', 'REJECTED'], {
-    required_error: 'Status is required',
+    message: 'Status is required',
   }),
 })
 

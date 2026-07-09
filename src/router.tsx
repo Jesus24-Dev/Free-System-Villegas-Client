@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute, GuestRoute } from '@/components/ProtectedRoute'
 import { Layout } from '@/components/layout/Layout'
 import { Login } from '@/pages/Login'
