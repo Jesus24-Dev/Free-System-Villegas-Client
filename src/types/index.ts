@@ -90,6 +90,36 @@ export interface Athlete {
   updated_at: string
 }
 
+// Athlete Profile (from /athlete/profile/:id)
+export interface AthleteProfile {
+  id: string
+  personal: {
+    dni: string
+    name: string
+    surname: string
+    birthday: string
+    gender: 'MALE' | 'FEMALE'
+  }
+  gym: {
+    name: string
+    address: string
+    state: string
+    monthly_payment: number
+  }
+  payments: Array<{
+    date: string
+    amount: number
+    reference: string
+    confirmed: boolean
+  }>
+  competitions: Array<{
+    id: string
+    name: string
+    date: string
+    location: string
+  }>
+}
+
 // Gym
 export interface Gym {
   id: string
