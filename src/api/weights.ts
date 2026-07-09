@@ -1,19 +1,32 @@
 import api from './client'
-import type { WeightCategory } from '@/types'
+import type { WeightCategoryResponse } from '@/types'
 
-export const weightsApi = {
-  getAll: async (): Promise<WeightCategory[]> => {
-    const response = await api.get<WeightCategory[]>('/weights')
+export const weightApi = {
+  getByCategory: async (category: string, gender: string): Promise<WeightCategoryResponse[]> => {
+    const response = await api.get<WeightCategoryResponse[]>('/gym/weights', {
+      params: { category, gender },
+    })
     return response.data
   },
 
-  getMale: async (): Promise<WeightCategory[]> => {
-    const response = await api.get<WeightCategory[]>('/weights/male')
+  getChYcByGender: async (gender: string): Promise<WeightCategoryResponse[]> => {
+    const response = await api.get<WeightCategoryResponse[]>('/gym/weights/ch-yc', {
+      params: { gender },
+    })
     return response.data
   },
 
-  getFemale: async (): Promise<WeightCategory[]> => {
-    const response = await api.get<WeightCategory[]>('/weights/female')
+  getOcSByGender: async (gender: string): Promise<WeightCategoryResponse[]> => {
+    const response = await api.get<WeightCategoryResponse[]>('/gym/weights/oc-s', {
+      params: { gender },
+    })
+    return response.data
+  },
+
+  getMByGender: async (gender: string): Promise<WeightCategoryResponse[]> => {
+    const response = await api.get<WeightCategoryResponse[]>('/gym/weights/m', {
+      params: { gender },
+    })
     return response.data
   },
 }

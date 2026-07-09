@@ -1,28 +1,28 @@
 import api from './client'
-import type { User, PaginatedResponse, PaginationParams } from '@/types'
+import type { User } from '@/types'
 
 export const userApi = {
-  getAll: async (params?: PaginationParams): Promise<PaginatedResponse<User>> => {
-    const response = await api.get<PaginatedResponse<User>>('/user', { params })
+  getAll: async (params?: { page?: number; limit?: number }): Promise<User[]> => {
+    const response = await api.get<User[]>('/users', { params })
     return response.data
   },
 
   getById: async (id: string): Promise<User> => {
-    const response = await api.get<User>(`/user/${id}`)
+    const response = await api.get<User>(`/users/${id}`)
     return response.data
   },
 
   create: async (data: Partial<User>): Promise<User> => {
-    const response = await api.post<User>('/user', data)
+    const response = await api.post<User>('/users', data)
     return response.data
   },
 
   update: async (id: string, data: Partial<User>): Promise<User> => {
-    const response = await api.patch<User>(`/user/${id}`, data)
+    const response = await api.patch<User>(`/users/${id}`, data)
     return response.data
   },
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/user/${id}`)
+    await api.delete(`/users/${id}`)
   },
 }

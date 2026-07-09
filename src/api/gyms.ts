@@ -1,9 +1,9 @@
 import api from './client'
-import type { Gym, PaginatedResponse, PaginationParams } from '@/types'
+import type { Gym } from '@/types'
 
 export const gymApi = {
-  getAll: async (params?: PaginationParams): Promise<PaginatedResponse<Gym>> => {
-    const response = await api.get<PaginatedResponse<Gym>>('/gym', { params })
+  getAll: async (params?: { page?: number; limit?: number }): Promise<Gym[]> => {
+    const response = await api.get<Gym[]>('/gym', { params })
     return response.data
   },
 

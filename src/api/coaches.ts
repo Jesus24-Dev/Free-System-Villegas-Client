@@ -1,9 +1,9 @@
 import api from './client'
-import type { Coach, PaginatedResponse, PaginationParams } from '@/types'
+import type { Coach } from '@/types'
 
 export const coachApi = {
-  getAll: async (params?: PaginationParams): Promise<PaginatedResponse<Coach>> => {
-    const response = await api.get<PaginatedResponse<Coach>>('/coach', { params })
+  getAll: async (params?: { page?: number; limit?: number }): Promise<Coach[]> => {
+    const response = await api.get<Coach[]>('/coach', { params })
     return response.data
   },
 
@@ -12,12 +12,7 @@ export const coachApi = {
     return response.data
   },
 
-  getByPersonId: async (personId: string): Promise<Coach> => {
-    const response = await api.get<Coach>(`/coach/person/${personId}`)
-    return response.data
-  },
-
-  create: async (data: Partial<Coach>): Promise<Coach> => {
+  create: async (data: { person_id: string; gym_id: string }): Promise<Coach> => {
     const response = await api.post<Coach>('/coach', data)
     return response.data
   },

@@ -1,9 +1,9 @@
 import api from './client'
-import type { Person, PaginatedResponse, PaginationParams } from '@/types'
+import type { Person } from '@/types'
 
 export const personApi = {
-  getAll: async (params?: PaginationParams): Promise<PaginatedResponse<Person>> => {
-    const response = await api.get<PaginatedResponse<Person>>('/person', { params })
+  getAll: async (params?: { page?: number; limit?: number }): Promise<Person[]> => {
+    const response = await api.get<Person[]>('/person', { params })
     return response.data
   },
 
