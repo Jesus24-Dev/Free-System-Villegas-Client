@@ -3,8 +3,11 @@ import type { Competition, CompetitionDivision, CompetitionRegistration } from '
 
 export const competitionApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Competition[]> => {
-    const response = await api.get<Competition[]>('/competition', { params })
-    return response.data
+    const response = await api.get('/competition', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<Competition> => {
@@ -29,8 +32,11 @@ export const competitionApi = {
 
 export const competitionDivisionApi = {
   getAll: async (params?: { competition_id?: string }): Promise<CompetitionDivision[]> => {
-    const response = await api.get<CompetitionDivision[]>('/competition/division', { params })
-    return response.data
+    const response = await api.get('/competition/division', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<CompetitionDivision> => {
@@ -55,8 +61,11 @@ export const competitionDivisionApi = {
 
 export const competitionRegistrationApi = {
   getAll: async (params?: { competition_id?: string; athlete_id?: string }): Promise<CompetitionRegistration[]> => {
-    const response = await api.get<CompetitionRegistration[]>('/competition/registration', { params })
-    return response.data
+    const response = await api.get('/competition/registration', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<CompetitionRegistration> => {

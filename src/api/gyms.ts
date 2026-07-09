@@ -3,8 +3,11 @@ import type { Gym } from '@/types'
 
 export const gymApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Gym[]> => {
-    const response = await api.get<Gym[]>('/gym', { params })
-    return response.data
+    const response = await api.get('/gym', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<Gym> => {

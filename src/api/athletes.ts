@@ -3,8 +3,11 @@ import type { Athlete } from '@/types'
 
 export const athleteApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Athlete[]> => {
-    const response = await api.get<Athlete[]>('/athlete', { params })
-    return response.data
+    const response = await api.get('/athlete', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<Athlete> => {

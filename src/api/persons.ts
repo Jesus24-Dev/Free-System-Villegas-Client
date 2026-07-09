@@ -3,8 +3,11 @@ import type { Person } from '@/types'
 
 export const personApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Person[]> => {
-    const response = await api.get<Person[]>('/person', { params })
-    return response.data
+    const response = await api.get('/person', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<Person> => {

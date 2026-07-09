@@ -3,8 +3,11 @@ import type { GymPayment } from '@/types'
 
 export const gymPaymentApi = {
   getAll: async (params?: { athlete_id?: string; gym_id?: number }): Promise<GymPayment[]> => {
-    const response = await api.get<GymPayment[]>('/gym/payment', { params })
-    return response.data
+    const response = await api.get('/gym/payment', { params })
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
   },
 
   getById: async (id: string): Promise<GymPayment> => {
