@@ -308,7 +308,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
           <CardDescription>Historial de pagos realizados</CardDescription>
         </CardHeader>
         <CardContent>
-          {profile.payments.length === 0 ? (
+          {!profile.payments || profile.payments.length === 0 ? (
             <p className="text-muted-foreground text-sm">Sin pagos registrados</p>
           ) : (
             <div className="space-y-2">
@@ -338,7 +338,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
           <CardDescription>Competencias en las que participas</CardDescription>
         </CardHeader>
         <CardContent>
-          {profile.competitions.length === 0 ? (
+          {!profile.competitions || profile.competitions.length === 0 ? (
             <p className="text-muted-foreground text-sm">No estas inscrito en ninguna competencia</p>
           ) : (
             <div className="space-y-2">
