@@ -8,13 +8,15 @@ import {
 } from '@/components/ui/table'
 import { Loader2 } from 'lucide-react'
 
-export interface Column<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Column<T = any> {
   key: string
   header: string
   render?: (item: T) => React.ReactNode
 }
 
-interface DataTableProps<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface DataTableProps<T = any> {
   columns: Column<T>[]
   data: T[]
   isLoading?: boolean
@@ -22,7 +24,8 @@ interface DataTableProps<T> {
   emptyMessage?: string
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function DataTable<T extends Record<string, any>>({
   columns,
   data,
   isLoading = false,

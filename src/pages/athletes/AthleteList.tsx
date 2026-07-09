@@ -6,7 +6,7 @@ import { DataTable, type Column } from '@/components/tables/DataTable'
 import { Pagination } from '@/components/tables/Pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Plus, Search } from 'lucide-react'
 import type { Athlete } from '@/types'
 
@@ -108,7 +108,8 @@ export function AthleteList() {
         <CardContent>
           <DataTable
             columns={columns}
-            data={(data?.data as Record<string, unknown>[]) ?? []}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            data={(data?.data as any[]) ?? []}
             isLoading={isLoading}
             onRowClick={(item) => {
               const athlete = item as unknown as Athlete

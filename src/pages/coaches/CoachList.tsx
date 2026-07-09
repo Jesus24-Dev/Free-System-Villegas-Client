@@ -108,7 +108,8 @@ export function CoachList() {
         <CardContent>
           <DataTable
             columns={columns}
-            data={(data?.data as Record<string, unknown>[]) ?? []}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            data={(data?.data as any[]) ?? []}
             isLoading={isLoading}
             onRowClick={(item) => {
               const coach = item as unknown as Coach
