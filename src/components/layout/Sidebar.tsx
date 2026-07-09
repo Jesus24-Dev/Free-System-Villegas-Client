@@ -16,14 +16,14 @@ import { Button } from '@/components/ui/button'
 import { useUIStore } from '@/stores/uiStore'
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
-  { to: '/athletes', label: 'Athletes', icon: Users, roles: ['ADMIN', 'COACH'] },
-  { to: '/coaches', label: 'Coaches', icon: Dumbbell, roles: ['ADMIN'] },
-  { to: '/gyms', label: 'Gyms', icon: Building2, roles: ['ADMIN'] },
-  { to: '/competitions', label: 'Competitions', icon: Trophy, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
-  { to: '/payments', label: 'Payments', icon: CreditCard, roles: ['ADMIN', 'COACH'] },
+  { to: '/dashboard', label: 'Panel de Control', icon: LayoutDashboard, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
+  { to: '/athletes', label: 'Atletas', icon: Users, roles: ['ADMIN', 'COACH'] },
+  { to: '/coaches', label: 'Entrenadores', icon: Dumbbell, roles: ['ADMIN'] },
+  { to: '/gyms', label: 'Gimnasios', icon: Building2, roles: ['ADMIN'] },
+  { to: '/competitions', label: 'Competencias', icon: Trophy, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
+  { to: '/payments', label: 'Pagos', icon: CreditCard, roles: ['ADMIN', 'COACH'] },
   { to: '/pago-movil', label: 'Pago Movil', icon: Smartphone, roles: ['ADMIN'] },
-  { to: '/settings', label: 'Settings', icon: Settings, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
+  { to: '/settings', label: 'Configuracion', icon: Settings, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
 ]
 
 export function Sidebar() {

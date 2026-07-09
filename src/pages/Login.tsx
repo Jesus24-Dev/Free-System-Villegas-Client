@@ -31,7 +31,7 @@ export function Login() {
     try {
       const response = await authApi.login(data)
       setAuth(response.access_token)
-      toast.success('Login successful')
+      toast.success('Inicio de sesion exitoso')
       navigate('/dashboard')
     } catch (error) {
       toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
@@ -47,17 +47,17 @@ export function Login() {
           <div className="mx-auto w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4">
             <span className="text-white font-bold text-xl">FS</span>
           </div>
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+          <CardTitle className="text-2xl">Bienvenido</CardTitle>
+          <CardDescription>Inicia sesion en tu cuenta</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Correo electronico</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Ingresa tu correo"
                 {...register('email')}
               />
               {errors.email && (
@@ -65,11 +65,11 @@ export function Login() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Contrasena</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Ingresa tu contrasena"
                 {...register('password')}
               />
               {errors.password && (
@@ -82,16 +82,16 @@ export function Login() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  Iniciando sesion...
                 </>
               ) : (
-                'Sign In'
+                'Iniciar Sesion'
               )}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              Don't have an account?{' '}
+              No tienes una cuenta?{' '}
               <Link to="/register" className="text-primary hover:underline">
-                Sign up
+                Registrate
               </Link>
             </p>
           </CardFooter>

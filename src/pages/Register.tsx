@@ -32,7 +32,7 @@ export function Register() {
     try {
       const response = await authApi.register(data)
       setAuth(response.access_token)
-      toast.success('Registration successful')
+      toast.success('Registro exitoso')
       navigate('/dashboard')
     } catch (error) {
       toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
@@ -48,30 +48,30 @@ export function Register() {
           <div className="mx-auto w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4">
             <span className="text-white font-bold text-xl">FS</span>
           </div>
-          <CardTitle className="text-2xl">Create Account</CardTitle>
-          <CardDescription>Sign up for a new account</CardDescription>
+          <CardTitle className="text-2xl">Crear Cuenta</CardTitle>
+          <CardDescription>Registrate para crear una nueva cuenta</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="John" {...register('name')} />
+                <Label htmlFor="name">Nombre</Label>
+                <Input id="name" placeholder="Juan" {...register('name')} />
                 {errors.name && (
                   <p className="text-sm text-destructive">{errors.name.message}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="surname">Surname</Label>
-                <Input id="surname" placeholder="Doe" {...register('surname')} />
+                <Label htmlFor="surname">Apellido</Label>
+                <Input id="surname" placeholder="Perez" {...register('surname')} />
                 {errors.surname && (
                   <p className="text-sm text-destructive">{errors.surname.message}</p>
                 )}
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="john@example.com" {...register('email')} />
+              <Label htmlFor="email">Correo electronico</Label>
+              <Input id="email" type="email" placeholder="juan@ejemplo.com" {...register('email')} />
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
               )}
@@ -85,18 +85,18 @@ export function Register() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="birthday">Birthday</Label>
+                <Label htmlFor="birthday">Fecha de nacimiento</Label>
                 <Input id="birthday" type="date" {...register('birthday')} />
                 {errors.birthday && (
                   <p className="text-sm text-destructive">{errors.birthday.message}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="gender">Gender</Label>
+                <Label htmlFor="gender">Genero</Label>
                 <Select id="gender" {...register('gender')}>
-                  <option value="">Select</option>
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
+                  <option value="">Seleccionar</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
                 </Select>
                 {errors.gender && (
                   <p className="text-sm text-destructive">{errors.gender.message}</p>
@@ -104,8 +104,8 @@ export function Register() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="Min. 8 characters" {...register('password')} />
+              <Label htmlFor="password">Contrasena</Label>
+              <Input id="password" type="password" placeholder="Min. 8 caracteres" {...register('password')} />
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
@@ -116,16 +116,16 @@ export function Register() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
+                  Creando cuenta...
                 </>
               ) : (
-                'Sign Up'
+                'Registrarse'
               )}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{' '}
+              Ya tienes una cuenta?{' '}
               <Link to="/login" className="text-primary hover:underline">
-                Sign in
+                Inicia sesion
               </Link>
             </p>
           </CardFooter>
