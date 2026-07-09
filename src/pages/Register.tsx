@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { authApi } from '@/api/auth'
-import { getErrorMessage } from '@/api/client'
+import { getErrorMessage, getValidationErrors } from '@/api/client'
 import { registerSchema, type RegisterFormData } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,9 +13,12 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
+import type { AxiosError } from 'axios'
+import type { ApiError } from '@/types'
 
 export function Register() {
   const [isLoading, setIsLoading] = useState(false)
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
 
@@ -29,13 +32,20 @@ export function Register() {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true)
+    setServerErrors({})
     try {
       const response = await authApi.register(data)
       setAuth(response.access_token)
       toast.success('Registro exitoso')
       navigate('/dashboard')
     } catch (error) {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
+      const axiosError = error as AxiosError<ApiError>
+      const validationErrors = getValidationErrors(axiosError)
+      if (Object.keys(validationErrors).length > 0) {
+        setServerErrors(validationErrors)
+      }
+      const message = getErrorMessage(axiosError)
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -57,38 +67,48 @@ export function Register() {
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre</Label>
                 <Input id="name" placeholder="Juan" {...register('name')} />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
+                {(errors.name || serverErrors.name) && (
+                  <p className="text-sm text-destructive">
+                    {errors.name?.message || serverErrors.name}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="surname">Apellido</Label>
                 <Input id="surname" placeholder="Perez" {...register('surname')} />
-                {errors.surname && (
-                  <p className="text-sm text-destructive">{errors.surname.message}</p>
+                {(errors.surname || serverErrors.surname) && (
+                  <p className="text-sm text-destructive">
+                    {errors.surname?.message || serverErrors.surname}
+                  </p>
                 )}
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Correo electronico</Label>
               <Input id="email" type="email" placeholder="juan@ejemplo.com" {...register('email')} />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+              {(errors.email || serverErrors.email) && (
+                <p className="text-sm text-destructive">
+                  {errors.email?.message || serverErrors.email}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="dni">DNI</Label>
               <Input id="dni" placeholder="V12345678" {...register('dni')} />
-              {errors.dni && (
-                <p className="text-sm text-destructive">{errors.dni.message}</p>
+              {(errors.dni || serverErrors.dni) && (
+                <p className="text-sm text-destructive">
+                  {errors.dni?.message || serverErrors.dni}
+                </p>
               )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="birthday">Fecha de nacimiento</Label>
                 <Input id="birthday" type="date" {...register('birthday')} />
-                {errors.birthday && (
-                  <p className="text-sm text-destructive">{errors.birthday.message}</p>
+                {(errors.birthday || serverErrors.birthday) && (
+                  <p className="text-sm text-destructive">
+                    {errors.birthday?.message || serverErrors.birthday}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -98,8 +118,10 @@ export function Register() {
                   <option value="M">Masculino</option>
                   <option value="F">Femenino</option>
                 </Select>
-                {errors.gender && (
-                  <p className="text-sm text-destructive">{errors.gender.message}</p>
+                {(errors.gender || serverErrors.gender) && (
+                  <p className="text-sm text-destructive">
+                    {errors.gender?.message || serverErrors.gender}
+                  </p>
                 )}
               </div>
             </div>
@@ -110,15 +132,19 @@ export function Register() {
                 <option value="COACH">Entrenador</option>
                 <option value="ATHLETE">Atleta</option>
               </Select>
-              {errors.role && (
-                <p className="text-sm text-destructive">{errors.role.message}</p>
+              {(errors.role || serverErrors.role) && (
+                <p className="text-sm text-destructive">
+                  {errors.role?.message || serverErrors.role}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Contrasena</Label>
               <Input id="password" type="password" placeholder="Min. 8 caracteres" {...register('password')} />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
+              {(errors.password || serverErrors.password) && (
+                <p className="text-sm text-destructive">
+                  {errors.password?.message || serverErrors.password}
+                </p>
               )}
             </div>
           </CardContent>

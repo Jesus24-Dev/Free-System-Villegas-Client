@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { gymApi } from '@/api/gyms'
 import { coachApi } from '@/api/coaches'
-import { getErrorMessage } from '@/api/client'
+import { getErrorMessage, getValidationErrors } from '@/api/client'
 import { gymSchema, type GymFormData } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,12 +14,15 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
+import type { AxiosError } from 'axios'
+import type { ApiError } from '@/types'
 
 export function GymForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const isEditing = Boolean(id)
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
 
   const {
     register,
@@ -52,6 +55,14 @@ export function GymForm() {
     }
   }, [gym, reset])
 
+  const handleServerError = (error: AxiosError<ApiError>) => {
+    const validationErrors = getValidationErrors(error)
+    if (Object.keys(validationErrors).length > 0) {
+      setServerErrors(validationErrors)
+    }
+    toast.error(getErrorMessage(error))
+  }
+
   const createMutation = useMutation({
     mutationFn: gymApi.create,
     onSuccess: () => {
@@ -59,9 +70,7 @@ export function GymForm() {
       toast.success('Gimnasio creado exitosamente')
       navigate('/gyms')
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
-    },
+    onError: handleServerError,
   })
 
   const updateMutation = useMutation({
@@ -71,12 +80,11 @@ export function GymForm() {
       toast.success('Gimnasio actualizado exitosamente')
       navigate('/gyms')
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
-    },
+    onError: handleServerError,
   })
 
   const onSubmit = (data: GymFormData) => {
+    setServerErrors({})
     if (isEditing) {
       updateMutation.mutate(data)
     } else {
@@ -113,22 +121,28 @@ export function GymForm() {
             <div className="space-y-2">
               <Label htmlFor="name">Nombre</Label>
               <Input id="name" placeholder="Nombre del gimnasio" {...register('name')} />
-              {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
+              {(errors.name || serverErrors.name) && (
+                <p className="text-sm text-destructive">
+                  {errors.name?.message || serverErrors.name}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="address">Direccion</Label>
               <Input id="address" placeholder="Direccion del gimnasio" {...register('address')} />
-              {errors.address && (
-                <p className="text-sm text-destructive">{errors.address.message}</p>
+              {(errors.address || serverErrors.address) && (
+                <p className="text-sm text-destructive">
+                  {errors.address?.message || serverErrors.address}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Telefono</Label>
               <Input id="phone" placeholder="Telefono del gimnasio" {...register('phone')} />
-              {errors.phone && (
-                <p className="text-sm text-destructive">{errors.phone.message}</p>
+              {(errors.phone || serverErrors.phone) && (
+                <p className="text-sm text-destructive">
+                  {errors.phone?.message || serverErrors.phone}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -141,8 +155,10 @@ export function GymForm() {
                   </option>
                 ))}
               </Select>
-              {errors.coach_id && (
-                <p className="text-sm text-destructive">{errors.coach_id.message}</p>
+              {(errors.coach_id || serverErrors.coach_id || serverErrors.coach) && (
+                <p className="text-sm text-destructive">
+                  {errors.coach_id?.message || serverErrors.coach_id || serverErrors.coach}
+                </p>
               )}
             </div>
           </CardContent>

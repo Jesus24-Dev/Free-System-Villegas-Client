@@ -1,11 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { competitionApi } from '@/api/competitions'
-import { getErrorMessage } from '@/api/client'
+import { getErrorMessage, getValidationErrors } from '@/api/client'
 import { competitionSchema, type CompetitionFormData } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,12 +13,15 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
+import type { AxiosError } from 'axios'
+import type { ApiError } from '@/types'
 
 export function CompetitionForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const isEditing = Boolean(id)
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
 
   const {
     register,
@@ -46,6 +49,14 @@ export function CompetitionForm() {
     }
   }, [competition, reset])
 
+  const handleServerError = (error: AxiosError<ApiError>) => {
+    const validationErrors = getValidationErrors(error)
+    if (Object.keys(validationErrors).length > 0) {
+      setServerErrors(validationErrors)
+    }
+    toast.error(getErrorMessage(error))
+  }
+
   const createMutation = useMutation({
     mutationFn: competitionApi.create,
     onSuccess: () => {
@@ -53,9 +64,7 @@ export function CompetitionForm() {
       toast.success('Competencia creada exitosamente')
       navigate('/competitions')
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
-    },
+    onError: handleServerError,
   })
 
   const updateMutation = useMutation({
@@ -65,12 +74,11 @@ export function CompetitionForm() {
       toast.success('Competencia actualizada exitosamente')
       navigate('/competitions')
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
-    },
+    onError: handleServerError,
   })
 
   const onSubmit = (data: CompetitionFormData) => {
+    setServerErrors({})
     if (isEditing) {
       updateMutation.mutate(data)
     } else {
@@ -107,16 +115,20 @@ export function CompetitionForm() {
             <div className="space-y-2">
               <Label htmlFor="name">Nombre</Label>
               <Input id="name" placeholder="Nombre de la competencia" {...register('name')} />
-              {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
+              {(errors.name || serverErrors.name) && (
+                <p className="text-sm text-destructive">
+                  {errors.name?.message || serverErrors.name}
+                </p>
               )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="date">Fecha</Label>
                 <Input id="date" type="date" {...register('date')} />
-                {errors.date && (
-                  <p className="text-sm text-destructive">{errors.date.message}</p>
+                {(errors.date || serverErrors.date) && (
+                  <p className="text-sm text-destructive">
+                    {errors.date?.message || serverErrors.date}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -128,16 +140,20 @@ export function CompetitionForm() {
                   <option value="COMPLETED">Finalizada</option>
                   <option value="CANCELLED">Cancelada</option>
                 </Select>
-                {errors.status && (
-                  <p className="text-sm text-destructive">{errors.status.message}</p>
+                {(errors.status || serverErrors.status) && (
+                  <p className="text-sm text-destructive">
+                    {errors.status?.message || serverErrors.status}
+                  </p>
                 )}
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Ubicacion</Label>
               <Input id="location" placeholder="Ubicacion de la competencia" {...register('location')} />
-              {errors.location && (
-                <p className="text-sm text-destructive">{errors.location.message}</p>
+              {(errors.location || serverErrors.location) && (
+                <p className="text-sm text-destructive">
+                  {errors.location?.message || serverErrors.location}
+                </p>
               )}
             </div>
           </CardContent>

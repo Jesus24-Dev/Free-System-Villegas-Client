@@ -15,6 +15,7 @@ import { Loader2 } from 'lucide-react'
 
 export function Login() {
   const [isLoading, setIsLoading] = useState(false)
+  const [serverError, setServerError] = useState('')
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
 
@@ -28,13 +29,16 @@ export function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
+    setServerError('')
     try {
       const response = await authApi.login(data)
       setAuth(response.access_token)
       toast.success('Inicio de sesion exitoso')
       navigate('/dashboard')
     } catch (error) {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
+      const message = getErrorMessage(error as Parameters<typeof getErrorMessage>[0])
+      setServerError(message)
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -52,6 +56,11 @@ export function Login() {
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
+            {serverError && (
+              <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
+                <p className="text-sm text-destructive">{serverError}</p>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Correo electronico</Label>
               <Input

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,19 +7,22 @@ import { toast } from 'sonner'
 import { athleteApi } from '@/api/athletes'
 import { gymApi } from '@/api/gyms'
 import { personApi } from '@/api/persons'
-import { getErrorMessage } from '@/api/client'
+import { getErrorMessage, getValidationErrors } from '@/api/client'
 import { athleteSchema, type AthleteFormData } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
+import type { AxiosError } from 'axios'
+import type { ApiError } from '@/types'
 
 export function AthleteForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const isEditing = Boolean(id)
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
 
   const {
     register,
@@ -55,6 +58,14 @@ export function AthleteForm() {
     }
   }, [athlete, reset])
 
+  const handleServerError = (error: AxiosError<ApiError>) => {
+    const validationErrors = getValidationErrors(error)
+    if (Object.keys(validationErrors).length > 0) {
+      setServerErrors(validationErrors)
+    }
+    toast.error(getErrorMessage(error))
+  }
+
   const createMutation = useMutation({
     mutationFn: athleteApi.create,
     onSuccess: () => {
@@ -62,9 +73,7 @@ export function AthleteForm() {
       toast.success('Atleta creado exitosamente')
       navigate('/athletes')
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
-    },
+    onError: handleServerError,
   })
 
   const updateMutation = useMutation({
@@ -74,12 +83,11 @@ export function AthleteForm() {
       toast.success('Atleta actualizado exitosamente')
       navigate('/athletes')
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error as Parameters<typeof getErrorMessage>[0]))
-    },
+    onError: handleServerError,
   })
 
   const onSubmit = (data: AthleteFormData) => {
+    setServerErrors({})
     if (isEditing) {
       updateMutation.mutate(data)
     } else {
@@ -123,8 +131,10 @@ export function AthleteForm() {
                   </option>
                 ))}
               </Select>
-              {errors.person_id && (
-                <p className="text-sm text-destructive">{errors.person_id.message}</p>
+              {(errors.person_id || serverErrors.person_id || serverErrors.person) && (
+                <p className="text-sm text-destructive">
+                  {errors.person_id?.message || serverErrors.person_id || serverErrors.person}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -137,8 +147,10 @@ export function AthleteForm() {
                   </option>
                 ))}
               </Select>
-              {errors.gym_id && (
-                <p className="text-sm text-destructive">{errors.gym_id.message}</p>
+              {(errors.gym_id || serverErrors.gym_id || serverErrors.gym) && (
+                <p className="text-sm text-destructive">
+                  {errors.gym_id?.message || serverErrors.gym_id || serverErrors.gym}
+                </p>
               )}
             </div>
           </CardContent>

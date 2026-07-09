@@ -30,7 +30,28 @@ api.interceptors.response.use(
 
 export function getErrorMessage(error: AxiosError<ApiError>): string {
   const data = error.response?.data
-  if (!data) return 'Ocurrio un error inesperado'
+
+  if (!data) {
+    const status = error.response?.status
+    switch (status) {
+      case 401:
+        return 'No tienes permiso para realizar esta accion'
+      case 403:
+        return 'No tienes acceso a este recurso'
+      case 404:
+        return 'El recurso solicitado no fue encontrado'
+      case 409:
+        return 'Existe un conflicto con la operacion solicitada'
+      case 422:
+        return 'Los datos enviados no son validos'
+      case 429:
+        return 'Demasiadas solicitudes. Intenta de nuevo mas tarde'
+      case 500:
+        return 'Error interno del servidor. Intenta de nuevo mas tarde'
+      default:
+        return 'Ocurrio un error inesperado'
+    }
+  }
 
   if (Array.isArray(data.message)) {
     return data.message.join(', ')
@@ -41,6 +62,25 @@ export function getErrorMessage(error: AxiosError<ApiError>): string {
   }
 
   return 'Ocurrio un error inesperado'
+}
+
+export function getValidationErrors(error: AxiosError<ApiError>): Record<string, string> {
+  const data = error.response?.data
+  const errors: Record<string, string> = {}
+
+  if (!data || !Array.isArray(data.message)) {
+    return errors
+  }
+
+  data.message.forEach((msg) => {
+    const match = msg.match(/^(\w+)\s/)
+    if (match) {
+      const field = match[1].toLowerCase()
+      errors[field] = msg
+    }
+  })
+
+  return errors
 }
 
 export default api
