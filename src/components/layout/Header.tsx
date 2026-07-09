@@ -12,7 +12,7 @@ export function Header() {
   return (
     <header className="h-16 border-b bg-background flex items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
         <h1 className="text-lg font-semibold hidden sm:block">Free System Villegas</h1>
