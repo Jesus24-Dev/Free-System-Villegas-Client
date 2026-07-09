@@ -104,6 +104,17 @@ export function Register() {
               </div>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="role">Rol</Label>
+              <Select id="role" {...register('role')}>
+                <option value="">Seleccionar</option>
+                <option value="COACH">Entrenador</option>
+                <option value="ATHLETE">Atleta</option>
+              </Select>
+              {errors.role && (
+                <p className="text-sm text-destructive">{errors.role.message}</p>
+              )}
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="password">Contrasena</Label>
               <Input id="password" type="password" placeholder="Min. 8 caracteres" {...register('password')} />
               {errors.password && (

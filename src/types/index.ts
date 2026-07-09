@@ -22,6 +22,7 @@ export interface RegisterDto {
   surname: string
   birthday: string
   gender: string
+  role: 'COACH' | 'ATHLETE'
 }
 
 export interface ProfileDto {

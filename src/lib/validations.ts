@@ -20,6 +20,7 @@ export const registerSchema = z.object({
   surname: z.string().min(2, 'El apellido debe tener al menos 2 caracteres'),
   birthday: z.string().min(1, 'La fecha de nacimiento es requerida'),
   gender: z.enum(['M', 'F'], { message: 'El genero es requerido' }),
+  role: z.enum(['COACH', 'ATHLETE'], { message: 'El rol es requerido' }),
 })
 
 export const personSchema = z.object({
