@@ -25,9 +25,9 @@ export function AthletesPage() {
   const loadAthletes = async () => {
     try {
       setLoading(true)
-      const data = await athleteApi.getAll({ page, limit })
-      setAthletes(data)
-      setTotalPages(Math.ceil(data.length / limit) || 1)
+      const response = await athleteApi.getAll({ page, limit })
+      setAthletes(response.data)
+      setTotalPages(response.meta?.totalPages ?? 1)
     } catch (error) {
       toast.error('Error al cargar atletas')
     } finally {
@@ -35,10 +35,10 @@ export function AthletesPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (personId: string) => {
     if (window.confirm('¿Estás seguro de eliminar este atleta?')) {
       try {
-        await athleteApi.delete(id)
+        await athleteApi.delete(personId)
         toast.success('Atleta eliminado correctamente')
         loadAthletes()
       } catch (error) {
@@ -76,12 +76,12 @@ export function AthletesPage() {
       cell: ({ row }: { row: { original: Athlete } }) => (
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link to={`/athletes/${row.original.id}/edit`}>Editar</Link>
+            <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
           </Button>
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => handleDelete(row.original.id)}
+            onClick={() => handleDelete(row.original.person_id)}
           >
             Eliminar
           </Button>
