@@ -190,9 +190,11 @@ export interface PaginatedResponse<T> {
 
 // API Error
 export interface ApiError {
+  success: boolean
   statusCode: number
+  timestamp: string
+  path: string
   message: string | string[]
-  error: string
 }
 
 // Pagination params

@@ -30,12 +30,17 @@ api.interceptors.response.use(
 
 export function getErrorMessage(error: AxiosError<ApiError>): string {
   const data = error.response?.data
-  if (!data) return 'An error occurred'
+  if (!data) return 'Ocurrio un error inesperado'
 
   if (Array.isArray(data.message)) {
     return data.message.join(', ')
   }
-  return data.message
+
+  if (typeof data.message === 'string') {
+    return data.message
+  }
+
+  return 'Ocurrio un error inesperado'
 }
 
 export default api
