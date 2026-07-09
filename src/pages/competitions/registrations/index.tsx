@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Competition, CompetitionRegistration, CompetitionDivision, Athlete, CombatMode, WeightCategory } from '@/types'
 import { COMBAT_MODE_OPTIONS, WEIGHT_CATEGORY_OPTIONS } from '@/types'
 
@@ -22,6 +23,10 @@ const weightCategoryLabels: Record<WeightCategory, string> = Object.fromEntries(
 ) as Record<WeightCategory, string>
 
 export function CompetitionRegistrationsPage() {
+  const { user } = useAuthStore()
+  const userRole = user ? extractRole(user) : ''
+  const isAthlete = userRole === 'ATHLETE'
+
   const [registrations, setRegistrations] = useState<CompetitionRegistration[]>([])
   const [competitions, setCompetitions] = useState<Competition[]>([])
   const [divisions, setDivisions] = useState<CompetitionDivision[]>([])
@@ -166,19 +171,23 @@ export function CompetitionRegistrationsPage() {
         return division ? `${division.weight} kg` : 'N/A'
       },
     },
-    {
-      header: 'Acciones',
-      accessorKey: 'id' as const,
-      cell: ({ row }: { row: { original: CompetitionRegistration } }) => (
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={() => handleDelete(row.original.id)}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      ),
-    },
+    ...(!isAthlete
+      ? [
+          {
+            header: 'Acciones',
+            accessorKey: 'id' as const,
+            cell: ({ row }: { row: { original: CompetitionRegistration } }) => (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => handleDelete(row.original.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            ),
+          },
+        ]
+      : []),
   ]
 
   const filteredRegistrations = registrations.filter(
@@ -192,10 +201,12 @@ export function CompetitionRegistrationsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Inscripciones a Competencias</h1>
-        <Button onClick={handleOpenForm} disabled={!selectedCompetitionId}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nueva Inscripción
-        </Button>
+        {!isAthlete && (
+          <Button onClick={handleOpenForm} disabled={!selectedCompetitionId}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nueva Inscripción
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4">

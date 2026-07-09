@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Competition, CompetitionStatus } from '@/types'
 
 const statusLabels: Record<CompetitionStatus, string> = {
@@ -25,6 +26,10 @@ const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destr
 }
 
 export function CompetitionsPage() {
+  const { user } = useAuthStore()
+  const userRole = user ? extractRole(user) : ''
+  const isAthlete = userRole === 'ATHLETE'
+
   const [competitions, setCompetitions] = useState<Competition[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -91,24 +96,28 @@ export function CompetitionsPage() {
         </Badge>
       ),
     },
-    {
-      header: 'Acciones',
-      accessorKey: 'id' as const,
-      cell: ({ row }: { row: { original: Competition } }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link to={`/competitions/${row.original.id}/edit`}>Editar</Link>
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDelete(row.original.id)}
-          >
-            Eliminar
-          </Button>
-        </div>
-      ),
-    },
+    ...(!isAthlete
+      ? [
+          {
+            header: 'Acciones',
+            accessorKey: 'id' as const,
+            cell: ({ row }: { row: { original: Competition } }) => (
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={`/competitions/${row.original.id}/edit`}>Editar</Link>
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(row.original.id)}
+                >
+                  Eliminar
+                </Button>
+              </div>
+            ),
+          },
+        ]
+      : []),
   ]
 
   const filteredCompetitions = competitions.filter(
@@ -121,12 +130,14 @@ export function CompetitionsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Competencias</h1>
-        <Button asChild>
-          <Link to="/competitions/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Nueva Competencia
-          </Link>
-        </Button>
+        {!isAthlete && (
+          <Button asChild>
+            <Link to="/competitions/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Nueva Competencia
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
