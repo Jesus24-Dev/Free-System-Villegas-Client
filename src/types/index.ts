@@ -78,16 +78,16 @@ export interface Coach {
 // Athlete
 export interface Athlete {
   id: string
+  person_id: string
   dni: string
   name: string
   surname: string
   gender: 'MALE' | 'FEMALE'
   birthday: string
   status: boolean
-  person_id?: string
   gym_id?: string
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }
 
 // Athlete Profile (from /athlete/profile/:id)
@@ -113,10 +113,13 @@ export interface AthleteProfile {
     confirmed: boolean
   }>
   competitions: Array<{
-    id: string
-    name: string
-    date: string
-    location: string
+    competition: string
+    status: string
+    division: {
+      mode: string
+      category: string
+      weight: number
+    }
   }>
 }
 

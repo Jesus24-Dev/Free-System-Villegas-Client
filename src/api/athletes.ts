@@ -1,17 +1,14 @@
 import api from './client'
-import type { Athlete, AthleteProfile } from '@/types'
+import type { Athlete, AthleteProfile, PaginatedResponse } from '@/types'
 
 export const athleteApi = {
-  getAll: async (params?: { page?: number; limit?: number }): Promise<Athlete[]> => {
-    const response = await api.get('/athlete', { params })
-    const data = response.data
-    if (Array.isArray(data)) return data
-    if (data?.data && Array.isArray(data.data)) return data.data
-    return []
+  getAll: async (params?: { page?: number; limit?: number }): Promise<PaginatedResponse<Athlete>> => {
+    const response = await api.get<PaginatedResponse<Athlete>>('/athlete', { params })
+    return response.data
   },
 
-  getById: async (id: string): Promise<Athlete> => {
-    const response = await api.get<Athlete>(`/athlete/${id}`)
+  getById: async (personId: string): Promise<Athlete> => {
+    const response = await api.get<Athlete>(`/athlete/${personId}`)
     return response.data
   },
 
@@ -25,12 +22,12 @@ export const athleteApi = {
     return response.data
   },
 
-  update: async (id: string, data: Partial<Athlete>): Promise<Athlete> => {
-    const response = await api.patch<Athlete>(`/athlete/${id}`, data)
+  update: async (personId: string, data: { person_id?: string; gym_id?: string }): Promise<Athlete> => {
+    const response = await api.patch<Athlete>(`/athlete/${personId}`, data)
     return response.data
   },
 
-  delete: async (id: string): Promise<void> => {
-    await api.delete(`/athlete/${id}`)
+  delete: async (personId: string): Promise<void> => {
+    await api.delete(`/athlete/${personId}`)
   },
 }
