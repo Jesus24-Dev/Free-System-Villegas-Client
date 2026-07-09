@@ -11,20 +11,38 @@ interface AuthState {
   hasRole: (role: string) => boolean
 }
 
+function decodeToken(token: string): JwtPayload | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+
+    const role = payload.role || payload.roles?.[0] || 'ATHLETE'
+
+    return {
+      sub: payload.sub || payload.userId || payload.id || '',
+      email: payload.email || '',
+      role: role as JwtPayload['role'],
+    }
+  } catch {
+    console.error('Invalid token format')
+    return null
+  }
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       token: null,
       user: null,
       setAuth: (token: string) => {
-        try {
-          const payload: JwtPayload = JSON.parse(atob(token.split('.')[1]))
+        const payload = decodeToken(token)
+        if (payload) {
           set({ token, user: payload })
-        } catch {
-          console.error('Invalid token')
         }
       },
-      logout: () => set({ token: null, user: null }),
+      logout: () => {
+        localStorage.removeItem('token')
+        set({ token: null, user: null })
+      },
       isAuthenticated: () => get().token !== null,
       hasRole: (role: string) => get().user?.role === role,
     }),

@@ -7,23 +7,28 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
 
-  if (!user) {
+  if (!token || !user) {
     return <Navigate to="/login" replace />
   }
 
-  if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/unauthorized" replace />
+  if (requiredRole) {
+    const userRole = user.role?.toUpperCase()
+    const required = requiredRole.toUpperCase()
+
+    if (userRole !== required) {
+      return <Navigate to="/unauthorized" replace />
+    }
   }
 
   return <>{children}</>
 }
 
 export function GuestRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
 
-  if (user) {
+  if (token && user) {
     return <Navigate to="/dashboard" replace />
   }
 

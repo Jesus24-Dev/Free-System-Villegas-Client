@@ -30,9 +30,11 @@ export function Sidebar() {
   const { user } = useAuthStore()
   const { sidebarOpen, setSidebarOpen } = useUIStore()
 
-  const filteredNavItems = navItems.filter((item) =>
-    user?.role ? item.roles.includes(user.role) : false
-  )
+  const filteredNavItems = navItems.filter((item) => {
+    if (!user?.role) return false
+    const userRole = user.role.toUpperCase()
+    return item.roles.some((r) => r.toUpperCase() === userRole)
+  })
 
   return (
     <>
