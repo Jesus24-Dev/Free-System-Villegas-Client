@@ -6,14 +6,10 @@ import { Register } from '@/pages/Register'
 import { Dashboard } from '@/pages/Dashboard'
 import { Unauthorized } from '@/pages/Unauthorized'
 import { NotFound } from '@/pages/NotFound'
-import { AthleteList } from '@/pages/athletes/AthleteList'
-import { AthleteForm } from '@/pages/athletes/AthleteForm'
-import { CoachList } from '@/pages/coaches/CoachList'
-import { CoachForm } from '@/pages/coaches/CoachForm'
-import { GymList } from '@/pages/gyms/GymList'
-import { GymForm } from '@/pages/gyms/GymForm'
-import { CompetitionList } from '@/pages/competitions/CompetitionList'
-import { CompetitionForm } from '@/pages/competitions/CompetitionForm'
+import { AthletesPage } from '@/pages/athletes'
+import { CoachesPage } from '@/pages/coaches'
+import { GymsPage } from '@/pages/gyms'
+import { CompetitionsPage } from '@/pages/competitions'
 
 export const router = createBrowserRouter([
   {
@@ -54,13 +50,13 @@ export const router = createBrowserRouter([
       },
       {
         path: 'athletes',
-        element: <AthleteList />,
+        element: <AthletesPage />,
       },
       {
         path: 'athletes/new',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <AthleteForm />
+            <AthletesPage />
           </ProtectedRoute>
         ),
       },
@@ -68,19 +64,19 @@ export const router = createBrowserRouter([
         path: 'athletes/:id/edit',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <AthleteForm />
+            <AthletesPage />
           </ProtectedRoute>
         ),
       },
       {
         path: 'coaches',
-        element: <CoachList />,
+        element: <CoachesPage />,
       },
       {
         path: 'coaches/new',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <CoachForm />
+            <CoachesPage />
           </ProtectedRoute>
         ),
       },
@@ -88,19 +84,19 @@ export const router = createBrowserRouter([
         path: 'coaches/:id/edit',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <CoachForm />
+            <CoachesPage />
           </ProtectedRoute>
         ),
       },
       {
         path: 'gyms',
-        element: <GymList />,
+        element: <GymsPage />,
       },
       {
         path: 'gyms/new',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <GymForm />
+            <GymsPage />
           </ProtectedRoute>
         ),
       },
@@ -108,19 +104,19 @@ export const router = createBrowserRouter([
         path: 'gyms/:id/edit',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <GymForm />
+            <GymsPage />
           </ProtectedRoute>
         ),
       },
       {
         path: 'competitions',
-        element: <CompetitionList />,
+        element: <CompetitionsPage />,
       },
       {
         path: 'competitions/new',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <CompetitionForm />
+            <CompetitionsPage />
           </ProtectedRoute>
         ),
       },
@@ -128,7 +124,7 @@ export const router = createBrowserRouter([
         path: 'competitions/:id/edit',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <CompetitionForm />
+            <CompetitionsPage />
           </ProtectedRoute>
         ),
       },
