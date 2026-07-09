@@ -4,12 +4,12 @@ import { Header } from './Header'
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex overflow-hidden">
+    <div className="h-screen bg-background overflow-hidden">
+      <div className="flex h-full">
         <Sidebar />
-        <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
           <Header />
-          <main className="flex-1 p-4 lg:p-6 overflow-auto">
+          <main className="flex-1 p-4 lg:p-6 overflow-y-auto scroll-smooth">
             <Outlet />
           </main>
         </div>

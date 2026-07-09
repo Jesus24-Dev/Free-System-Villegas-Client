@@ -213,7 +213,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <div>
         <h1 className="text-3xl font-bold">Mi Panel</h1>
         <p className="text-muted-foreground">
