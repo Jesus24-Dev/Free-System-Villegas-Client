@@ -81,8 +81,8 @@ export function CompetitionRegistrationsPage() {
 
   const loadAthletes = async () => {
     try {
-      const data = await athleteApi.getAll()
-      setAthletes(data)
+      const response = await athleteApi.getAll()
+      setAthletes(response.data)
     } catch (error) {
       toast.error('Error al cargar atletas')
     }
