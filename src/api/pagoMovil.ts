@@ -2,8 +2,8 @@ import api from './client'
 import type { PagoMovil } from '@/types'
 
 export const pagoMovilApi = {
-  getAll: async (params?: { dni?: string }): Promise<PagoMovil[]> => {
-    const response = await api.get('/gym/pago-movil', { params })
+  getByGym: async (gymId: string): Promise<PagoMovil[]> => {
+    const response = await api.get(`/pago-movil/${gymId}`)
     const data = response.data
     if (Array.isArray(data)) return data
     if (data?.data && Array.isArray(data.data)) return data.data
@@ -11,21 +11,16 @@ export const pagoMovilApi = {
   },
 
   getById: async (id: string): Promise<PagoMovil> => {
-    const response = await api.get<PagoMovil>(`/gym/pago-movil/${id}`)
+    const response = await api.get<PagoMovil>(`/pago-movil/${id}`)
     return response.data
   },
 
-  create: async (data: Partial<PagoMovil>): Promise<PagoMovil> => {
-    const response = await api.post<PagoMovil>('/gym/pago-movil', data)
-    return response.data
-  },
-
-  update: async (id: string, data: Partial<PagoMovil>): Promise<PagoMovil> => {
-    const response = await api.patch<PagoMovil>(`/gym/pago-movil/${id}`, data)
+  create: async (gymId: string, data: Partial<PagoMovil>): Promise<PagoMovil> => {
+    const response = await api.post<PagoMovil>(`/pago-movil/${gymId}`, data)
     return response.data
   },
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/gym/pago-movil/${id}`)
+    await api.delete(`/pago-movil/${id}`)
   },
 }

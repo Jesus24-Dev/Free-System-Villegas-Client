@@ -61,7 +61,7 @@ export const competitionDivisionApi = {
 
 export const competitionRegistrationApi = {
   getAll: async (params?: { competition_id?: string; athlete_id?: string }): Promise<CompetitionRegistration[]> => {
-    const response = await api.get('/competition/registration', { params })
+    const response = await api.get('/competition-registration', { params })
     const data = response.data
     if (Array.isArray(data)) return data
     if (data?.data && Array.isArray(data.data)) return data.data
@@ -69,21 +69,21 @@ export const competitionRegistrationApi = {
   },
 
   getById: async (id: string): Promise<CompetitionRegistration> => {
-    const response = await api.get<CompetitionRegistration>(`/competition/registration/${id}`)
+    const response = await api.get<CompetitionRegistration>(`/competition-registration/${id}`)
     return response.data
   },
 
   create: async (data: { athlete_id: string; division_id: string }): Promise<CompetitionRegistration> => {
-    const response = await api.post<CompetitionRegistration>('/competition/registration', data)
+    const response = await api.post<CompetitionRegistration>('/competition-registration', data)
     return response.data
   },
 
   update: async (id: string, data: Partial<CompetitionRegistration>): Promise<CompetitionRegistration> => {
-    const response = await api.patch<CompetitionRegistration>(`/competition/registration/${id}`, data)
+    const response = await api.patch<CompetitionRegistration>(`/competition-registration/${id}`, data)
     return response.data
   },
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/competition/registration/${id}`)
+    await api.delete(`/competition-registration/${id}`)
   },
 }
