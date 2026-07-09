@@ -3,7 +3,7 @@ import { useAuthStore, extractRole } from '@/stores/authStore'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  requiredRole?: 'ADMIN' | 'COACH' | 'ATHLETE'
+  requiredRole?: 'ADMIN' | 'COACH' | 'ATHLETE' | Array<'ADMIN' | 'COACH' | 'ATHLETE'>
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
@@ -15,9 +15,10 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
   if (requiredRole) {
     const userRole = extractRole(user)
-    const required = requiredRole.toUpperCase()
+    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole]
+    const normalizedRoles = roles.map(r => r.toUpperCase())
 
-    if (userRole !== required) {
+    if (!normalizedRoles.includes(userRole)) {
       return <Navigate to="/unauthorized" replace />
     }
   }

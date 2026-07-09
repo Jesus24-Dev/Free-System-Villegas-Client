@@ -10,6 +10,9 @@ import { AthletesPage } from '@/pages/athletes'
 import { CoachesPage } from '@/pages/coaches'
 import { GymsPage } from '@/pages/gyms'
 import { CompetitionsPage } from '@/pages/competitions'
+import { CompetitionRegistrationsPage } from '@/pages/competitions/registrations'
+import { PaymentsPage } from '@/pages/payments'
+import { PagoMovilPage } from '@/pages/pago-movil'
 
 export const router = createBrowserRouter([
   {
@@ -125,6 +128,26 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRole="ADMIN">
             <CompetitionsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'competition-registrations',
+        element: <CompetitionRegistrationsPage />,
+      },
+      {
+        path: 'payments',
+        element: (
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
+            <PaymentsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'pago-movil',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <PagoMovilPage />
           </ProtectedRoute>
         ),
       },
