@@ -350,9 +350,11 @@ function AthleteDashboard({ userId }: { userId: string }) {
                       {comp.division.mode} - {comp.division.category} - {comp.division.weight}kg
                     </p>
                   </div>
-                  <Badge variant={comp.status === 'ACTIVE' ? 'default' : 'secondary'}>
-                    {comp.status}
-                  </Badge>
+                  <div className="text-right">
+                    <Badge variant={comp.status === 'ACTIVE' ? 'default' : 'secondary'}>
+                      {comp.status}
+                    </Badge>
+                  </div>
                 </div>
               ))}
             </div>
