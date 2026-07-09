@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 import { useUIStore } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
 import { LogOut, Menu, User } from 'lucide-react'
@@ -6,6 +6,8 @@ import { LogOut, Menu, User } from 'lucide-react'
 export function Header() {
   const { user, logout } = useAuthStore()
   const { toggleSidebar } = useUIStore()
+
+  const roleLabel = user ? extractRole(user) : ''
 
   return (
     <header className="h-16 border-b bg-background flex items-center justify-between px-4 lg:px-6">
@@ -21,7 +23,7 @@ export function Header() {
           <User className="h-4 w-4 text-muted-foreground" />
           <span className="hidden sm:inline">{user?.email}</span>
           <span className="px-2 py-0.5 text-xs bg-secondary text-secondary-foreground rounded-full">
-            {user?.role}
+            {roleLabel}
           </span>
         </div>
         <Button variant="ghost" size="icon" onClick={logout}>

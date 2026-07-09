@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 import {
   LayoutDashboard,
   Users,
@@ -30,9 +30,10 @@ export function Sidebar() {
   const { user } = useAuthStore()
   const { sidebarOpen, setSidebarOpen } = useUIStore()
 
+  const userRole = user ? extractRole(user) : ''
+
   const filteredNavItems = navItems.filter((item) => {
-    if (!user?.role) return false
-    const userRole = user.role.toUpperCase()
+    if (!userRole) return true
     return item.roles.some((r) => r.toUpperCase() === userRole)
   })
 

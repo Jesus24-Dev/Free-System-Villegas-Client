@@ -18,6 +18,7 @@ export function Login() {
   const [serverError, setServerError] = useState('')
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
+  const setUserFromProfile = useAuthStore((s) => s.setUserFromProfile)
 
   const {
     register,
@@ -33,6 +34,11 @@ export function Login() {
     try {
       const response = await authApi.login(data)
       setAuth(response.access_token)
+
+      // Fetch profile to get the actual user role
+      const profile = await authApi.getProfile()
+      setUserFromProfile(profile)
+
       toast.success('Inicio de sesion exitoso')
       navigate('/dashboard')
     } catch (error) {

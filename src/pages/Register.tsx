@@ -21,6 +21,7 @@ export function Register() {
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
+  const setUserFromProfile = useAuthStore((s) => s.setUserFromProfile)
 
   const {
     register,
@@ -36,6 +37,11 @@ export function Register() {
     try {
       const response = await authApi.register(data)
       setAuth(response.access_token)
+
+      // Fetch profile to get the actual user role
+      const profile = await authApi.getProfile()
+      setUserFromProfile(profile)
+
       toast.success('Registro exitoso')
       navigate('/dashboard')
     } catch (error) {
@@ -115,8 +121,8 @@ export function Register() {
                 <Label htmlFor="gender">Genero</Label>
                 <Select id="gender" {...register('gender')}>
                   <option value="">Seleccionar</option>
-                  <option value="M">Masculino</option>
-                  <option value="F">Femenino</option>
+                  <option value="MALE">Masculino</option>
+                  <option value="FEMALE">Femenino</option>
                 </Select>
                 {(errors.gender || serverErrors.gender) && (
                   <p className="text-sm text-destructive">

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -14,7 +14,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   if (requiredRole) {
-    const userRole = user.role?.toUpperCase()
+    const userRole = extractRole(user)
     const required = requiredRole.toUpperCase()
 
     if (userRole !== required) {
