@@ -69,8 +69,6 @@ export interface Coach {
   gender: 'MALE' | 'FEMALE'
   birthday: string
   status: boolean
-  person_id?: string
-  gym_id?: string
   created_at: string
   updated_at: string
 }
@@ -99,7 +97,6 @@ export interface Athlete {
   gender: 'MALE' | 'FEMALE'
   birthday: string
   status: boolean
-  gym_id?: string
   created_at?: string
   updated_at?: string
 }
@@ -115,6 +112,7 @@ export interface AthleteProfile {
     gender: 'MALE' | 'FEMALE'
   }
   gym: {
+    id_gym: string
     name: string
     address: string
     state: string
@@ -282,7 +280,7 @@ export interface GymPayment {
   day_payed: string
   amount: number
   evidence_url?: string
-  payment_reference?: string
+  payment_reference: string
   athlete_id: string
   gym_id: string
   isConfirmed: boolean

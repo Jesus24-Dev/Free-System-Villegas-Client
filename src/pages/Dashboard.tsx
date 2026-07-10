@@ -303,7 +303,6 @@ function CoachDashboard() {
 
 function AthleteDashboard({ userId }: { userId: string }) {
   const [profile, setProfile] = useState<AthleteProfile | null>(null)
-  const [athleteGymId, setAthleteGymId] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [paymentData, setPaymentData] = useState({
@@ -321,20 +320,6 @@ function AthleteDashboard({ userId }: { userId: string }) {
       setLoading(true)
       const data = await athleteApi.getProfile(userId)
       setProfile(data)
-      if (data?.id) {
-        try {
-          const athlete = await athleteApi.getById(data.id)
-          if (athlete?.gym_id) {
-            setAthleteGymId(athlete.gym_id)
-          }
-        } catch {
-          // fallback: try using userId directly
-          const athlete = await athleteApi.getById(userId)
-          if (athlete?.gym_id) {
-            setAthleteGymId(athlete.gym_id)
-          }
-        }
-      }
     } catch (error) {
       toast.error('Error al cargar perfil')
     } finally {
@@ -343,7 +328,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
   }
 
   const handleCreatePayment = async () => {
-    if (!profile?.gym || !paymentData.amount || !athleteGymId) {
+    if (!profile?.gym || !paymentData.amount || !profile.gym.id_gym) {
       toast.error('Completa todos los campos')
       return
     }
@@ -352,8 +337,8 @@ function AthleteDashboard({ userId }: { userId: string }) {
         day_payed: new Date(paymentData.day_payed).toISOString(),
         amount: parseFloat(paymentData.amount),
         athlete_id: userId,
-        gym_id: athleteGymId,
-        payment_reference: paymentData.payment_reference || undefined,
+        gym_id: profile.gym.id_gym,
+        payment_reference: paymentData.payment_reference,
       })
       toast.success('Pago registrado correctamente')
       setShowPaymentForm(false)

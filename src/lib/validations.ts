@@ -84,7 +84,7 @@ export const gymPaymentSchema = z.object({
   amount: z.number().min(0.01, 'El monto debe ser mayor a 0'),
   athlete_id: z.string().min(1, 'El atleta es requerido'),
   gym_id: z.string().min(1, 'El gimnasio es requerido'),
-  payment_reference: z.string().optional(),
+  payment_reference: z.string().min(1, 'La referencia es requerida'),
   evidence_url: z.string().url('URL invalida').optional().or(z.literal('')),
 })
 
