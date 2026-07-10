@@ -328,7 +328,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
   }
 
   const handleCreatePayment = async () => {
-    if (!profile?.gym || !paymentData.amount || !profile.gym.id_gym) {
+    if (!profile?.gym || !paymentData.amount || !profile.gym.id_gym || !paymentData.payment_reference) {
       toast.error('Completa todos los campos')
       return
     }
