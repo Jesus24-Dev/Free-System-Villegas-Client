@@ -115,7 +115,6 @@ export interface AthleteProfile {
     gender: 'MALE' | 'FEMALE'
   }
   gym: {
-    id: string
     name: string
     address: string
     state: string
