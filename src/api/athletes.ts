@@ -7,6 +7,14 @@ export const athleteApi = {
     return response.data
   },
 
+  getByGym: async (gymId: string): Promise<Athlete[]> => {
+    const response = await api.get(`/athlete/gym/${gymId}/athletes`)
+    const data = response.data
+    if (Array.isArray(data)) return data as Athlete[]
+    if (data?.data && Array.isArray(data.data)) return data.data as Athlete[]
+    return []
+  },
+
   getById: async (personId: string): Promise<Athlete> => {
     const response = await api.get<Athlete>(`/athlete/${personId}`)
     return response.data

@@ -5,8 +5,11 @@ import type { ProfileDto } from '@/types'
 interface AuthState {
   token: string | null
   user: ProfileDto | null
+  gymId: string | null
+  isGymOwner: boolean
   setAuth: (token: string) => void
   setUserFromProfile: (profile: ProfileDto) => void
+  setGymContext: (gymId: string, isOwner: boolean) => void
   logout: () => void
   isAuthenticated: () => boolean
   hasRole: (role: string) => boolean
@@ -29,15 +32,20 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       token: null,
       user: null,
+      gymId: null,
+      isGymOwner: false,
       setAuth: (token: string) => {
         set({ token })
       },
       setUserFromProfile: (profile: ProfileDto) => {
         set({ user: profile })
       },
+      setGymContext: (gymId: string, isOwner: boolean) => {
+        set({ gymId, isGymOwner: isOwner })
+      },
       logout: () => {
         localStorage.removeItem('token')
-        set({ token: null, user: null })
+        set({ token: null, user: null, gymId: null, isGymOwner: false })
       },
       isAuthenticated: () => {
         const token = get().token
@@ -53,7 +61,12 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ token: state.token, user: state.user }),
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        gymId: state.gymId,
+        isGymOwner: state.isGymOwner,
+      }),
     }
   )
 )

@@ -7,6 +7,14 @@ export const coachApi = {
     return response.data
   },
 
+  getByGym: async (gymId: string): Promise<Coach[]> => {
+    const response = await api.get(`/coach/gym/${gymId}/coaches`)
+    const data = response.data
+    if (Array.isArray(data)) return data as Coach[]
+    if (data?.data && Array.isArray(data.data)) return data.data as Coach[]
+    return []
+  },
+
   getAll: async (params?: { page?: number; limit?: number }): Promise<Coach[]> => {
     const response = await api.get('/coach', { params })
     const data = response.data
