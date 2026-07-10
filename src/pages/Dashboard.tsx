@@ -336,7 +336,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
       await gymPaymentApi.create({
         day_payed: new Date(paymentData.day_payed).toISOString(),
         amount: parseFloat(paymentData.amount),
-        athlete_id: userId,
+        athlete_id: profile.id,
         gym_id: profile.gym.id_gym,
         payment_reference: paymentData.payment_reference,
       })
