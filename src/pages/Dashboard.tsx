@@ -328,7 +328,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
   }
 
   const handleCreatePayment = async () => {
-    if (!profile?.gym || !paymentData.amount || !profile.gym.id_gym || !paymentData.payment_reference) {
+    if (!profile?.gym || Object.keys(profile.gym).length === 0 || !paymentData.amount || !profile.gym.id_gym || !paymentData.payment_reference) {
       toast.error('Completa todos los campos')
       return
     }
@@ -392,7 +392,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </p>
       </div>
 
-      {profile.gym ? (
+      {profile.gym && Object.keys(profile.gym).length > 0 ? (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Mi Gimnasio</CardTitle>
@@ -417,7 +417,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </Card>
       )}
 
-      {profile.gym && (
+      {profile.gym && Object.keys(profile.gym).length > 0 && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Registrar Pago</CardTitle>
