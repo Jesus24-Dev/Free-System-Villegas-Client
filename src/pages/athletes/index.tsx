@@ -8,9 +8,14 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Athlete } from '@/types'
 
 export function AthletesPage() {
+  const { user, gymId } = useAuthStore()
+  const userRole = user ? extractRole(user) : ''
+  const isCoach = userRole === 'COACH'
+
   const [athletes, setAthletes] = useState<Athlete[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -20,14 +25,20 @@ export function AthletesPage() {
 
   useEffect(() => {
     loadAthletes()
-  }, [page])
+  }, [page, gymId])
 
   const loadAthletes = async () => {
     try {
       setLoading(true)
-      const response = await athleteApi.getAll({ page, limit })
-      setAthletes(response.data)
-      setTotalPages(response.meta?.totalPages ?? 1)
+      if (isCoach && gymId) {
+        const data = await athleteApi.getByGym(gymId)
+        setAthletes(data)
+        setTotalPages(Math.ceil(data.length / limit) || 1)
+      } else {
+        const response = await athleteApi.getAll({ page, limit })
+        setAthletes(response.data)
+        setTotalPages(response.meta?.totalPages ?? 1)
+      }
     } catch (error) {
       toast.error('Error al cargar atletas')
     } finally {

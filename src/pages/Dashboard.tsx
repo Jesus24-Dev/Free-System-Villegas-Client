@@ -135,7 +135,7 @@ function AdminDashboard() {
 }
 
 function CoachDashboard() {
-  const { user } = useAuthStore()
+  const { user, setGymContext } = useAuthStore()
   const [gymDetails, setGymDetails] = useState<GymDetails | null>(null)
   const [gymInfo, setGymInfo] = useState<Gym | null>(null)
   const [isOwner, setIsOwner] = useState(false)
@@ -167,8 +167,10 @@ function CoachDashboard() {
         competitionApi.getAll(),
       ])
 
+      const owner = gym.owner?.id === coachMe.id
       setGymInfo(gym)
-      setIsOwner(gym.owner?.id === coachMe.id)
+      setIsOwner(owner)
+      setGymContext(coachMe.gym_id, owner)
       setCompetitionsCount(competitions.length)
       setGymDetails(details)
     } catch (err) {

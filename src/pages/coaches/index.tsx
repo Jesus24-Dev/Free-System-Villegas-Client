@@ -8,9 +8,14 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Coach } from '@/types'
 
 export function CoachesPage() {
+  const { user, gymId } = useAuthStore()
+  const userRole = user ? extractRole(user) : ''
+  const isCoach = userRole === 'COACH'
+
   const [coaches, setCoaches] = useState<Coach[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -20,14 +25,20 @@ export function CoachesPage() {
 
   useEffect(() => {
     loadCoaches()
-  }, [page])
+  }, [page, gymId])
 
   const loadCoaches = async () => {
     try {
       setLoading(true)
-      const data = await coachApi.getAll({ page, limit })
-      setCoaches(data)
-      setTotalPages(Math.ceil(data.length / limit) || 1)
+      if (isCoach && gymId) {
+        const data = await coachApi.getByGym(gymId)
+        setCoaches(data)
+        setTotalPages(Math.ceil(data.length / limit) || 1)
+      } else {
+        const data = await coachApi.getAll({ page, limit })
+        setCoaches(data)
+        setTotalPages(Math.ceil(data.length / limit) || 1)
+      }
     } catch (error) {
       toast.error('Error al cargar entrenadores')
     } finally {
