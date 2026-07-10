@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { PagoMovil, Gym } from '@/types'
@@ -22,6 +23,9 @@ export function PagoMovilPage() {
     dni: '',
     phone: '',
   })
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [pagoMovilToDelete, setPagoMovilToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     loadGyms()
@@ -54,15 +58,22 @@ export function PagoMovilPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de eliminar este pago móvil?')) {
-      try {
-        await pagoMovilApi.delete(id)
-        toast.success('Pago móvil eliminado correctamente')
-        loadPagoMovils()
-      } catch (error) {
-        toast.error('Error al eliminar pago móvil')
-      }
+  const handleDeleteClick = (id: string) => {
+    setPagoMovilToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!pagoMovilToDelete) return
+    try {
+      await pagoMovilApi.delete(pagoMovilToDelete)
+      toast.success('Pago móvil eliminado correctamente')
+      loadPagoMovils()
+    } catch (error) {
+      toast.error('Error al eliminar pago móvil')
+    } finally {
+      setShowDeleteDialog(false)
+      setPagoMovilToDelete(null)
     }
   }
 
@@ -102,7 +113,8 @@ export function PagoMovilPage() {
         <Button
           variant="destructive"
           size="sm"
-          onClick={() => handleDelete(row.original.id)}
+          onClick={() => handleDeleteClick(row.original.id)}
+          className="hover:opacity-80 transition-opacity"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -120,7 +132,7 @@ export function PagoMovilPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Pago Móvil</h1>
-        <Button onClick={() => setShowForm(true)} disabled={!selectedGymId}>
+        <Button onClick={() => setShowForm(true)} disabled={!selectedGymId} className="hover:opacity-90 transition-opacity">
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Pago Móvil
         </Button>
@@ -191,13 +203,27 @@ export function PagoMovilPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleCreate}>Crear</Button>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
+            <Button onClick={handleCreate} className="hover:opacity-90 transition-opacity">Crear</Button>
+            <Button variant="outline" onClick={() => setShowForm(false)} className="hover:bg-muted transition-colors">Cancelar</Button>
           </div>
         </div>
       )}
 
       <DataTable columns={columns} data={filteredPagoMovils} loading={loading} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Pago Móvil"
+        description="¿Estás seguro de eliminar este pago móvil? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setPagoMovilToDelete(null)
+        }}
+      />
     </div>
   )
 }

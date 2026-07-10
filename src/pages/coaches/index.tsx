@@ -6,6 +6,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -22,6 +23,9 @@ export function CoachesPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 10
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [coachToDelete, setCoachToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     loadCoaches()
@@ -46,15 +50,22 @@ export function CoachesPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de eliminar este entrenador?')) {
-      try {
-        await coachApi.delete(id)
-        toast.success('Entrenador eliminado correctamente')
-        loadCoaches()
-      } catch (error) {
-        toast.error('Error al eliminar entrenador')
-      }
+  const handleDeleteClick = (id: string) => {
+    setCoachToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!coachToDelete) return
+    try {
+      await coachApi.delete(coachToDelete)
+      toast.success('Entrenador eliminado correctamente')
+      loadCoaches()
+    } catch (error) {
+      toast.error('Error al eliminar entrenador')
+    } finally {
+      setShowDeleteDialog(false)
+      setCoachToDelete(null)
     }
   }
 
@@ -112,7 +123,7 @@ export function CoachesPage() {
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => handleDelete(row.original.id)}
+            onClick={() => handleDeleteClick(row.original.id)}
             className="hover:opacity-80 transition-opacity"
           >
             Eliminar
@@ -154,6 +165,20 @@ export function CoachesPage() {
       <DataTable columns={columns} data={filteredCoaches} loading={loading} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Entrenador"
+        description="¿Estas seguro de eliminar este entrenador? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setCoachToDelete(null)
+        }}
+      />
     </div>
   )
 }

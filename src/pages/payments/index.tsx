@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search, Trash2, Check, Pencil, Clock, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -36,6 +37,11 @@ export function PaymentsPage() {
     payment_reference: '',
   })
   const limit = 10
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [paymentToConfirm, setPaymentToConfirm] = useState<string | null>(null)
 
   useEffect(() => {
     loadData()
@@ -70,27 +76,41 @@ export function PaymentsPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de eliminar este pago?')) {
-      try {
-        await gymPaymentApi.delete(id)
-        toast.success('Pago eliminado correctamente')
-        loadData()
-      } catch (error) {
-        toast.error('Error al eliminar pago')
-      }
+  const handleDeleteClick = (id: string) => {
+    setPaymentToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!paymentToDelete) return
+    try {
+      await gymPaymentApi.delete(paymentToDelete)
+      toast.success('Pago eliminado correctamente')
+      loadData()
+    } catch (error) {
+      toast.error('Error al eliminar pago')
+    } finally {
+      setShowDeleteDialog(false)
+      setPaymentToDelete(null)
     }
   }
 
-  const handleConfirm = async (id: string) => {
-    if (window.confirm('¿Confirmar este pago?')) {
-      try {
-        await gymPaymentApi.confirm(id)
-        toast.success('Pago confirmado correctamente')
-        loadData()
-      } catch (error) {
-        toast.error('Error al confirmar pago')
-      }
+  const handleConfirmClick = (id: string) => {
+    setPaymentToConfirm(id)
+    setShowConfirmDialog(true)
+  }
+
+  const handleConfirmPayment = async () => {
+    if (!paymentToConfirm) return
+    try {
+      await gymPaymentApi.confirm(paymentToConfirm)
+      toast.success('Pago confirmado correctamente')
+      loadData()
+    } catch (error) {
+      toast.error('Error al confirmar pago')
+    } finally {
+      setShowConfirmDialog(false)
+      setPaymentToConfirm(null)
     }
   }
 
@@ -251,7 +271,7 @@ export function PaymentsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleConfirm(row.original.id)}
+              onClick={() => handleConfirmClick(row.original.id)}
               title="Confirmar pago"
               className="hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors"
             >
@@ -270,7 +290,7 @@ export function PaymentsPage() {
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => handleDelete(row.original.id)}
+            onClick={() => handleDeleteClick(row.original.id)}
             title="Eliminar pago"
             className="hover:opacity-80 transition-opacity"
           >
@@ -396,6 +416,34 @@ export function PaymentsPage() {
       <DataTable columns={columns} data={filteredPayments} loading={loading} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Pago"
+        description="¿Estas seguro de eliminar este pago? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setPaymentToDelete(null)
+        }}
+      />
+
+      <ConfirmDialog
+        open={showConfirmDialog}
+        title="Confirmar Pago"
+        description="¿Confirmar este pago? Se marcara como confirmado."
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+        variant="default"
+        onConfirm={handleConfirmPayment}
+        onCancel={() => {
+          setShowConfirmDialog(false)
+          setPaymentToConfirm(null)
+        }}
+      />
     </div>
   )
 }

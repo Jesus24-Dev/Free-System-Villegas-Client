@@ -1,9 +1,22 @@
 import api from './client'
 import type { Coach, CoachMeResponse } from '@/types'
 
+interface RegisterAthletePayload {
+  dni: string
+  name: string
+  surname: string
+  birthday: string
+  gender: 'MALE' | 'FEMALE'
+}
+
 export const coachApi = {
   getMe: async (): Promise<CoachMeResponse> => {
     const response = await api.get<CoachMeResponse>('/coach/me')
+    return response.data
+  },
+
+  registerAthlete: async (gymId: string, data: RegisterAthletePayload) => {
+    const response = await api.post(`/coach/${gymId}/athlete`, data)
     return response.data
   },
 

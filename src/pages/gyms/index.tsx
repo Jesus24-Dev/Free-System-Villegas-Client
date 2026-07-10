@@ -5,6 +5,7 @@ import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Gym } from '@/types'
@@ -16,6 +17,9 @@ export function GymsPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 10
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [gymToDelete, setGymToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     loadGyms()
@@ -34,15 +38,22 @@ export function GymsPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de eliminar este gimnasio?')) {
-      try {
-        await gymApi.delete(id)
-        toast.success('Gimnasio eliminado correctamente')
-        loadGyms()
-      } catch (error) {
-        toast.error('Error al eliminar gimnasio')
-      }
+  const handleDeleteClick = (id: string) => {
+    setGymToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!gymToDelete) return
+    try {
+      await gymApi.delete(gymToDelete)
+      toast.success('Gimnasio eliminado correctamente')
+      loadGyms()
+    } catch (error) {
+      toast.error('Error al eliminar gimnasio')
+    } finally {
+      setShowDeleteDialog(false)
+      setGymToDelete(null)
     }
   }
 
@@ -74,14 +85,20 @@ export function GymsPage() {
       header: 'Acciones',
       accessorKey: 'id' as const,
       cell: ({ row }: { row: { original: Gym } }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
+        <div className="flex gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
             <Link to={`/gyms/${row.original.id}/edit`}>Editar</Link>
           </Button>
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => handleDelete(row.original.id)}
+            onClick={() => handleDeleteClick(row.original.id)}
+            className="hover:opacity-80 transition-opacity"
           >
             Eliminar
           </Button>
@@ -100,7 +117,7 @@ export function GymsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Gimnasios</h1>
-        <Button asChild>
+        <Button asChild className="hover:opacity-90 transition-opacity">
           <Link to="/gyms/new">
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Gimnasio
@@ -121,6 +138,20 @@ export function GymsPage() {
       <DataTable columns={columns} data={filteredGyms} loading={loading} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Gimnasio"
+        description="¿Estas seguro de eliminar este gimnasio? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setGymToDelete(null)
+        }}
+      />
     </div>
   )
 }

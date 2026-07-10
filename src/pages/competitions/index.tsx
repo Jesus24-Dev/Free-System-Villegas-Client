@@ -6,6 +6,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -28,7 +29,7 @@ const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destr
 export function CompetitionsPage() {
   const { user } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
-  const isAthlete = userRole === 'ATHLETE'
+  const isReadOnly = userRole === 'ATHLETE' || userRole === 'COACH'
 
   const [competitions, setCompetitions] = useState<Competition[]>([])
   const [loading, setLoading] = useState(true)
@@ -36,6 +37,9 @@ export function CompetitionsPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 10
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [competitionToDelete, setCompetitionToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     loadCompetitions()
@@ -54,15 +58,22 @@ export function CompetitionsPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de eliminar esta competencia?')) {
-      try {
-        await competitionApi.delete(id)
-        toast.success('Competencia eliminada correctamente')
-        loadCompetitions()
-      } catch (error) {
-        toast.error('Error al eliminar competencia')
-      }
+  const handleDeleteClick = (id: string) => {
+    setCompetitionToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!competitionToDelete) return
+    try {
+      await competitionApi.delete(competitionToDelete)
+      toast.success('Competencia eliminada correctamente')
+      loadCompetitions()
+    } catch (error) {
+      toast.error('Error al eliminar competencia')
+    } finally {
+      setShowDeleteDialog(false)
+      setCompetitionToDelete(null)
     }
   }
 
@@ -96,7 +107,7 @@ export function CompetitionsPage() {
         </Badge>
       ),
     },
-    ...(!isAthlete
+    ...(!isReadOnly
       ? [
           {
             header: 'Acciones',
@@ -109,7 +120,7 @@ export function CompetitionsPage() {
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => handleDelete(row.original.id)}
+                  onClick={() => handleDeleteClick(row.original.id)}
                 >
                   Eliminar
                 </Button>
@@ -130,7 +141,7 @@ export function CompetitionsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Competencias</h1>
-        {!isAthlete && (
+        {!isReadOnly && (
           <Button asChild>
             <Link to="/competitions/new">
               <Plus className="mr-2 h-4 w-4" />
@@ -153,6 +164,20 @@ export function CompetitionsPage() {
       <DataTable columns={columns} data={filteredCompetitions} loading={loading} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Competencia"
+        description="¿Estas seguro de eliminar esta competencia? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setCompetitionToDelete(null)
+        }}
+      />
     </div>
   )
 }

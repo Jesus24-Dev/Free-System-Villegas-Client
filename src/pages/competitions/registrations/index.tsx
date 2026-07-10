@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -39,6 +40,9 @@ export function CompetitionRegistrationsPage() {
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ athlete_id: '', division_id: '' })
   const limit = 10
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [registrationToDelete, setRegistrationToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     loadCompetitions()
@@ -93,15 +97,22 @@ export function CompetitionRegistrationsPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de eliminar esta inscripción?')) {
-      try {
-        await competitionRegistrationApi.delete(id)
-        toast.success('Inscripción eliminada correctamente')
-        loadRegistrations()
-      } catch (error) {
-        toast.error('Error al eliminar inscripción')
-      }
+  const handleDeleteClick = (id: string) => {
+    setRegistrationToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!registrationToDelete) return
+    try {
+      await competitionRegistrationApi.delete(registrationToDelete)
+      toast.success('Inscripción eliminada correctamente')
+      loadRegistrations()
+    } catch (error) {
+      toast.error('Error al eliminar inscripción')
+    } finally {
+      setShowDeleteDialog(false)
+      setRegistrationToDelete(null)
     }
   }
 
@@ -180,7 +191,7 @@ export function CompetitionRegistrationsPage() {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => handleDelete(row.original.id)}
+                onClick={() => handleDeleteClick(row.original.id)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -289,6 +300,20 @@ export function CompetitionRegistrationsPage() {
       <DataTable columns={columns} data={filteredRegistrations} loading={loading} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Inscripción"
+        description="¿Estas seguro de eliminar esta inscripción? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setRegistrationToDelete(null)
+        }}
+      />
     </div>
   )
 }
