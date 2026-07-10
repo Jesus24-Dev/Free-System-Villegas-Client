@@ -392,24 +392,30 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </p>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Mi Gimnasio</CardTitle>
-          <Dumbbell className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          {profile.gym ? (
+      {profile.gym ? (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Mi Gimnasio</CardTitle>
+            <Dumbbell className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
             <div className="space-y-2">
               <div className="text-2xl font-bold">{profile.gym.name}</div>
               <p className="text-sm text-muted-foreground">{profile.gym.address}</p>
               <p className="text-sm text-muted-foreground">{profile.gym.state}</p>
               <p className="text-sm font-medium">Mensualidad: {formatCurrency(profile.gym.monthly_payment)}</p>
             </div>
-          ) : (
-            <p className="text-muted-foreground">No tienes gimnasio asignado</p>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="py-6">
+            <p className="text-muted-foreground text-center">
+              Aun no tienes un gimnasio asignado. Un entrenador te asignara pronto.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {profile.gym && (
         <Card>
