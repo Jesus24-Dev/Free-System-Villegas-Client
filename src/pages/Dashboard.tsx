@@ -337,7 +337,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
         day_payed: new Date(paymentData.day_payed).toISOString(),
         amount: parseFloat(paymentData.amount),
         athlete_id: userId,
-        gym_id: '',
+        gym_id: profile.gym.id,
         payment_reference: paymentData.payment_reference || undefined,
       })
       toast.success('Pago registrado correctamente')
