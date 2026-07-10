@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
       {
         path: 'athletes/new',
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
             <AthletesPage />
           </ProtectedRoute>
         ),
@@ -66,7 +66,7 @@ export const router = createBrowserRouter([
       {
         path: 'athletes/:id/edit',
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
             <AthletesPage />
           </ProtectedRoute>
         ),
@@ -78,7 +78,7 @@ export const router = createBrowserRouter([
       {
         path: 'coaches/new',
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
             <CoachesPage />
           </ProtectedRoute>
         ),
@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
       {
         path: 'coaches/:id/edit',
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
             <CoachesPage />
           </ProtectedRoute>
         ),

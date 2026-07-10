@@ -18,7 +18,7 @@ import { useUIStore } from '@/stores/uiStore'
 const navItems = [
   { to: '/dashboard', label: 'Panel de Control', icon: LayoutDashboard, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
   { to: '/athletes', label: 'Atletas', icon: Users, roles: ['ADMIN', 'COACH'] },
-  { to: '/coaches', label: 'Entrenadores', icon: Dumbbell, roles: ['ADMIN'] },
+  { to: '/coaches', label: 'Entrenadores', icon: Dumbbell, roles: ['ADMIN', 'COACH'] },
   { to: '/gyms', label: 'Gimnasios', icon: Building2, roles: ['ADMIN'] },
   { to: '/competitions', label: 'Competencias', icon: Trophy, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
   { to: '/payments', label: 'Pagos', icon: CreditCard, roles: ['ADMIN', 'COACH'] },
