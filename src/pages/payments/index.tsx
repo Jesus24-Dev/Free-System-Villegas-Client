@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Search, Trash2, Check, Pencil } from 'lucide-react'
+import { Plus, Search, Trash2, Check, Pencil, Clock, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { GymPayment, Athlete } from '@/types'
+
+type PaymentFilter = 'all' | 'pending' | 'confirmed'
 
 export function PaymentsPage() {
   const { user, gymId } = useAuthStore()
@@ -21,6 +23,7 @@ export function PaymentsPage() {
   const [athletes, setAthletes] = useState<Athlete[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState<PaymentFilter>('pending')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [showForm, setShowForm] = useState(false)
@@ -35,38 +38,35 @@ export function PaymentsPage() {
   const limit = 10
 
   useEffect(() => {
-    loadPayments()
+    loadData()
   }, [page, gymId])
 
-  const loadPayments = async () => {
+  const loadData = async () => {
     try {
       setLoading(true)
+      let paymentsData: GymPayment[] = []
+      let athletesData: Athlete[] = []
+
       if (isCoach && gymId) {
-        const data = await gymPaymentApi.getAll({ gym_id: gymId })
-        setPayments(data)
+        const [paymentsResult, athletesResult] = await Promise.all([
+          gymPaymentApi.getAll({ gym_id: gymId }),
+          athleteApi.getByGym(gymId),
+        ])
+        paymentsData = paymentsResult
+        athletesData = athletesResult
       } else {
-        const data = await gymPaymentApi.getAll()
-        setPayments(data)
+        paymentsData = await gymPaymentApi.getAll()
+        const response = await athleteApi.getAll()
+        athletesData = response.data
       }
-      setTotalPages(Math.ceil(payments.length / limit) || 1)
+
+      setPayments(paymentsData)
+      setAthletes(athletesData)
+      setTotalPages(Math.ceil(paymentsData.length / limit) || 1)
     } catch (error) {
-      toast.error('Error al cargar pagos')
+      toast.error('Error al cargar datos')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const loadAthletes = async () => {
-    try {
-      if (isCoach && gymId) {
-        const data = await athleteApi.getByGym(gymId)
-        setAthletes(data)
-      } else {
-        const response = await athleteApi.getAll()
-        setAthletes(response.data)
-      }
-    } catch (error) {
-      toast.error('Error al cargar atletas')
     }
   }
 
@@ -75,7 +75,7 @@ export function PaymentsPage() {
       try {
         await gymPaymentApi.delete(id)
         toast.success('Pago eliminado correctamente')
-        loadPayments()
+        loadData()
       } catch (error) {
         toast.error('Error al eliminar pago')
       }
@@ -87,7 +87,7 @@ export function PaymentsPage() {
       try {
         await gymPaymentApi.confirm(id)
         toast.success('Pago confirmado correctamente')
-        loadPayments()
+        loadData()
       } catch (error) {
         toast.error('Error al confirmar pago')
       }
@@ -95,7 +95,6 @@ export function PaymentsPage() {
   }
 
   const handleOpenForm = (payment?: GymPayment) => {
-    loadAthletes()
     if (payment) {
       setEditingId(payment.id)
       setFormData({
@@ -139,7 +138,7 @@ export function PaymentsPage() {
         toast.success('Pago creado correctamente')
       }
       setShowForm(false)
-      loadPayments()
+      loadData()
     } catch (error) {
       toast.error(editingId ? 'Error al actualizar pago' : 'Error al crear pago')
     }
@@ -155,18 +154,55 @@ export function PaymentsPage() {
 
   const getAthleteName = (athleteId: string) => {
     const athlete = athletes.find(a => a.id === athleteId)
-    return athlete ? `${athlete.name} ${athlete.surname}` : athleteId
+    return athlete ? `${athlete.name} ${athlete.surname}` : 'Atleta desconocido'
   }
+
+  const getAthleteDni = (athleteId: string) => {
+    const athlete = athletes.find(a => a.id === athleteId)
+    return athlete?.dni || ''
+  }
+
+  const pendingPayments = payments.filter(p => !p.isConfirmed)
+  const confirmedPayments = payments.filter(p => p.isConfirmed)
+
+  const getFilteredPayments = () => {
+    let filtered: GymPayment[]
+    switch (filter) {
+      case 'pending':
+        filtered = pendingPayments
+        break
+      case 'confirmed':
+        filtered = confirmedPayments
+        break
+      default:
+        filtered = payments
+    }
+
+    return filtered.filter(payment => {
+      const athleteName = getAthleteName(payment.athlete_id).toLowerCase()
+      const reference = (payment.payment_reference || '').toLowerCase()
+      return athleteName.includes(search.toLowerCase()) || reference.includes(search.toLowerCase())
+    })
+  }
+
+  const filteredPayments = getFilteredPayments()
 
   const columns = [
     {
       header: 'Atleta',
       accessorKey: 'athlete_id' as const,
-      cell: ({ row }: { row: { original: GymPayment } }) => (
-        <div>
-          <p className="font-medium">{getAthleteName(row.original.athlete_id)}</p>
-        </div>
-      ),
+      cell: ({ row }: { row: { original: GymPayment } }) => {
+        const athleteName = getAthleteName(row.original.athlete_id)
+        const athleteDni = getAthleteDni(row.original.athlete_id)
+        return (
+          <div className="flex flex-col">
+            <span className="font-medium">{athleteName}</span>
+            {athleteDni && (
+              <span className="text-xs text-muted-foreground">DNI: {athleteDni}</span>
+            )}
+          </div>
+        )
+      },
     },
     {
       header: 'Fecha',
@@ -191,9 +227,19 @@ export function PaymentsPage() {
     },
     {
       header: 'Estado',
-      accessorKey: 'id' as const,
-      cell: () => (
-        <Badge variant="default">Registrado</Badge>
+      accessorKey: 'isConfirmed' as const,
+      cell: ({ row }: { row: { original: GymPayment } }) => (
+        row.original.isConfirmed ? (
+          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+            <CheckCircle2 className="mr-1 h-3 w-3" />
+            Confirmado
+          </Badge>
+        ) : (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+            <Clock className="mr-1 h-3 w-3" />
+            Por confirmar
+          </Badge>
+        )
       ),
     },
     {
@@ -201,19 +247,23 @@ export function PaymentsPage() {
       accessorKey: 'id' as const,
       cell: ({ row }: { row: { original: GymPayment } }) => (
         <div className="flex gap-1">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleConfirm(row.original.id)}
-            title="Confirmar"
-          >
-            <Check className="h-4 w-4" />
-          </Button>
+          {!row.original.isConfirmed && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleConfirm(row.original.id)}
+              title="Confirmar pago"
+              className="hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors"
+            >
+              <Check className="h-4 w-4" />
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
             onClick={() => handleOpenForm(row.original)}
-            title="Editar"
+            title="Editar pago"
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -221,7 +271,8 @@ export function PaymentsPage() {
             variant="destructive"
             size="sm"
             onClick={() => handleDelete(row.original.id)}
-            title="Eliminar"
+            title="Eliminar pago"
+            className="hover:opacity-80 transition-opacity"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -230,35 +281,57 @@ export function PaymentsPage() {
     },
   ]
 
-  const filteredPayments = payments.filter(
-    (payment) => {
-      const reference = payment.payment_reference || ''
-      const athleteName = getAthleteName(payment.athlete_id).toLowerCase()
-      return (
-        reference.toLowerCase().includes(search.toLowerCase()) ||
-        athleteName.includes(search.toLowerCase())
-      )
-    }
-  )
+  const pendingCount = pendingPayments.length
+  const confirmedCount = confirmedPayments.length
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Pagos de Gimnasio</h1>
-        <Button onClick={() => handleOpenForm()}>
+        <Button onClick={() => handleOpenForm()} className="hover:opacity-90 transition-opacity">
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Pago
         </Button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por atleta o referencia..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="flex items-center gap-4">
+        <div className="flex gap-2">
+          <Button
+            variant={filter === 'pending' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('pending')}
+            className={filter === 'pending' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+          >
+            <Clock className="mr-1 h-4 w-4" />
+            Por confirmar ({pendingCount})
+          </Button>
+          <Button
+            variant={filter === 'confirmed' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('confirmed')}
+            className={filter === 'confirmed' ? 'bg-green-600 hover:bg-green-700' : ''}
+          >
+            <CheckCircle2 className="mr-1 h-4 w-4" />
+            Confirmados ({confirmedCount})
+          </Button>
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('all')}
+          >
+            Todos ({payments.length})
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-2 ml-auto">
+          <Search className="h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por atleta o referencia..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-sm"
+          />
+        </div>
       </div>
 
       {showForm && (
@@ -300,16 +373,6 @@ export function PaymentsPage() {
                 ))}
               </select>
             </div>
-            {!isCoach && (
-              <div>
-                <Label htmlFor="gym_id">Gimnasio</Label>
-                <Input
-                  id="gym_id"
-                  value={formData.gym_id}
-                  disabled
-                />
-              </div>
-            )}
             <div className="col-span-2">
               <Label htmlFor="reference">Referencia de Pago</Label>
               <Input
@@ -320,8 +383,12 @@ export function PaymentsPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleSubmit}>{editingId ? 'Actualizar' : 'Crear'}</Button>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
+            <Button onClick={handleSubmit} className="hover:opacity-90 transition-opacity">
+              {editingId ? 'Actualizar' : 'Crear'}
+            </Button>
+            <Button variant="outline" onClick={() => setShowForm(false)} className="hover:bg-muted transition-colors">
+              Cancelar
+            </Button>
           </div>
         </div>
       )}

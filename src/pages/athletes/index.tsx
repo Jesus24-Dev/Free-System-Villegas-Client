@@ -85,14 +85,20 @@ export function AthletesPage() {
       header: 'Acciones',
       accessorKey: 'id' as const,
       cell: ({ row }: { row: { original: Athlete } }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
+        <div className="flex gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
             <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
           </Button>
           <Button
             variant="destructive"
             size="sm"
             onClick={() => handleDelete(row.original.person_id)}
+            className="hover:opacity-80 transition-opacity"
           >
             Eliminar
           </Button>
@@ -112,7 +118,7 @@ export function AthletesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Atletas</h1>
-        <Button asChild>
+        <Button asChild className="hover:opacity-90 transition-opacity">
           <Link to="/athletes/new">
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Atleta

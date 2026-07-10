@@ -285,6 +285,7 @@ export interface GymPayment {
   payment_reference?: string
   athlete_id: string
   gym_id: string
+  isConfirmed: boolean
   created_at: string
   updated_at: string
 }

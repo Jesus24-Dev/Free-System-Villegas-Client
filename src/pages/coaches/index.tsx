@@ -58,9 +58,24 @@ export function CoachesPage() {
     }
   }
 
+  const isCurrentUser = (coachDni: string) => {
+    return user?.dni === coachDni
+  }
+
   const columns = [
     { header: 'DNI', accessorKey: 'dni' as const },
-    { header: 'Nombre', accessorKey: 'name' as const },
+    {
+      header: 'Nombre',
+      accessorKey: 'name' as const,
+      cell: ({ row }: { row: { original: Coach } }) => (
+        <div className="flex items-center gap-2">
+          <span>{row.original.name}</span>
+          {isCurrentUser(row.original.dni) && (
+            <Badge variant="secondary" className="text-xs">yo</Badge>
+          )}
+        </div>
+      ),
+    },
     { header: 'Apellido', accessorKey: 'surname' as const },
     {
       header: 'Genero',
@@ -85,14 +100,20 @@ export function CoachesPage() {
       header: 'Acciones',
       accessorKey: 'id' as const,
       cell: ({ row }: { row: { original: Coach } }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
+        <div className="flex gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
             <Link to={`/coaches/${row.original.id}/edit`}>Editar</Link>
           </Button>
           <Button
             variant="destructive"
             size="sm"
             onClick={() => handleDelete(row.original.id)}
+            className="hover:opacity-80 transition-opacity"
           >
             Eliminar
           </Button>
@@ -112,7 +133,7 @@ export function CoachesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Entrenadores</h1>
-        <Button asChild>
+        <Button asChild className="hover:opacity-90 transition-opacity">
           <Link to="/coaches/new">
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Entrenador
