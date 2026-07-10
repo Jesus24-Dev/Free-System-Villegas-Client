@@ -75,6 +75,20 @@ export interface Coach {
   updated_at: string
 }
 
+export interface CoachMeResponse {
+  id: string
+  person_id: string
+  gym_id: string
+  person: {
+    dni: string
+    name: string
+    surname: string
+    gender: 'MALE' | 'FEMALE'
+    birthday: string
+    status: boolean
+  }
+}
+
 // Athlete
 export interface Athlete {
   id: string

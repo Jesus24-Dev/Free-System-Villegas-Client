@@ -153,37 +153,23 @@ function CoachDashboard() {
     try {
       setLoading(true)
 
-      const [coaches, gyms, competitions] = await Promise.all([
-        coachApi.getAll(),
-        gymApi.getAll(),
+      const coachMe = await coachApi.getMe()
+
+      if (!coachMe.gym_id) {
+        setError('No tienes un gimnasio asignado')
+        setLoading(false)
+        return
+      }
+
+      const [gym, details, competitions] = await Promise.all([
+        gymApi.getById(coachMe.gym_id),
+        gymApi.getDetails(coachMe.gym_id),
         competitionApi.getAll(),
       ])
 
-      const matchedCoach = coaches.find(
-        (c) => c.dni === user.dni
-      )
-
-      if (!matchedCoach) {
-        setError('No se encontro un perfil de entrenador asociado a tu cuenta')
-        setLoading(false)
-        return
-      }
-
-      const matchedGym = gyms.find(
-        (g) => g.owner?.id === matchedCoach.id
-      )
-
-      if (!matchedGym) {
-        setError('No eres propietario de ningun gimnasio')
-        setLoading(false)
-        return
-      }
-
-      setGymInfo(matchedGym)
-      setIsOwner(true)
+      setGymInfo(gym)
+      setIsOwner(gym.owner?.id === coachMe.id)
       setCompetitionsCount(competitions.length)
-
-      const details = await gymApi.getDetails(matchedGym.id)
       setGymDetails(details)
     } catch (err) {
       toast.error('Error al cargar datos del gimnasio')

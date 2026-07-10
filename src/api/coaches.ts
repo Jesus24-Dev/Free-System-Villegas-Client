@@ -1,7 +1,12 @@
 import api from './client'
-import type { Coach } from '@/types'
+import type { Coach, CoachMeResponse } from '@/types'
 
 export const coachApi = {
+  getMe: async (): Promise<CoachMeResponse> => {
+    const response = await api.get<CoachMeResponse>('/coach/me')
+    return response.data
+  },
+
   getAll: async (params?: { page?: number; limit?: number }): Promise<Coach[]> => {
     const response = await api.get('/coach', { params })
     const data = response.data
