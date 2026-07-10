@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Users, Building2, Trophy, Dumbbell, CreditCard, Plus, Check, X } from 'lucide-react'
+import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
@@ -13,7 +13,7 @@ import { coachApi } from '@/api/coaches'
 import { gymApi } from '@/api/gyms'
 import { competitionApi } from '@/api/competitions'
 import { gymPaymentApi } from '@/api/gymPayments'
-import type { AthleteProfile } from '@/types'
+import type { AthleteProfile, GymDetails, Gym } from '@/types'
 
 export function Dashboard() {
   const { user } = useAuthStore()
@@ -23,10 +23,14 @@ export function Dashboard() {
     return <AthleteDashboard userId={user?.id || ''} />
   }
 
-  return <AdminCoachDashboard />
+  if (userRole === 'COACH') {
+    return <CoachDashboard />
+  }
+
+  return <AdminDashboard />
 }
 
-function AdminCoachDashboard() {
+function AdminDashboard() {
   const [counts, setCounts] = useState({ athletes: 0, coaches: 0, gyms: 0, competitions: 0 })
   const [loading, setLoading] = useState(true)
 
@@ -93,7 +97,7 @@ function AdminCoachDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Gimnasios</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <Dumbbell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{loading ? '--' : counts.gyms}</div>
@@ -126,6 +130,185 @@ function AdminCoachDashboard() {
           <p className="text-muted-foreground text-sm">Sin actividad reciente</p>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+function CoachDashboard() {
+  const { user } = useAuthStore()
+  const [gymDetails, setGymDetails] = useState<GymDetails | null>(null)
+  const [gymInfo, setGymInfo] = useState<Gym | null>(null)
+  const [isOwner, setIsOwner] = useState(false)
+  const [competitionsCount, setCompetitionsCount] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadCoachData()
+  }, [])
+
+  const loadCoachData = async () => {
+    if (!user) return
+
+    try {
+      setLoading(true)
+
+      const [coaches, gyms, competitions] = await Promise.all([
+        coachApi.getAll(),
+        gymApi.getAll(),
+        competitionApi.getAll(),
+      ])
+
+      const matchedCoach = coaches.find(
+        (c) => c.dni === user.dni
+      )
+
+      if (!matchedCoach) {
+        setError('No se encontro un perfil de entrenador asociado a tu cuenta')
+        setLoading(false)
+        return
+      }
+
+      const matchedGym = gyms.find(
+        (g) => g.owner?.id === matchedCoach.id
+      )
+
+      if (!matchedGym) {
+        setError('No eres propietario de ningun gimnasio')
+        setLoading(false)
+        return
+      }
+
+      setGymInfo(matchedGym)
+      setIsOwner(true)
+      setCompetitionsCount(competitions.length)
+
+      const details = await gymApi.getDetails(matchedGym.id)
+      setGymDetails(details)
+    } catch (err) {
+      toast.error('Error al cargar datos del gimnasio')
+      setError('Error al cargar datos')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
+          <p className="text-muted-foreground">Cargando informacion de tu gimnasio...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
+        <p className="text-muted-foreground">
+          {gymInfo ? `Gimnasio: ${gymInfo.name}` : 'Informacion de tu gimnasio'}
+        </p>
+      </div>
+
+      {gymInfo && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Mi Gimnasio</CardTitle>
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold">{gymInfo.name}</div>
+              <p className="text-sm text-muted-foreground">{gymInfo.address}</p>
+              <p className="text-sm text-muted-foreground">
+                {gymInfo.state.replace(/_/g, ' ')}
+              </p>
+              <p className="text-sm font-medium">
+                Mensualidad: ${gymInfo.monthly_payment}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Atletas</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {gymDetails ? gymDetails.athletes.length : '--'}
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <Link to="/athletes">
+                <Button variant="link" className="px-0 text-sm">Ver todos</Button>
+              </Link>
+              {isOwner && (
+                <Link to="/athletes/new">
+                  <Button variant="link" className="px-0 text-sm">
+                    <Plus className="mr-1 h-3 w-3" />
+                    Nuevo
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Entrenadores</CardTitle>
+            <Dumbbell className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {gymDetails ? gymDetails.coaches.length : '--'}
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <Link to="/coaches">
+                <Button variant="link" className="px-0 text-sm">Ver todos</Button>
+              </Link>
+              {isOwner && (
+                <Link to="/coaches/new">
+                  <Button variant="link" className="px-0 text-sm">
+                    <Plus className="mr-1 h-3 w-3" />
+                    Nuevo
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Competencias</CardTitle>
+            <Trophy className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{competitionsCount}</div>
+            <Link to="/competitions">
+              <Button variant="link" className="px-0 text-sm">Ver todas</Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
@@ -166,7 +349,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
         day_payed: new Date(paymentData.day_payed).toISOString(),
         amount: parseFloat(paymentData.amount),
         athlete_id: userId,
-        gym_id: '', // Will be resolved by backend
+        gym_id: '',
         payment_reference: paymentData.payment_reference || undefined,
       })
       toast.success('Pago registrado correctamente')
@@ -221,11 +404,10 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </p>
       </div>
 
-      {/* Gym Info Card */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Mi Gimnasio</CardTitle>
-          <Building2 className="h-4 w-4 text-muted-foreground" />
+          <Dumbbell className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           {profile.gym ? (
@@ -241,7 +423,6 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </CardContent>
       </Card>
 
-      {/* Payment Registration */}
       {profile.gym && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -301,7 +482,6 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </Card>
       )}
 
-      {/* Payments History */}
       <Card>
         <CardHeader>
           <CardTitle>Mis Pagos</CardTitle>
@@ -331,7 +511,6 @@ function AthleteDashboard({ userId }: { userId: string }) {
         </CardContent>
       </Card>
 
-      {/* Competitions */}
       <Card>
         <CardHeader>
           <CardTitle>Mis Competencias</CardTitle>

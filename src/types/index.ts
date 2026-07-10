@@ -132,8 +132,50 @@ export interface Gym {
   monthly_payment: number
   coach_id?: string
   phone?: string
+  owner?: GymOwner
   created_at: string
   updated_at: string
+}
+
+export interface GymOwner {
+  id: string
+  name: string
+  surname: string
+  status: boolean
+}
+
+export interface GymDetails {
+  id: string
+  name: string
+  address: string
+  state: VenezuelanState
+  athletes: GymAthleteDetails[]
+  coaches: GymCoachDetails[]
+  pago_movil: GymPagoMovilDetails[]
+}
+
+export interface GymAthleteDetails {
+  id: string
+  person: GymPersonDetails
+}
+
+export interface GymCoachDetails {
+  id: string
+  person: GymPersonDetails
+}
+
+export interface GymPersonDetails {
+  dni: string
+  name: string
+  surname: string
+  gender: 'MALE' | 'FEMALE'
+  status: boolean
+}
+
+export interface GymPagoMovilDetails {
+  bank_to_pay: string
+  dni: string
+  phone: string
 }
 
 export type VenezuelanState =
