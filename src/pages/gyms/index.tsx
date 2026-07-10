@@ -21,22 +21,22 @@ export function GymsPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [gymToDelete, setGymToDelete] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadGyms()
-  }, [page])
-
   const loadGyms = async () => {
     try {
       setLoading(true)
       const data = await gymApi.getAll({ page, limit })
       setGyms(data)
       setTotalPages(Math.ceil(data.length / limit) || 1)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar gimnasios')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadGyms()
+  }, [page])
 
   const handleDeleteClick = (id: string) => {
     setGymToDelete(id)
@@ -49,7 +49,7 @@ export function GymsPage() {
       await gymApi.delete(gymToDelete)
       toast.success('Gimnasio eliminado correctamente')
       loadGyms()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar gimnasio')
     } finally {
       setShowDeleteDialog(false)

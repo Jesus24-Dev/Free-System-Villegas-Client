@@ -41,22 +41,22 @@ export function CompetitionsPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [competitionToDelete, setCompetitionToDelete] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadCompetitions()
-  }, [page])
-
   const loadCompetitions = async () => {
     try {
       setLoading(true)
       const data = await competitionApi.getAll({ page, limit })
       setCompetitions(data)
       setTotalPages(Math.ceil(data.length / limit) || 1)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar competencias')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadCompetitions()
+  }, [page])
 
   const handleDeleteClick = (id: string) => {
     setCompetitionToDelete(id)
@@ -69,7 +69,7 @@ export function CompetitionsPage() {
       await competitionApi.delete(competitionToDelete)
       toast.success('Competencia eliminada correctamente')
       loadCompetitions()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar competencia')
     } finally {
       setShowDeleteDialog(false)

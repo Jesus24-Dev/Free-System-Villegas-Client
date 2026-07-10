@@ -44,22 +44,11 @@ export function CompetitionRegistrationsPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [registrationToDelete, setRegistrationToDelete] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadCompetitions()
-  }, [])
-
-  useEffect(() => {
-    if (selectedCompetitionId) {
-      loadRegistrations()
-      loadDivisions(selectedCompetitionId)
-    }
-  }, [selectedCompetitionId, page])
-
   const loadCompetitions = async () => {
     try {
       const data = await competitionApi.getAll()
       setCompetitions(data)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar competencias')
     }
   }
@@ -72,7 +61,7 @@ export function CompetitionRegistrationsPage() {
       const data = await competitionRegistrationApi.getAll(params)
       setRegistrations(data)
       setTotalPages(Math.ceil(data.length / limit) || 1)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar inscripciones')
     } finally {
       setLoading(false)
@@ -83,7 +72,7 @@ export function CompetitionRegistrationsPage() {
     try {
       const data = await competitionDivisionApi.getAll({ competition_id: competitionId })
       setDivisions(data)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar divisiones')
     }
   }
@@ -92,10 +81,21 @@ export function CompetitionRegistrationsPage() {
     try {
       const response = await athleteApi.getAll()
       setAthletes(response.data)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar atletas')
     }
   }
+
+  useEffect(() => {
+    loadCompetitions()
+  }, [])
+
+  useEffect(() => {
+    if (selectedCompetitionId) {
+      loadRegistrations()
+      loadDivisions(selectedCompetitionId)
+    }
+  }, [selectedCompetitionId, page])
 
   const handleDeleteClick = (id: string) => {
     setRegistrationToDelete(id)
@@ -108,7 +108,7 @@ export function CompetitionRegistrationsPage() {
       await competitionRegistrationApi.delete(registrationToDelete)
       toast.success('Inscripción eliminada correctamente')
       loadRegistrations()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar inscripción')
     } finally {
       setShowDeleteDialog(false)
@@ -132,7 +132,7 @@ export function CompetitionRegistrationsPage() {
       toast.success('Inscripción creada correctamente')
       setShowForm(false)
       loadRegistrations()
-    } catch (error) {
+    } catch {
       toast.error('Error al crear inscripción')
     }
   }

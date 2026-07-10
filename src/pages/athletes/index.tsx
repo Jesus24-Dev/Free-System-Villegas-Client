@@ -39,10 +39,6 @@ export function AthletesPage() {
   const [dniError, setDniError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    loadAthletes()
-  }, [page, gymId])
-
   const loadAthletes = async () => {
     try {
       setLoading(true)
@@ -55,12 +51,16 @@ export function AthletesPage() {
         setAthletes(response.data)
         setTotalPages(response.meta?.totalPages ?? 1)
       }
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar atletas')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadAthletes()
+  }, [page, gymId])
 
   const handleDeleteClick = (personId: string) => {
     setAthleteToDelete(personId)
@@ -73,7 +73,7 @@ export function AthletesPage() {
       await athleteApi.delete(athleteToDelete)
       toast.success('Atleta eliminado correctamente')
       loadAthletes()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar atleta')
     } finally {
       setShowDeleteDialog(false)
@@ -116,7 +116,7 @@ export function AthletesPage() {
       setShowCreateModal(false)
       setFormData({ dni: '', name: '', surname: '', birthday: '', gender: 'MALE' })
       loadAthletes()
-    } catch (error) {
+    } catch {
       toast.error('Error al crear atleta')
     } finally {
       setSubmitting(false)

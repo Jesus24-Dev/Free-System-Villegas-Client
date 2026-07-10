@@ -34,10 +34,6 @@ function AdminDashboard() {
   const [counts, setCounts] = useState({ athletes: 0, coaches: 0, gyms: 0, competitions: 0 })
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadCounts()
-  }, [])
-
   const loadCounts = async () => {
     try {
       setLoading(true)
@@ -53,12 +49,16 @@ function AdminDashboard() {
         gyms: gyms.length,
         competitions: competitions.length,
       })
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar estadisticas')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadCounts()
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -143,10 +143,6 @@ function CoachDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadCoachData()
-  }, [])
-
   const loadCoachData = async () => {
     if (!user) return
 
@@ -173,13 +169,17 @@ function CoachDashboard() {
       setGymContext(coachMe.gym_id, owner)
       setCompetitionsCount(competitions.length)
       setGymDetails(details)
-    } catch (err) {
+    } catch {
       toast.error('Error al cargar datos del gimnasio')
       setError('Error al cargar datos')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadCoachData()
+  }, [])
 
   if (loading) {
     return (
@@ -311,21 +311,21 @@ function AthleteDashboard({ userId }: { userId: string }) {
     payment_reference: '',
   })
 
-  useEffect(() => {
-    loadProfile()
-  }, [userId])
-
   const loadProfile = async () => {
     try {
       setLoading(true)
       const data = await athleteApi.getProfile(userId)
       setProfile(data)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar perfil')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadProfile()
+  }, [userId])
 
   const handleCreatePayment = async () => {
     if (!profile?.gym || Object.keys(profile.gym).length === 0 || !paymentData.amount || !profile.gym.id_gym || !paymentData.payment_reference) {
@@ -348,7 +348,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
         payment_reference: '',
       })
       loadProfile()
-    } catch (error) {
+    } catch {
       toast.error('Error al registrar pago')
     }
   }

@@ -27,21 +27,11 @@ export function PagoMovilPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [pagoMovilToDelete, setPagoMovilToDelete] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadGyms()
-  }, [])
-
-  useEffect(() => {
-    if (selectedGymId) {
-      loadPagoMovils()
-    }
-  }, [selectedGymId])
-
   const loadGyms = async () => {
     try {
       const data = await gymApi.getAll()
       setGyms(data)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar gimnasios')
     }
   }
@@ -51,12 +41,22 @@ export function PagoMovilPage() {
       setLoading(true)
       const data = await pagoMovilApi.getByGym(selectedGymId)
       setPagoMovils(data)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar pagos móviles')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadGyms()
+  }, [])
+
+  useEffect(() => {
+    if (selectedGymId) {
+      loadPagoMovils()
+    }
+  }, [selectedGymId])
 
   const handleDeleteClick = (id: string) => {
     setPagoMovilToDelete(id)
@@ -69,7 +69,7 @@ export function PagoMovilPage() {
       await pagoMovilApi.delete(pagoMovilToDelete)
       toast.success('Pago móvil eliminado correctamente')
       loadPagoMovils()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar pago móvil')
     } finally {
       setShowDeleteDialog(false)
@@ -88,7 +88,7 @@ export function PagoMovilPage() {
       setShowForm(false)
       setFormData({ bank_to_pay: '', dni: '', phone: '' })
       loadPagoMovils()
-    } catch (error) {
+    } catch {
       toast.error('Error al crear pago móvil')
     }
   }

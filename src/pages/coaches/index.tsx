@@ -27,10 +27,6 @@ export function CoachesPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [coachToDelete, setCoachToDelete] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadCoaches()
-  }, [page, gymId])
-
   const loadCoaches = async () => {
     try {
       setLoading(true)
@@ -43,12 +39,16 @@ export function CoachesPage() {
         setCoaches(data)
         setTotalPages(Math.ceil(data.length / limit) || 1)
       }
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar entrenadores')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadCoaches()
+  }, [page, gymId])
 
   const handleDeleteClick = (id: string) => {
     setCoachToDelete(id)
@@ -61,7 +61,7 @@ export function CoachesPage() {
       await coachApi.delete(coachToDelete)
       toast.success('Entrenador eliminado correctamente')
       loadCoaches()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar entrenador')
     } finally {
       setShowDeleteDialog(false)

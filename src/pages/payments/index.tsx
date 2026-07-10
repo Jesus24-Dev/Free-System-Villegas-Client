@@ -43,10 +43,6 @@ export function PaymentsPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [paymentToConfirm, setPaymentToConfirm] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadData()
-  }, [page, gymId])
-
   const loadData = async () => {
     try {
       setLoading(true)
@@ -69,12 +65,16 @@ export function PaymentsPage() {
       setPayments(paymentsData)
       setAthletes(athletesData)
       setTotalPages(Math.ceil(paymentsData.length / limit) || 1)
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar datos')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadData()
+  }, [page, gymId])
 
   const handleDeleteClick = (id: string) => {
     setPaymentToDelete(id)
@@ -87,7 +87,7 @@ export function PaymentsPage() {
       await gymPaymentApi.delete(paymentToDelete)
       toast.success('Pago eliminado correctamente')
       loadData()
-    } catch (error) {
+    } catch {
       toast.error('Error al eliminar pago')
     } finally {
       setShowDeleteDialog(false)
@@ -106,7 +106,7 @@ export function PaymentsPage() {
       await gymPaymentApi.confirm(paymentToConfirm)
       toast.success('Pago confirmado correctamente')
       loadData()
-    } catch (error) {
+    } catch {
       toast.error('Error al confirmar pago')
     } finally {
       setShowConfirmDialog(false)
@@ -159,7 +159,7 @@ export function PaymentsPage() {
       }
       setShowForm(false)
       loadData()
-    } catch (error) {
+    } catch {
       toast.error(editingId ? 'Error al actualizar pago' : 'Error al crear pago')
     }
   }
