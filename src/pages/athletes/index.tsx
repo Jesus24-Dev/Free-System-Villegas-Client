@@ -36,6 +36,7 @@ export function AthletesPage() {
     birthday: '',
     gender: 'MALE' as 'MALE' | 'FEMALE',
   })
+  const [dniError, setDniError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -86,7 +87,18 @@ export function AthletesPage() {
       return
     }
 
-    if (!formData.dni || !formData.name || !formData.surname || !formData.birthday) {
+    const dniRegex = /^[VEve]\d{6,9}$/
+    if (!formData.dni) {
+      setDniError('El DNI es requerido')
+      return
+    }
+    if (!dniRegex.test(formData.dni)) {
+      setDniError('Formato de DNI invalido (ej: V12345678)')
+      return
+    }
+    setDniError('')
+
+    if (!formData.name || !formData.surname || !formData.birthday) {
       toast.error('Completa todos los campos requeridos')
       return
     }
@@ -197,7 +209,7 @@ export function AthletesPage() {
       {showCreateModal && (
         <dialog
           open
-          className="backdrop:bg-black/50 rounded-lg border shadow-lg p-0 w-full max-w-lg"
+          className="confirm-dialog"
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowCreateModal(false)
           }}
@@ -210,9 +222,15 @@ export function AthletesPage() {
                 <Input
                   id="dni"
                   value={formData.dni}
-                  onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
-                  placeholder="Ej: 12345678"
+                  onChange={(e) => {
+                    setFormData({ ...formData, dni: e.target.value })
+                    if (dniError) setDniError('')
+                  }}
+                  placeholder="Ej: V12345678"
                 />
+                {dniError && (
+                  <p className="text-sm text-destructive mt-1">{dniError}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="name">Nombre *</Label>

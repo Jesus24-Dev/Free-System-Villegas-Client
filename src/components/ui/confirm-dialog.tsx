@@ -38,7 +38,7 @@ export function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="backdrop:bg-black/50 rounded-lg border shadow-lg p-0 w-full max-w-md"
+      className="confirm-dialog"
       onClick={(e) => {
         if (e.target === dialogRef.current) {
           onCancel()
@@ -49,10 +49,18 @@ export function ConfirmDialog({
         <h2 className="text-lg font-semibold">{title}</h2>
         <p className="text-sm text-muted-foreground">{description}</p>
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onCancel}>
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            className="hover:bg-muted transition-colors"
+          >
             {cancelText}
           </Button>
-          <Button variant={variant} onClick={onConfirm}>
+          <Button
+            variant={variant}
+            onClick={onConfirm}
+            className="hover:opacity-90 transition-opacity"
+          >
             {confirmText}
           </Button>
         </div>
