@@ -32,12 +32,19 @@ export const personSchema = z.object({
   status: z.boolean({ message: 'El estado es requerido' }),
 })
 
+export const pagoMovilSchema = z.object({
+  bank_to_pay: z.string().min(1, 'El banco es requerido'),
+  dni: z.string().regex(dniRegex, 'Formato de DNI invalido'),
+  phone: z.string().min(10, 'El telefono debe tener al menos 10 caracteres'),
+})
+
 export const gymSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   address: z.string().min(5, 'La direccion debe tener al menos 5 caracteres'),
   state: z.string().min(1, 'El estado es requerido'),
   monthly_payment: z.number().min(0, 'El pago mensual debe ser positivo'),
   phone: z.string().optional(),
+  payment_methods: z.array(pagoMovilSchema).min(1, 'Debe agregar al menos un metodo de pago movil'),
 })
 
 export const athleteSchema = z.object({
@@ -86,12 +93,6 @@ export const gymPaymentSchema = z.object({
   gym_id: z.string().min(1, 'El gimnasio es requerido'),
   payment_reference: z.string().min(1, 'La referencia es requerida'),
   evidence_url: z.string().url('URL invalida').optional().or(z.literal('')),
-})
-
-export const pagoMovilSchema = z.object({
-  bank_to_pay: z.string().min(1, 'El banco es requerido'),
-  dni: z.string().regex(dniRegex, 'Formato de DNI invalido'),
-  phone: z.string().min(10, 'El telefono debe tener al menos 10 caracteres'),
 })
 
 export type LoginFormData = z.infer<typeof loginSchema>

@@ -199,6 +199,21 @@ function CoachDashboard() {
           <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
           <p className="text-muted-foreground">{error}</p>
         </div>
+        <Card>
+          <CardContent className="py-6">
+            <div className="flex flex-col items-center gap-4">
+              <p className="text-muted-foreground text-center">
+                Para comenzar a gestionar tu gimnasio, primero debes registrar uno.
+              </p>
+              <Link to="/gyms/new">
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Registrar Gimnasio
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }

@@ -298,6 +298,21 @@ export interface PagoMovil {
   updated_at?: string
 }
 
+export interface CreatePagoMovilDto {
+  bank_to_pay: string
+  dni: string
+  phone: string
+}
+
+export interface CreateGymDto {
+  name: string
+  address: string
+  state: VenezuelanState
+  monthly_payment: number
+  owner_id: string
+  payment_methods: CreatePagoMovilDto[]
+}
+
 // Weight Category
 export interface WeightCategoryResponse {
   id?: string

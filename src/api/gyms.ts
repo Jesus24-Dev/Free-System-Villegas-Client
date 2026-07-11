@@ -1,5 +1,5 @@
 import api from './client'
-import type { Gym, GymDetails } from '@/types'
+import type { Gym, GymDetails, CreateGymDto } from '@/types'
 
 export const gymApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Gym[]> => {
@@ -20,7 +20,7 @@ export const gymApi = {
     return response.data
   },
 
-  create: async (data: Partial<Gym>): Promise<Gym> => {
+  create: async (data: CreateGymDto): Promise<Gym> => {
     const response = await api.post<Gym>('/gym', data)
     return response.data
   },

@@ -9,6 +9,7 @@ import { NotFound } from '@/pages/NotFound'
 import { AthletesPage } from '@/pages/athletes'
 import { CoachesPage } from '@/pages/coaches'
 import { GymsPage } from '@/pages/gyms'
+import { CreateGymPage } from '@/pages/gyms/create'
 import { CompetitionsPage } from '@/pages/competitions'
 import { CompetitionRegistrationsPage } from '@/pages/competitions/registrations'
 import { PaymentsPage } from '@/pages/payments'
@@ -98,8 +99,8 @@ export const router = createBrowserRouter([
       {
         path: 'gyms/new',
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
-            <GymsPage />
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
+            <CreateGymPage />
           </ProtectedRoute>
         ),
       },
