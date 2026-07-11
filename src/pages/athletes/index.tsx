@@ -42,7 +42,12 @@ export function AthletesPage() {
   const loadAthletes = async () => {
     try {
       setLoading(true)
-      if (isCoach && gymId) {
+      if (isCoach) {
+        if (!gymId) {
+          setAthletes([])
+          setTotalPages(1)
+          return
+        }
         const data = await athleteApi.getByGym(gymId)
         setAthletes(data)
         setTotalPages(Math.ceil(data.length / limit) || 1)

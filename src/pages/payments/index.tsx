@@ -49,7 +49,13 @@ export function PaymentsPage() {
       let paymentsData: GymPayment[] = []
       let athletesData: Athlete[] = []
 
-      if (isCoach && gymId) {
+      if (isCoach) {
+        if (!gymId) {
+          setPayments([])
+          setAthletes([])
+          setTotalPages(1)
+          return
+        }
         const [paymentsResult, athletesResult] = await Promise.all([
           gymPaymentApi.getAll({ gym_id: gymId }),
           athleteApi.getByGym(gymId),
