@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Search, Dumbbell, Users } from 'lucide-react'
+import { Search, Dumbbell, Users, Building2, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { personApi } from '@/api/persons'
 import { coachApi } from '@/api/coaches'
@@ -75,8 +75,89 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
     }
   }
 
-  const canAssignAsAthlete = result?.user_id && result?.roles?.includes('ATHLETE') && !result?.athlete_id
-  const canAssignAsCoach = result?.user_id && result?.roles?.includes('COACH') && !result?.coach_id
+  const renderResult = () => {
+    if (!result) return null
+
+    const isAthlete = result.roles?.includes('ATHLETE')
+    const isCoach = result.roles?.includes('COACH')
+
+    return (
+      <div className="border rounded-md p-3 space-y-2 bg-muted/30">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">{result.name} {result.surname}</p>
+            <p className="text-xs text-muted-foreground">DNI: {result.dni}</p>
+          </div>
+          <div className="flex gap-1">
+            {isAthlete && <Badge variant="outline" className="text-xs">Atleta</Badge>}
+            {isCoach && <Badge variant="outline" className="text-xs">Coach</Badge>}
+            {!result.user_id && (
+              <Badge variant="secondary" className="text-xs">Sin cuenta</Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Sin cuenta */}
+        {!result.user_id && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <AlertCircle className="h-3 w-3" />
+            <span>Esta persona no tiene cuenta. Debe registrarse primero.</span>
+          </div>
+        )}
+
+        {/* Atleta */}
+        {result.user_id && isAthlete && (
+          <>
+            {result.has_gym ? (
+              <Badge variant="default" className="bg-green-600 text-xs">
+                <Users className="mr-1 h-3 w-3" />
+                Ya tiene gimnasio asignado
+              </Badge>
+            ) : (
+              <Button
+                size="sm"
+                onClick={handleAssignAthlete}
+                disabled={assigning}
+                className="hover:opacity-90 transition-opacity"
+              >
+                <Users className="mr-1 h-3 w-3" />
+                Asignar a mi gimnasio
+              </Button>
+            )}
+          </>
+        )}
+
+        {/* Coach */}
+        {result.user_id && isCoach && (
+          <>
+            {result.owns_gym ? (
+              <div className="flex items-center gap-2">
+                <Badge variant="default" className="bg-blue-600 text-xs">
+                  <Building2 className="mr-1 h-3 w-3" />
+                  Dueño de gimnasio
+                </Badge>
+              </div>
+            ) : result.has_gym ? (
+              <Badge variant="default" className="bg-green-600 text-xs">
+                <Dumbbell className="mr-1 h-3 w-3" />
+                Asignado a otro gimnasio
+              </Badge>
+            ) : (
+              <Button
+                size="sm"
+                onClick={handleAssignCoach}
+                disabled={assigning}
+                className="hover:opacity-90 transition-opacity"
+              >
+                <Dumbbell className="mr-1 h-3 w-3" />
+                Asignar a mi gimnasio
+              </Button>
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-3">
@@ -85,7 +166,7 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
           <Input
             value={dni}
             onChange={(e) => setDni(e.target.value)}
-            placeholder="DNI para asignar..."
+            placeholder="DNI para buscar..."
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
         </div>
@@ -100,69 +181,7 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
         </Button>
       </div>
 
-      {result && (
-        <div className="border rounded-md p-3 space-y-2 bg-muted/30">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium">{result.name} {result.surname}</p>
-              <p className="text-xs text-muted-foreground">DNI: {result.dni}</p>
-            </div>
-            <div className="flex gap-1">
-              {result.roles?.map((role) => (
-                <Badge key={role} variant="outline" className="text-xs">
-                  {role === 'ATHLETE' ? 'Atleta' : role === 'COACH' ? 'Coach' : role}
-                </Badge>
-              ))}
-              {!result.user_id && (
-                <Badge variant="secondary" className="text-xs">Sin cuenta</Badge>
-              )}
-            </div>
-          </div>
-
-          {!result.user_id ? (
-            <p className="text-xs text-muted-foreground">
-              Sin cuenta en el sistema
-            </p>
-          ) : (
-            <div className="flex gap-2">
-              {canAssignAsAthlete && (
-                <Button
-                  size="sm"
-                  onClick={handleAssignAthlete}
-                  disabled={assigning}
-                  className="hover:opacity-90 transition-opacity"
-                >
-                  <Users className="mr-1 h-3 w-3" />
-                  Asignar Atleta
-                </Button>
-              )}
-              {result.athlete_id && (
-                <Badge variant="default" className="bg-green-600 text-xs">
-                  <Users className="mr-1 h-3 w-3" />
-                  Ya es Atleta
-                </Badge>
-              )}
-              {canAssignAsCoach && (
-                <Button
-                  size="sm"
-                  onClick={handleAssignCoach}
-                  disabled={assigning}
-                  className="hover:opacity-90 transition-opacity"
-                >
-                  <Dumbbell className="mr-1 h-3 w-3" />
-                  Asignar Coach
-                </Button>
-              )}
-              {result.coach_id && (
-                <Badge variant="default" className="bg-blue-600 text-xs">
-                  <Dumbbell className="mr-1 h-3 w-3" />
-                  Ya es Coach
-                </Badge>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+      {renderResult()}
     </div>
   )
 }

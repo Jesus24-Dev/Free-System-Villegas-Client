@@ -69,6 +69,8 @@ export interface PersonByDniResponse {
   roles: string[] | null
   athlete_id: string | null
   coach_id: string | null
+  has_gym: boolean
+  owns_gym: boolean
 }
 
 // Coach
