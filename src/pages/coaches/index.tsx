@@ -6,8 +6,10 @@ import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { Plus, Search } from 'lucide-react'
+import { PersonSearch } from '@/components/PersonSearch'
+import { Search, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Coach } from '@/types'
@@ -141,25 +143,41 @@ export function CoachesPage() {
   )
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Entrenadores</h1>
-        <Button asChild className="hover:opacity-90 transition-opacity">
-          <Link to="/coaches/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Nuevo Entrenador
-          </Link>
-        </Button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar entrenador..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Buscar Entrenador
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input
+              placeholder="Buscar por nombre, apellido o DNI..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </CardContent>
+        </Card>
+
+        {isCoach && gymId && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Asignar Coach Existente
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PersonSearch gymId={gymId} onAssignSuccess={loadCoaches} />
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <DataTable columns={columns} data={filteredCoaches} loading={loading} />

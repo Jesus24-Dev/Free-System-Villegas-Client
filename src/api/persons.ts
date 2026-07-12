@@ -1,5 +1,5 @@
 import api from './client'
-import type { Person } from '@/types'
+import type { Person, PersonByDniResponse } from '@/types'
 
 export const personApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Person[]> => {
@@ -15,8 +15,8 @@ export const personApi = {
     return response.data
   },
 
-  getByDni: async (dni: string): Promise<Person> => {
-    const response = await api.get<Person>(`/person/dni/${dni}`)
+  getByDni: async (dni: string): Promise<PersonByDniResponse | null> => {
+    const response = await api.get<PersonByDniResponse | null>(`/person/dni/${dni}`)
     return response.data
   },
 

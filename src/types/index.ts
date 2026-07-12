@@ -60,6 +60,17 @@ export interface Person {
   updated_at: string
 }
 
+export interface PersonByDniResponse {
+  id: string
+  dni: string
+  name: string
+  surname: string
+  user_id: string | null
+  roles: string[] | null
+  athlete_id: string | null
+  coach_id: string | null
+}
+
 // Coach
 export interface Coach {
   id: string

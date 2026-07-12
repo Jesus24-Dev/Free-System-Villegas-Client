@@ -9,6 +9,14 @@ interface RegisterAthletePayload {
   gender: 'MALE' | 'FEMALE'
 }
 
+interface AssignResponse {
+  id: string
+  person_id: string
+  gym_id: string
+  created_at: string
+  updated_at: string
+}
+
 export const coachApi = {
   getMe: async (): Promise<CoachMeResponse> => {
     const response = await api.get<CoachMeResponse>('/coach/me')
@@ -17,6 +25,16 @@ export const coachApi = {
 
   registerAthlete: async (gymId: string, data: RegisterAthletePayload) => {
     const response = await api.post(`/coach/${gymId}/athlete`, data)
+    return response.data
+  },
+
+  assignAthleteToGym: async (gymId: string, athleteId: string): Promise<AssignResponse> => {
+    const response = await api.patch<AssignResponse>(`/coach/${gymId}/athlete/${athleteId}`)
+    return response.data
+  },
+
+  assignCoachToGym: async (gymId: string, coachId: string): Promise<AssignResponse> => {
+    const response = await api.patch<AssignResponse>(`/coach/${gymId}/coach/${coachId}`)
     return response.data
   },
 

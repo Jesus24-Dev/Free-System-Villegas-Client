@@ -343,14 +343,6 @@ function CoachDashboard() {
               <Link to="/coaches">
                 <Button variant="link" className="px-0 text-sm">Ver todos</Button>
               </Link>
-              {isOwner && (
-                <Link to="/coaches/new">
-                  <Button variant="link" className="px-0 text-sm">
-                    <Plus className="mr-1 h-3 w-3" />
-                    Nuevo
-                  </Button>
-                </Link>
-              )}
             </div>
           </CardContent>
         </Card>

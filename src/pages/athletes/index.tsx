@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { Plus, Search } from 'lucide-react'
+import { PersonSearch } from '@/components/PersonSearch'
+import { Plus, Search, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Athlete } from '@/types'
@@ -185,7 +187,7 @@ export function AthletesPage() {
   )
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Atletas</h1>
         <Button
@@ -197,14 +199,36 @@ export function AthletesPage() {
         </Button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar atleta..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Buscar Atleta
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input
+              placeholder="Buscar por nombre, apellido o DNI..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </CardContent>
+        </Card>
+
+        {isCoach && gymId && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Asignar Atleta Existente
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PersonSearch gymId={gymId} onAssignSuccess={loadAthletes} />
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <DataTable columns={columns} data={filteredAthletes} loading={loading} />
