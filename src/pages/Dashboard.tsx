@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin } from 'lucide-react'
+import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
@@ -13,7 +13,8 @@ import { coachApi } from '@/api/coaches'
 import { gymApi } from '@/api/gyms'
 import { competitionApi } from '@/api/competitions'
 import { gymPaymentApi } from '@/api/gymPayments'
-import type { AthleteProfile, GymDetails, Gym } from '@/types'
+import { pagoMovilApi } from '@/api/pagoMovil'
+import type { AthleteProfile, GymDetails, Gym, PagoMovil } from '@/types'
 
 export function Dashboard() {
   const { user } = useAuthStore()
@@ -142,6 +143,17 @@ function CoachDashboard() {
   const [competitionsCount, setCompetitionsCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [gymId, setGymId] = useState<string | null>(null)
+
+  const [pagoMovils, setPagoMovils] = useState<PagoMovil[]>([])
+  const [showPagoForm, setShowPagoForm] = useState(false)
+  const [pagoFormData, setPagoFormData] = useState({
+    bank_to_pay: '',
+    dni: '',
+    phone: '',
+  })
+  const [pagoToDelete, setPagoToDelete] = useState<string | null>(null)
+  const [showDeletePagoDialog, setShowDeletePagoDialog] = useState(false)
 
   const loadCoachData = async () => {
     if (!user) return
@@ -157,23 +169,67 @@ function CoachDashboard() {
         return
       }
 
-      const [gym, details, competitions] = await Promise.all([
+      const [gym, details, competitions, pagoMovilsData] = await Promise.all([
         gymApi.getById(coachMe.gym_id),
         gymApi.getDetails(coachMe.gym_id),
         competitionApi.getAll(),
+        pagoMovilApi.getByGym(coachMe.gym_id),
       ])
 
       const owner = gym.owner?.id === coachMe.id
       setGymInfo(gym)
       setIsOwner(owner)
+      setGymId(coachMe.gym_id)
       setGymContext(coachMe.gym_id, owner)
       setCompetitionsCount(competitions.length)
       setGymDetails(details)
+      setPagoMovils(pagoMovilsData)
     } catch {
       toast.error('Error al cargar datos del gimnasio')
       setError('Error al cargar datos')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadPagoMovils = async () => {
+    if (!gymId) return
+    try {
+      const data = await pagoMovilApi.getByGym(gymId)
+      setPagoMovils(data)
+    } catch {
+      toast.error('Error al cargar pagos moviles')
+    }
+  }
+
+  const handleCreatePagoMovil = async () => {
+    if (!gymId) return
+    if (!pagoFormData.bank_to_pay || !pagoFormData.dni || !pagoFormData.phone) {
+      toast.error('Completa todos los campos')
+      return
+    }
+    try {
+      await pagoMovilApi.create(gymId, pagoFormData)
+      toast.success('Pago movil creado correctamente')
+      setShowPagoForm(false)
+      setPagoFormData({ bank_to_pay: '', dni: '', phone: '' })
+      loadPagoMovils()
+    } catch {
+      toast.error('Error al crear pago movil')
+    }
+  }
+
+  const handleDeletePagoMovil = async () => {
+    if (!pagoToDelete) return
+    try {
+      await pagoMovilApi.delete(pagoToDelete)
+      toast.success('Pago movil eliminado correctamente')
+      loadPagoMovils()
+    } catch {
+      toast.error('Error al eliminar pago movil')
+    } finally {
+      setShowDeletePagoDialog(false)
+      setPagoToDelete(null)
     }
   }
 
@@ -312,6 +368,139 @@ function CoachDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-sm font-medium">Metodos de Pago Movil</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </div>
+          {isOwner && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPagoForm(true)}
+              className="hover:opacity-90 transition-opacity"
+            >
+              <Plus className="mr-1 h-4 w-4" />
+              Nuevo
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent>
+          {showPagoForm && (
+            <div className="border rounded-lg p-4 space-y-4 bg-muted/50 mb-4">
+              <h4 className="font-semibold text-sm">Nuevo Metodo de Pago Movil</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="bank">Banco</Label>
+                  <Input
+                    id="bank"
+                    value={pagoFormData.bank_to_pay}
+                    onChange={(e) => setPagoFormData({ ...pagoFormData, bank_to_pay: e.target.value })}
+                    placeholder="Ej: 0102 - Banco de Venezuela"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="dni">DNI</Label>
+                  <Input
+                    id="dni"
+                    value={pagoFormData.dni}
+                    onChange={(e) => setPagoFormData({ ...pagoFormData, dni: e.target.value })}
+                    placeholder="Ej: V12345678"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Telefono</Label>
+                  <Input
+                    id="phone"
+                    value={pagoFormData.phone}
+                    onChange={(e) => setPagoFormData({ ...pagoFormData, phone: e.target.value })}
+                    placeholder="Ej: 04141234567"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleCreatePagoMovil} size="sm">
+                  <Check className="mr-1 h-4 w-4" />
+                  Crear
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowPagoForm(false)
+                    setPagoFormData({ bank_to_pay: '', dni: '', phone: '' })
+                  }}
+                >
+                  <X className="mr-1 h-4 w-4" />
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {pagoMovils.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No hay metodos de pago movil registrados</p>
+          ) : (
+            <div className="space-y-2">
+              {pagoMovils.map((pm) => (
+                <div key={pm.id} className="flex items-center justify-between border-b pb-2 last:border-0">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{pm.bank_to_pay}</p>
+                    <p className="text-xs text-muted-foreground">DNI: {pm.dni} | Tel: {pm.phone}</p>
+                  </div>
+                  {isOwner && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        setPagoToDelete(pm.id)
+                        setShowDeletePagoDialog(true)
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {showDeletePagoDialog && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowDeletePagoDialog(false)
+              setPagoToDelete(null)
+            }
+          }}
+        >
+          <div className="bg-background rounded-lg p-6 space-y-4 max-w-md">
+            <h3 className="font-semibold">Eliminar Metodo de Pago Movil</h3>
+            <p className="text-sm text-muted-foreground">
+              ¿Estas seguro de eliminar este metodo de pago movil? Esta accion no se puede deshacer.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeletePagoDialog(false)
+                  setPagoToDelete(null)
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button variant="destructive" onClick={handleDeletePagoMovil}>
+                Eliminar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -325,12 +514,22 @@ function AthleteDashboard({ userId }: { userId: string }) {
     amount: '',
     payment_reference: '',
   })
+  const [pagoMovils, setPagoMovils] = useState<PagoMovil[]>([])
 
   const loadProfile = async () => {
     try {
       setLoading(true)
       const data = await athleteApi.getProfile(userId)
       setProfile(data)
+
+      if (data.gym && Object.keys(data.gym).length > 0 && data.gym.id_gym) {
+        try {
+          const pagoData = await pagoMovilApi.getByGym(data.gym.id_gym)
+          setPagoMovils(pagoData)
+        } catch {
+          // Silently fail - pago movils are optional
+        }
+      }
     } catch {
       toast.error('Error al cargar perfil')
     } finally {
@@ -439,6 +638,22 @@ function AthleteDashboard({ userId }: { userId: string }) {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
+            {pagoMovils.length > 0 && (
+              <div className="mb-4 p-3 border rounded-lg bg-muted/50">
+                <p className="text-xs font-medium text-muted-foreground mb-2">
+                  Datos de pago movil de tu gimnasio:
+                </p>
+                <div className="space-y-1">
+                  {pagoMovils.map((pm) => (
+                    <div key={pm.id} className="text-sm">
+                      <span className="font-medium">{pm.bank_to_pay}</span>
+                      <span className="text-muted-foreground"> | DNI: {pm.dni} | Tel: {pm.phone}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {!showPaymentForm ? (
               <Button onClick={() => setShowPaymentForm(true)}>
                 <Plus className="mr-2 h-4 w-4" />
