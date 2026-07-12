@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { DniInput } from '@/components/ui/dni-input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -226,11 +227,11 @@ export function CreateGymPage() {
                 </div>
                 <div>
                   <Label htmlFor={`dni-${index}`}>DNI *</Label>
-                  <Input
+                  <DniInput
                     id={`dni-${index}`}
                     value={pm.dni}
-                    onChange={(e) => updatePaymentMethod(index, 'dni', e.target.value)}
-                    placeholder="Ej: V12345678"
+                    onChange={(value) => updatePaymentMethod(index, 'dni', value)}
+                    placeholder="12345678"
                   />
                 </div>
                 <div>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
+import { DniInput } from '@/components/ui/dni-input'
 import { Loader2 } from 'lucide-react'
 import type { AxiosError } from 'axios'
 import type { ApiError } from '@/types'
@@ -26,6 +27,7 @@ export function Register() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -100,7 +102,18 @@ export function Register() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="dni">DNI</Label>
-              <Input id="dni" placeholder="V12345678" {...register('dni')} />
+              <Controller
+                control={control}
+                name="dni"
+                render={({ field }) => (
+                  <DniInput
+                    id="dni"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="12345678"
+                  />
+                )}
+              />
               {(errors.dni || serverErrors.dni) && (
                 <p className="text-sm text-destructive">
                   {errors.dni?.message || serverErrors.dni}

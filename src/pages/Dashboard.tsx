@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { DniInput } from '@/components/ui/dni-input'
 import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -395,11 +396,11 @@ function CoachDashboard() {
                 </div>
                 <div>
                   <Label htmlFor="dni">DNI</Label>
-                  <Input
+                  <DniInput
                     id="dni"
                     value={pagoFormData.dni}
-                    onChange={(e) => setPagoFormData({ ...pagoFormData, dni: e.target.value })}
-                    placeholder="Ej: V12345678"
+                    onChange={(value) => setPagoFormData({ ...pagoFormData, dni: value })}
+                    placeholder="12345678"
                   />
                 </div>
                 <div>

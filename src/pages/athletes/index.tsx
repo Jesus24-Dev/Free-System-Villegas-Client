@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { DniInput } from '@/components/ui/dni-input'
 import { PersonSearch } from '@/components/PersonSearch'
 import { Plus, Search, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
@@ -94,7 +95,7 @@ export function AthletesPage() {
       return
     }
 
-    const dniRegex = /^[VEve]\d{6,9}$/
+    const dniRegex = /^[VEJvej]\d{6,9}$/
     if (!formData.dni) {
       setDniError('El DNI es requerido')
       return
@@ -248,14 +249,14 @@ export function AthletesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="dni">DNI *</Label>
-                <Input
+                <DniInput
                   id="dni"
                   value={formData.dni}
-                  onChange={(e) => {
-                    setFormData({ ...formData, dni: e.target.value })
+                  onChange={(value) => {
+                    setFormData({ ...formData, dni: value })
                     if (dniError) setDniError('')
                   }}
-                  placeholder="Ej: V12345678"
+                  placeholder="12345678"
                 />
                 {dniError && (
                   <p className="text-sm text-destructive mt-1">{dniError}</p>

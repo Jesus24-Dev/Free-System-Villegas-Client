@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { DniInput } from '@/components/ui/dni-input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -185,11 +186,11 @@ export function PagoMovilPage() {
             </div>
             <div>
               <Label htmlFor="dni">DNI</Label>
-              <Input
+              <DniInput
                 id="dni"
                 value={formData.dni}
-                onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
-                placeholder="Ej: V12345678"
+                onChange={(value) => setFormData({ ...formData, dni: value })}
+                placeholder="12345678"
               />
             </div>
             <div>

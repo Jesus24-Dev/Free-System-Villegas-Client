@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { DniInput } from '@/components/ui/dni-input'
 import { Badge } from '@/components/ui/badge'
 import { Search, Dumbbell, Users, Building2, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
@@ -163,10 +163,10 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <div className="flex-1">
-          <Input
+          <DniInput
             value={dni}
-            onChange={(e) => setDni(e.target.value)}
-            placeholder="DNI para buscar..."
+            onChange={(value) => setDni(value)}
+            placeholder="12345678"
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
         </div>
