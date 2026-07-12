@@ -14,6 +14,7 @@ import { CompetitionsPage } from '@/pages/competitions'
 import { CompetitionRegistrationsPage } from '@/pages/competitions/registrations'
 import { PaymentsPage } from '@/pages/payments'
 import { PagoMovilPage } from '@/pages/pago-movil'
+import { SettingsPage } from '@/pages/settings'
 
 export const router = createBrowserRouter([
   {
@@ -151,6 +152,10 @@ export const router = createBrowserRouter([
             <PagoMovilPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: 'settings',
+        element: <SettingsPage />,
       },
     ],
   },
