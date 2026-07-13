@@ -4,6 +4,7 @@ import { competitionApi, competitionRegistrationApi } from '@/api/competitions'
 import { athleteApi } from '@/api/athletes'
 import { weightApi } from '@/api/weights'
 import { DataTable } from '@/components/ui/data-table'
+import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -83,6 +84,9 @@ export function CompetitionRegistrationsPage() {
   const [showForm, setShowForm] = useState(false)
   const [selectedAthleteId, setSelectedAthleteId] = useState('')
   const [selectedWeightIndex, setSelectedWeightIndex] = useState('')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const limit = 10
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [registrationToDelete, setRegistrationToDelete] = useState<string | null>(null)
@@ -103,16 +107,27 @@ export function CompetitionRegistrationsPage() {
     if (!selectedCompetitionId) return
     try {
       setLoading(true)
-      const data = await competitionRegistrationApi.getAll({
-        competition_id: selectedCompetitionId,
-      })
-      setRegistrations(data)
+      if (isCoach && gymId) {
+        const result = await competitionRegistrationApi.getByGymAndCompetition(gymId, selectedCompetitionId, {
+          page,
+          limit,
+        })
+        setRegistrations(result.data)
+        setTotalPages(result.meta.totalPages || 1)
+      } else {
+        const result = await competitionRegistrationApi.getByCompetition(selectedCompetitionId, {
+          page,
+          limit,
+        })
+        setRegistrations(result.data)
+        setTotalPages(result.meta.totalPages || 1)
+      }
     } catch {
       toast.error('Error al cargar inscripciones')
     } finally {
       setLoading(false)
     }
-  }, [selectedCompetitionId])
+  }, [selectedCompetitionId, isCoach, gymId, page, limit])
 
   const loadAthletes = useCallback(async () => {
     if (!gymId) {
@@ -145,6 +160,7 @@ export function CompetitionRegistrationsPage() {
 
   useEffect(() => {
     if (selectedCompetitionId) {
+      setPage(1)
       loadRegistrations()
     }
   }, [selectedCompetitionId, loadRegistrations])
@@ -518,6 +534,10 @@ export function CompetitionRegistrationsPage() {
       )}
 
       <DataTable columns={columns} data={filteredRegistrations} loading={loading} />
+
+      {selectedCompetitionId && (
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      )}
 
       <ConfirmDialog
         open={showDeleteDialog}

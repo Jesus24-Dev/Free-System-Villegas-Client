@@ -12,6 +12,7 @@ import { GymsPage } from '@/pages/gyms'
 import { CreateGymPage } from '@/pages/gyms/create'
 import { CompetitionsPage } from '@/pages/competitions'
 import { CompetitionRegistrationsPage } from '@/pages/competitions/registrations'
+import { GymRegistrationsPage } from '@/pages/competitions/registrations/gym-registrations'
 import { PaymentsPage } from '@/pages/payments'
 import { PagoMovilPage } from '@/pages/pago-movil'
 import { SettingsPage } from '@/pages/settings'
@@ -138,6 +139,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRole={['ADMIN', 'COACH', 'ATHLETE']}>
             <CompetitionRegistrationsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'gym-registrations',
+        element: (
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
+            <GymRegistrationsPage />
           </ProtectedRoute>
         ),
       },

@@ -80,6 +80,31 @@ export const competitionRegistrationApi = {
     return []
   },
 
+  getByCompetition: async (
+    competitionId: string,
+    params?: { page?: number; limit?: number }
+  ): Promise<{ data: CompetitionRegistration[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
+    const response = await api.get(`/competition-registration/competition/${competitionId}`, { params })
+    return response.data
+  },
+
+  getByGym: async (
+    gymId: string,
+    params?: { page?: number; limit?: number }
+  ): Promise<{ data: CompetitionRegistration[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
+    const response = await api.get(`/competition-registration/gym/${gymId}`, { params })
+    return response.data
+  },
+
+  getByGymAndCompetition: async (
+    gymId: string,
+    competitionId: string,
+    params?: { page?: number; limit?: number }
+  ): Promise<{ data: CompetitionRegistration[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
+    const response = await api.get(`/competition-registration/gym/${gymId}/competition/${competitionId}`, { params })
+    return response.data
+  },
+
   getById: async (id: string): Promise<CompetitionRegistration> => {
     const response = await api.get<CompetitionRegistration>(`/competition-registration/${id}`)
     return response.data
