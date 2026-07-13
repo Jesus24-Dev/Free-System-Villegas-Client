@@ -252,6 +252,7 @@ export function CompetitionRegistrationsPage() {
         await competitionApi.registerAthlete(selectedCompetitionId, pending.athleteId, {
           mode: pending.mode,
           category: pending.category,
+          weight: pending.weight,
         })
         successCount++
       } catch {

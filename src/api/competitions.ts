@@ -32,7 +32,7 @@ export const competitionApi = {
   registerAthlete: async (
     competitionId: string,
     athleteId: string,
-    data: { mode: CombatMode; category: WeightCategory }
+    data: { mode: CombatMode; category: WeightCategory; weight: number }
   ): Promise<CompetitionRegistration> => {
     const response = await api.post<CompetitionRegistration>(
       `/competition/${competitionId}/athletes/${athleteId}/register`,
