@@ -31,9 +31,32 @@ const weightCategoryLabels: Record<WeightCategory, string> = Object.fromEntries(
   WEIGHT_CATEGORY_OPTIONS.map((opt) => [opt.value, opt.label])
 ) as Record<WeightCategory, string>
 
+function calculateAge(birthday: string): number {
+  const birth = new Date(birthday)
+  const today = new Date()
+  let age = today.getFullYear() - birth.getFullYear()
+  const monthDiff = today.getMonth() - birth.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--
+  }
+  return age
+}
+
+function getWeightCategoryByAge(age: number): WeightCategory | null {
+  if (age >= 7 && age <= 9) return 'CH'
+  if (age >= 10 && age <= 12) return 'YC'
+  if (age >= 13 && age <= 15) return 'OC'
+  if (age >= 16 && age <= 18) return 'J'
+  if (age >= 19 && age <= 40) return 'S'
+  if (age >= 41 && age <= 55) return 'M'
+  return null
+}
+
 interface PendingRegistration {
   athleteId: string
   athleteName: string
+  age: number
+  ageCategory: WeightCategory
   mode: CombatMode
   category: WeightCategory
   weight: number
@@ -104,10 +127,10 @@ export function CompetitionRegistrationsPage() {
     }
   }, [gymId])
 
-  const loadWeights = useCallback(async (gender: string) => {
+  const loadWeights = useCallback(async (gender: string, category: WeightCategory) => {
     setLoadingWeights(true)
     try {
-      const data = await weightApi.getAll({ gender })
+      const data = await weightApi.getAll({ gender, category })
       setWeights(data)
     } catch {
       toast.error('Error al cargar pesos disponibles')
@@ -128,7 +151,14 @@ export function CompetitionRegistrationsPage() {
 
   useEffect(() => {
     if (selectedAthlete) {
-      loadWeights(selectedAthlete.gender)
+      const age = calculateAge(selectedAthlete.birthday)
+      const category = getWeightCategoryByAge(age)
+      if (category) {
+        loadWeights(selectedAthlete.gender, category)
+      } else {
+        setWeights([])
+        toast.error('El atleta no pertenece a ninguna categoría de edad válida (7-55 años)')
+      }
       setSelectedWeightIndex('')
     } else {
       setWeights([])
@@ -192,6 +222,8 @@ export function CompetitionRegistrationsPage() {
       {
         athleteId: selectedAthlete.id,
         athleteName: `${selectedAthlete.name} ${selectedAthlete.surname}`,
+        age: calculateAge(selectedAthlete.birthday),
+        ageCategory: weight.category,
         mode: weight.mode,
         category: weight.category,
         weight: weight.weight || 0,
@@ -395,6 +427,14 @@ export function CompetitionRegistrationsPage() {
                   </option>
                 ))}
               </Select>
+              {selectedAthlete && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Edad: {calculateAge(selectedAthlete.birthday)} años -{' '}
+                  Categoría: {getWeightCategoryByAge(calculateAge(selectedAthlete.birthday))
+                    ? weightCategoryLabels[getWeightCategoryByAge(calculateAge(selectedAthlete.birthday))!]
+                    : 'N/A'}
+                </p>
+              )}
             </div>
 
             <div>
@@ -443,6 +483,10 @@ export function CompetitionRegistrationsPage() {
                   >
                     <div className="flex items-center gap-4">
                       <span className="text-sm font-medium">{pending.athleteName}</span>
+                      <span className="text-xs text-muted-foreground">{pending.age} años</span>
+                      <Badge variant="outline">
+                        {weightCategoryLabels[pending.ageCategory]}
+                      </Badge>
                       <Badge variant="outline">
                         {combatModeLabels[pending.mode]}
                       </Badge>
