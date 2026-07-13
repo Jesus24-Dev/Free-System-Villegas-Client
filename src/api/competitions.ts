@@ -1,8 +1,8 @@
 import api from './client'
-import type { Competition, CompetitionDivision, CompetitionRegistration } from '@/types'
+import type { Competition, CompetitionDivision, CompetitionRegistration, CombatMode, WeightCategory } from '@/types'
 
 export const competitionApi = {
-  getAll: async (params?: { page?: number; limit?: number }): Promise<Competition[]> => {
+  getAll: async (params?: { page?: number; limit?: number; status?: string }): Promise<Competition[]> => {
     const response = await api.get('/competition', { params })
     const data = response.data
     if (Array.isArray(data)) return data
@@ -27,6 +27,18 @@ export const competitionApi = {
 
   delete: async (id: string): Promise<void> => {
     await api.delete(`/competition/${id}`)
+  },
+
+  registerAthlete: async (
+    competitionId: string,
+    athleteId: string,
+    data: { mode: CombatMode; category: WeightCategory }
+  ): Promise<CompetitionRegistration> => {
+    const response = await api.post<CompetitionRegistration>(
+      `/competition/${competitionId}/athletes/${athleteId}/register`,
+      data
+    )
+    return response.data
   },
 }
 

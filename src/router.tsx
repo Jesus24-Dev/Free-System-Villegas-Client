@@ -135,7 +135,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'competition-registrations',
-        element: <CompetitionRegistrationsPage />,
+        element: (
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH', 'ATHLETE']}>
+            <CompetitionRegistrationsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'payments',

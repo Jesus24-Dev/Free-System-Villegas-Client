@@ -1,90 +1,120 @@
-import { useState, useEffect } from 'react'
-import { competitionApi, competitionRegistrationApi, competitionDivisionApi } from '@/api/competitions'
+import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { competitionApi, competitionRegistrationApi } from '@/api/competitions'
 import { athleteApi } from '@/api/athletes'
+import { weightApi } from '@/api/weights'
 import { DataTable } from '@/components/ui/data-table'
-import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { Plus, Search, Trash2 } from 'lucide-react'
+import { Plus, Search, Trash2, Check, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
-import type { Competition, CompetitionRegistration, CompetitionDivision, Athlete, CombatMode, WeightCategory } from '@/types'
+import type {
+  Competition,
+  CompetitionRegistration,
+  Athlete,
+  WeightCategoryResponse,
+  CombatMode,
+  WeightCategory,
+} from '@/types'
 import { COMBAT_MODE_OPTIONS, WEIGHT_CATEGORY_OPTIONS } from '@/types'
 
 const combatModeLabels: Record<CombatMode, string> = Object.fromEntries(
-  COMBAT_MODE_OPTIONS.map(opt => [opt.value, opt.label])
+  COMBAT_MODE_OPTIONS.map((opt) => [opt.value, opt.label])
 ) as Record<CombatMode, string>
 
 const weightCategoryLabels: Record<WeightCategory, string> = Object.fromEntries(
-  WEIGHT_CATEGORY_OPTIONS.map(opt => [opt.value, opt.label])
+  WEIGHT_CATEGORY_OPTIONS.map((opt) => [opt.value, opt.label])
 ) as Record<WeightCategory, string>
 
+interface PendingRegistration {
+  athleteId: string
+  athleteName: string
+  mode: CombatMode
+  category: WeightCategory
+  weight: number
+}
+
 export function CompetitionRegistrationsPage() {
-  const { user } = useAuthStore()
+  const [searchParams] = useSearchParams()
+  const initialCompetitionId = searchParams.get('competition') || ''
+
+  const { user, gymId } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
+  const isCoach = userRole === 'COACH'
   const isAthlete = userRole === 'ATHLETE'
 
   const [registrations, setRegistrations] = useState<CompetitionRegistration[]>([])
   const [competitions, setCompetitions] = useState<Competition[]>([])
-  const [divisions, setDivisions] = useState<CompetitionDivision[]>([])
   const [athletes, setAthletes] = useState<Athlete[]>([])
+  const [weights, setWeights] = useState<WeightCategoryResponse[]>([])
+  const [pendingRegistrations, setPendingRegistrations] = useState<PendingRegistration[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingWeights, setLoadingWeights] = useState(false)
   const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [selectedCompetitionId, setSelectedCompetitionId] = useState('')
+  const [selectedCompetitionId, setSelectedCompetitionId] = useState(initialCompetitionId)
   const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({ athlete_id: '', division_id: '' })
-  const limit = 10
+  const [selectedAthleteId, setSelectedAthleteId] = useState('')
+  const [selectedWeightIndex, setSelectedWeightIndex] = useState('')
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [registrationToDelete, setRegistrationToDelete] = useState<string | null>(null)
 
+  const selectedAthlete = athletes.find((a) => a.id === selectedAthleteId)
+  const selectedCompetition = competitions.find((c) => c.id === selectedCompetitionId)
+
   const loadCompetitions = async () => {
     try {
-      const data = await competitionApi.getAll()
+      const data = await competitionApi.getAll({ status: 'OPEN' })
       setCompetitions(data)
     } catch {
       toast.error('Error al cargar competencias')
     }
   }
 
-  const loadRegistrations = async () => {
+  const loadRegistrations = useCallback(async () => {
+    if (!selectedCompetitionId) return
     try {
       setLoading(true)
-      const params: { competition_id?: string; page?: number; limit?: number } = {}
-      if (selectedCompetitionId) params.competition_id = selectedCompetitionId
-      const data = await competitionRegistrationApi.getAll(params)
+      const data = await competitionRegistrationApi.getAll({
+        competition_id: selectedCompetitionId,
+      })
       setRegistrations(data)
-      setTotalPages(Math.ceil(data.length / limit) || 1)
     } catch {
       toast.error('Error al cargar inscripciones')
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedCompetitionId])
 
-  const loadDivisions = async (competitionId: string) => {
-    try {
-      const data = await competitionDivisionApi.getAll({ competition_id: competitionId })
-      setDivisions(data)
-    } catch {
-      toast.error('Error al cargar divisiones')
+  const loadAthletes = useCallback(async () => {
+    if (!gymId) {
+      toast.error('No tienes un gimnasio asignado')
+      return
     }
-  }
+    try {
+      const data = await athleteApi.getByGym(gymId)
+      setAthletes(data)
+    } catch {
+      toast.error('Error al cargar atletas del gimnasio')
+    }
+  }, [gymId])
 
-  const loadAthletes = async () => {
+  const loadWeights = useCallback(async (gender: string) => {
+    setLoadingWeights(true)
     try {
-      const response = await athleteApi.getAll()
-      setAthletes(response.data)
+      const data = await weightApi.getAll({ gender })
+      setWeights(data)
     } catch {
-      toast.error('Error al cargar atletas')
+      toast.error('Error al cargar pesos disponibles')
+    } finally {
+      setLoadingWeights(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadCompetitions()
@@ -93,9 +123,18 @@ export function CompetitionRegistrationsPage() {
   useEffect(() => {
     if (selectedCompetitionId) {
       loadRegistrations()
-      loadDivisions(selectedCompetitionId)
     }
-  }, [selectedCompetitionId, page])
+  }, [selectedCompetitionId, loadRegistrations])
+
+  useEffect(() => {
+    if (selectedAthlete) {
+      loadWeights(selectedAthlete.gender)
+      setSelectedWeightIndex('')
+    } else {
+      setWeights([])
+      setSelectedWeightIndex('')
+    }
+  }, [selectedAthlete, loadWeights])
 
   const handleDeleteClick = (id: string) => {
     setRegistrationToDelete(id)
@@ -116,25 +155,88 @@ export function CompetitionRegistrationsPage() {
     }
   }
 
-  const handleOpenForm = () => {
-    loadAthletes()
-    setFormData({ athlete_id: '', division_id: '' })
+  const handleOpenForm = async () => {
+    await loadAthletes()
+    setSelectedAthleteId('')
+    setSelectedWeightIndex('')
+    setPendingRegistrations([])
     setShowForm(true)
   }
 
-  const handleCreate = async () => {
-    if (!formData.athlete_id || !formData.division_id) {
-      toast.error('Selecciona un atleta y una división')
+  const handleAddToPending = () => {
+    if (!selectedAthlete || selectedWeightIndex === '') {
+      toast.error('Selecciona un atleta y un peso')
       return
     }
-    try {
-      await competitionRegistrationApi.create(formData)
-      toast.success('Inscripción creada correctamente')
-      setShowForm(false)
-      loadRegistrations()
-    } catch {
-      toast.error('Error al crear inscripción')
+
+    const weight = weights[parseInt(selectedWeightIndex)]
+    if (!weight || !weight.mode || !weight.category) {
+      toast.error('Datos de peso incompletos')
+      return
     }
+
+    const alreadyExists = pendingRegistrations.some(
+      (p) =>
+        p.athleteId === selectedAthlete.id &&
+        p.mode === weight.mode &&
+        p.category === weight.category
+    )
+
+    if (alreadyExists) {
+      toast.error('Esta inscripción ya está en la lista')
+      return
+    }
+
+    setPendingRegistrations([
+      ...pendingRegistrations,
+      {
+        athleteId: selectedAthlete.id,
+        athleteName: `${selectedAthlete.name} ${selectedAthlete.surname}`,
+        mode: weight.mode,
+        category: weight.category,
+        weight: weight.weight || 0,
+      },
+    ])
+
+    setSelectedAthleteId('')
+    setSelectedWeightIndex('')
+  }
+
+  const handleRemovePending = (index: number) => {
+    setPendingRegistrations(pendingRegistrations.filter((_, i) => i !== index))
+  }
+
+  const handleConfirmRegistrations = async () => {
+    if (!selectedCompetitionId || pendingRegistrations.length === 0) {
+      toast.error('No hay inscripciones pendientes')
+      return
+    }
+
+    let successCount = 0
+    let errorCount = 0
+
+    for (const pending of pendingRegistrations) {
+      try {
+        await competitionApi.registerAthlete(selectedCompetitionId, pending.athleteId, {
+          mode: pending.mode,
+          category: pending.category,
+        })
+        successCount++
+      } catch {
+        errorCount++
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(`${successCount} inscripción(es) creada(s) correctamente`)
+    }
+    if (errorCount > 0) {
+      toast.error(`${errorCount} inscripción(es) fallaron`)
+    }
+
+    setPendingRegistrations([])
+    setShowForm(false)
+    loadRegistrations()
   }
 
   const columns = [
@@ -171,7 +273,9 @@ export function CompetitionRegistrationsPage() {
       accessorKey: 'id' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const division = row.original.division
-        return division ? weightCategoryLabels[division.category] || division.category : 'N/A'
+        return division
+          ? weightCategoryLabels[division.category] || division.category
+          : 'N/A'
       },
     },
     {
@@ -201,21 +305,21 @@ export function CompetitionRegistrationsPage() {
       : []),
   ]
 
-  const filteredRegistrations = registrations.filter(
-    (reg) => {
-      const athleteName = reg.athlete ? `${reg.athlete.name} ${reg.athlete.surname}`.toLowerCase() : ''
-      return athleteName.includes(search.toLowerCase())
-    }
-  )
+  const filteredRegistrations = registrations.filter((reg) => {
+    const athleteName = reg.athlete
+      ? `${reg.athlete.name} ${reg.athlete.surname}`.toLowerCase()
+      : ''
+    return athleteName.includes(search.toLowerCase())
+  })
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Inscripciones a Competencias</h1>
-        {!isAthlete && (
+        {isCoach && (
           <Button onClick={handleOpenForm} disabled={!selectedCompetitionId}>
             <Plus className="mr-2 h-4 w-4" />
-            Nueva Inscripción
+            Registrar Atleta
           </Button>
         )}
       </div>
@@ -228,7 +332,7 @@ export function CompetitionRegistrationsPage() {
             value={selectedCompetitionId}
             onChange={(e) => {
               setSelectedCompetitionId(e.target.value)
-              setPage(1)
+              setSearch('')
             }}
           >
             <option value="">Seleccionar competencia</option>
@@ -238,6 +342,11 @@ export function CompetitionRegistrationsPage() {
               </option>
             ))}
           </Select>
+          {selectedCompetition && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Estado: {selectedCompetition.status === 'OPEN' ? 'Abierta' : selectedCompetition.status}
+            </p>
+          )}
         </div>
 
         <div className="flex-1 max-w-sm">
@@ -257,14 +366,27 @@ export function CompetitionRegistrationsPage() {
 
       {showForm && (
         <div className="border rounded-lg p-4 space-y-4 bg-muted/50">
-          <h3 className="font-semibold">Nueva Inscripción</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Registrar Atleta en Competencia</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowForm(false)
+                setPendingRegistrations([])
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <Label htmlFor="athlete">Atleta</Label>
               <Select
                 id="athlete"
-                value={formData.athlete_id}
-                onChange={(e) => setFormData({ ...formData, athlete_id: e.target.value })}
+                value={selectedAthleteId}
+                onChange={(e) => setSelectedAthleteId(e.target.value)}
               >
                 <option value="">Seleccionar atleta</option>
                 {athletes.map((athlete) => (
@@ -274,32 +396,83 @@ export function CompetitionRegistrationsPage() {
                 ))}
               </Select>
             </div>
+
             <div>
-              <Label htmlFor="division">División</Label>
+              <Label htmlFor="weight">Peso / Modalidad</Label>
               <Select
-                id="division"
-                value={formData.division_id}
-                onChange={(e) => setFormData({ ...formData, division_id: e.target.value })}
+                id="weight"
+                value={selectedWeightIndex}
+                onChange={(e) => setSelectedWeightIndex(e.target.value)}
+                disabled={!selectedAthleteId || loadingWeights}
               >
-                <option value="">Seleccionar división</option>
-                {divisions.map((div) => (
-                  <option key={div.id} value={div.id}>
-                    {combatModeLabels[div.mode]} - {weightCategoryLabels[div.category]} - {div.weight}kg
+                <option value="">
+                  {loadingWeights
+                    ? 'Cargando pesos...'
+                    : selectedAthleteId
+                      ? 'Seleccionar peso'
+                      : 'Primero selecciona un atleta'}
+                </option>
+                {weights.map((w, index) => (
+                  <option key={w.id || index} value={index}>
+                    {combatModeLabels[w.mode as CombatMode] || w.mode} -{' '}
+                    {weightCategoryLabels[w.category as WeightCategory] || w.category} - {w.weight}kg
                   </option>
                 ))}
               </Select>
             </div>
+
+            <div className="flex items-end">
+              <Button
+                onClick={handleAddToPending}
+                disabled={!selectedAthleteId || selectedWeightIndex === ''}
+              >
+                <Plus className="mr-1 h-4 w-4" />
+                Agregar
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={handleCreate}>Crear</Button>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
-          </div>
+
+          {pendingRegistrations.length > 0 && (
+            <div className="space-y-2">
+              <Label>Inscripciones Pendientes</Label>
+              <div className="border rounded-md divide-y">
+                {pendingRegistrations.map((pending, index) => (
+                  <div
+                    key={`${pending.athleteId}-${pending.mode}-${pending.category}`}
+                    className="flex items-center justify-between p-2"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm font-medium">{pending.athleteName}</span>
+                      <Badge variant="outline">
+                        {combatModeLabels[pending.mode]}
+                      </Badge>
+                      <Badge variant="secondary">
+                        {weightCategoryLabels[pending.category]}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">{pending.weight}kg</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemovePending(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleConfirmRegistrations}>
+                  <Check className="mr-2 h-4 w-4" />
+                  Confirmar Inscripciones ({pendingRegistrations.length})
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       <DataTable columns={columns} data={filteredRegistrations} loading={loading} />
-
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       <ConfirmDialog
         open={showDeleteDialog}

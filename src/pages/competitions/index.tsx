@@ -107,28 +107,35 @@ export function CompetitionsPage() {
         </Badge>
       ),
     },
-    ...(!isReadOnly
-      ? [
-          {
-            header: 'Acciones',
-            accessorKey: 'id' as const,
-            cell: ({ row }: { row: { original: Competition } }) => (
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link to={`/competitions/${row.original.id}/edit`}>Editar</Link>
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDeleteClick(row.original.id)}
-                >
-                  Eliminar
-                </Button>
-              </div>
-            ),
-          },
-        ]
-      : []),
+    {
+      header: 'Acciones',
+      accessorKey: 'id' as const,
+      cell: ({ row }: { row: { original: Competition } }) => (
+        <div className="flex gap-2">
+          {!isReadOnly && (
+            <>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/competitions/${row.original.id}/edit`}>Editar</Link>
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => handleDeleteClick(row.original.id)}
+              >
+                Eliminar
+              </Button>
+            </>
+          )}
+          {userRole === 'COACH' && row.original.status === 'OPEN' && (
+            <Button variant="default" size="sm" asChild>
+              <Link to={`/competition-registrations?competition=${row.original.id}`}>
+                Registrar
+              </Link>
+            </Button>
+          )}
+        </div>
+      ),
+    },
   ]
 
   const filteredCompetitions = competitions.filter(
