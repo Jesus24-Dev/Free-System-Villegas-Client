@@ -99,7 +99,17 @@ export function CoachesPage() {
         </Badge>
       ),
     },
-    { header: 'Cumpleaños', accessorKey: 'birthday' as const },
+    {
+      header: 'Cumpleaños',
+      accessorKey: 'birthday' as const,
+      cell: ({ row }: { row: { original: Coach } }) => {
+        const date = new Date(row.original.birthday)
+        const day = String(date.getDate()).padStart(2, '0')
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const year = date.getFullYear()
+        return <span>{day}-{month}-{year}</span>
+      },
+    },
     {
       header: 'Estado',
       accessorKey: 'status' as const,
