@@ -1,5 +1,5 @@
 import api from './client'
-import type { Coach, CoachMeResponse } from '@/types'
+import type { Coach, CoachMeResponse, CoachProfile } from '@/types'
 
 interface RegisterAthletePayload {
   dni: string
@@ -56,6 +56,11 @@ export const coachApi = {
 
   getById: async (id: string): Promise<Coach> => {
     const response = await api.get<Coach>(`/coach/${id}`)
+    return response.data
+  },
+
+  getProfile: async (id: string): Promise<CoachProfile> => {
+    const response = await api.get<CoachProfile>(`/coach/profile/${id}`)
     return response.data
   },
 

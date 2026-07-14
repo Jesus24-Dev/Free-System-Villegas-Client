@@ -175,6 +175,14 @@ export function AthletesPage() {
             asChild
             className="hover:bg-primary hover:text-primary-foreground transition-colors"
           >
+            <Link to={`/profile/athlete/${row.original.id}`}>Perfil</Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
             <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
           </Button>
           {isGymOwner && (

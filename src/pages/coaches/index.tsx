@@ -150,6 +150,14 @@ export function CoachesPage() {
             asChild
             className="hover:bg-primary hover:text-primary-foreground transition-colors"
           >
+            <Link to={`/profile/coach/${row.original.id}`}>Perfil</Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
             <Link to={`/coaches/${row.original.id}/edit`}>Editar</Link>
           </Button>
           {isGymOwner && !isCoachGymOwner(row.original.id) && (

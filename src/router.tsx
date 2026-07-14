@@ -16,6 +16,7 @@ import { GymRegistrationsPage } from '@/pages/competitions/registrations/gym-reg
 import { PaymentsPage } from '@/pages/payments'
 import { PagoMovilPage } from '@/pages/pago-movil'
 import { SettingsPage } from '@/pages/settings'
+import { ProfilePage } from '@/pages/profile'
 
 export const router = createBrowserRouter([
   {
@@ -169,6 +170,10 @@ export const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingsPage />,
+      },
+      {
+        path: 'profile/:type/:id',
+        element: <ProfilePage />,
       },
     ],
   },

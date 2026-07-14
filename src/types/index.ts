@@ -100,6 +100,21 @@ export interface CoachMeResponse {
   }
 }
 
+// Coach Profile (from /coach/profile/:id)
+export interface CoachProfile {
+  id: string
+  person_id: string
+  gym_id: string
+  dni: string
+  name: string
+  surname: string
+  gender: 'MALE' | 'FEMALE'
+  birthday: string
+  status: boolean
+  created_at: string
+  updated_at: string
+}
+
 // Athlete
 export interface Athlete {
   id: string
