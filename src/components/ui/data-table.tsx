@@ -18,12 +18,14 @@ interface DataTableProps<T> {
   columns: Column<T>[]
   data: T[]
   loading?: boolean
+  rowClassName?: (row: T, index: number) => string
 }
 
 export function DataTable<T extends object>({
   columns,
   data,
   loading,
+  rowClassName,
 }: DataTableProps<T>) {
   if (loading) {
     return (
@@ -53,7 +55,10 @@ export function DataTable<T extends object>({
         </TableHeader>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow key={index}>
+            <TableRow 
+              key={index}
+              className={rowClassName ? rowClassName(row, index) : undefined}
+            >
               {columns.map((column) => (
                 <TableCell key={column.accessorKey}>
                   {column.cell

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { coachApi } from '@/api/coaches'
+import { gymApi } from '@/api/gyms'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,7 @@ export function CoachesPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [gymOwnerId, setGymOwnerId] = useState<string | null>(null)
   const limit = 10
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -33,8 +35,12 @@ export function CoachesPage() {
     try {
       setLoading(true)
       if (isCoach && gymId) {
-        const data = await coachApi.getByGym(gymId)
+        const [data, gymDetails] = await Promise.all([
+          coachApi.getByGym(gymId),
+          gymApi.getById(gymId)
+        ])
         setCoaches(data)
+        setGymOwnerId(gymDetails.owner?.id || null)
         setTotalPages(Math.ceil(data.length / limit) || 1)
       } else {
         const data = await coachApi.getAll({ page, limit })
@@ -75,6 +81,17 @@ export function CoachesPage() {
     return user?.dni === coachDni
   }
 
+  const isGymOwner = (coachId: string) => {
+    return gymOwnerId === coachId
+  }
+
+  const getRowClassName = (coach: Coach) => {
+    if (isGymOwner(coach.id)) {
+      return 'bg-amber-50 dark:bg-amber-950/30'
+    }
+    return ''
+  }
+
   const columns = [
     { header: 'DNI', accessorKey: 'dni' as const },
     {
@@ -83,6 +100,9 @@ export function CoachesPage() {
       cell: ({ row }: { row: { original: Coach } }) => (
         <div className="flex items-center gap-2">
           <span>{row.original.name}</span>
+          {isGymOwner(row.original.id) && (
+            <Badge variant="default" className="text-xs bg-amber-500 hover:bg-amber-600">Dueño</Badge>
+          )}
           {isCurrentUser(row.original.dni) && (
             <Badge variant="secondary" className="text-xs">yo</Badge>
           )}
@@ -190,7 +210,7 @@ export function CoachesPage() {
         )}
       </div>
 
-      <DataTable columns={columns} data={filteredCoaches} loading={loading} />
+      <DataTable columns={columns} data={filteredCoaches} loading={loading} rowClassName={getRowClassName} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
