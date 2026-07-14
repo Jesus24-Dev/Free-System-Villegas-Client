@@ -1,5 +1,5 @@
 import api from './client'
-import type { Coach, CoachMeResponse, CoachProfile } from '@/types'
+import type { Coach, CoachMeResponse, CoachProfile, ProfileDto } from '@/types'
 
 interface RegisterAthletePayload {
   dni: string
@@ -80,5 +80,10 @@ export const coachApi = {
 
   delete: async (id: string): Promise<void> => {
     await api.delete(`/coach/${id}`)
+  },
+
+  registerAsAthlete: async (): Promise<ProfileDto> => {
+    const response = await api.post<ProfileDto>('/coach/register-as-athlete')
+    return response.data
   },
 }

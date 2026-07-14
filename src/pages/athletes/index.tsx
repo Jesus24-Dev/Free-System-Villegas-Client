@@ -131,9 +131,24 @@ export function AthletesPage() {
     }
   }
 
+  const isCurrentUser = (athleteDni: string) => {
+    return user?.dni === athleteDni
+  }
+
   const columns = [
     { header: 'DNI', accessorKey: 'dni' as const },
-    { header: 'Nombre', accessorKey: 'name' as const },
+    {
+      header: 'Nombre',
+      accessorKey: 'name' as const,
+      cell: ({ row }: { row: { original: Athlete } }) => (
+        <div className="flex items-center gap-2">
+          <span>{row.original.name}</span>
+          {isCurrentUser(row.original.dni) && (
+            <Badge variant="secondary" className="text-xs">yo</Badge>
+          )}
+        </div>
+      ),
+    },
     { header: 'Apellido', accessorKey: 'surname' as const },
     {
       header: 'Genero',

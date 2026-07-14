@@ -18,8 +18,8 @@ import { pagoMovilApi } from '@/api/pagoMovil'
 import type { AthleteProfile, GymDetails, Gym, PagoMovil } from '@/types'
 
 export function Dashboard() {
-  const { user } = useAuthStore()
-  const userRole = user ? extractRole(user) : ''
+  const { user, getEffectiveRole, viewAs } = useAuthStore()
+  const userRole = user ? getEffectiveRole() : ''
 
   if (userRole === 'ATHLETE') {
     return <AthleteDashboard userId={user?.id || ''} />
@@ -137,7 +137,7 @@ function AdminDashboard() {
 }
 
 function CoachDashboard() {
-  const { user, setGymContext } = useAuthStore()
+  const { user, setGymContext, setUserFromProfile, hasAnyRole } = useAuthStore()
   const [gymDetails, setGymDetails] = useState<GymDetails | null>(null)
   const [gymInfo, setGymInfo] = useState<Gym | null>(null)
   const [isOwner, setIsOwner] = useState(false)
@@ -145,6 +145,9 @@ function CoachDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [gymId, setGymId] = useState<string | null>(null)
+  const [registering, setRegistering] = useState(false)
+
+  const isAlreadyAthlete = hasAnyRole(['ATHLETE'])
 
   const [pagoMovils, setPagoMovils] = useState<PagoMovil[]>([])
   const [showPagoForm, setShowPagoForm] = useState(false)
@@ -234,6 +237,19 @@ function CoachDashboard() {
     }
   }
 
+  const handleRegisterAsAthlete = async () => {
+    try {
+      setRegistering(true)
+      const updatedProfile = await coachApi.registerAsAthlete()
+      setUserFromProfile(updatedProfile)
+      toast.success('Te has registrado como atleta exitosamente')
+    } catch {
+      toast.error('Error al registrar como atleta')
+    } finally {
+      setRegistering(false)
+    }
+  }
+
   useEffect(() => {
     loadCoachData()
   }, [])
@@ -300,6 +316,28 @@ function CoachDashboard() {
               <p className="text-sm font-medium">
                 Mensualidad: ${gymInfo.monthly_payment}
               </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {!isAlreadyAthlete && (
+        <Card>
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">Participar como Atleta</h3>
+                <p className="text-sm text-muted-foreground">
+                  Registrate como atleta para participar en competencias
+                </p>
+              </div>
+              <Button
+                onClick={handleRegisterAsAthlete}
+                disabled={registering}
+                className="hover:opacity-90 transition-opacity"
+              >
+                {registering ? 'Registrando...' : 'Activar como Atleta'}
+              </Button>
             </div>
           </CardContent>
         </Card>

@@ -11,6 +11,7 @@ import {
   Smartphone,
   Settings,
   X,
+  ArrowRightLeft,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useUIStore } from '@/stores/uiStore'
@@ -28,13 +29,20 @@ const navItems = [
 ]
 
 export function Sidebar() {
-  const { user } = useAuthStore()
+  const { user, hasAnyRole, viewAs, setViewAs } = useAuthStore()
   const { sidebarOpen, setSidebarOpen } = useUIStore()
 
   const userRole = user ? extractRole(user) : ''
+  const hasBothRoles = hasAnyRole(['COACH']) && hasAnyRole(['ATHLETE'])
 
   const filteredNavItems = navItems.filter((item) => {
     if (!userRole) return true
+    if (hasBothRoles) {
+      if (viewAs === 'ATHLETE') {
+        return item.roles.includes('ATHLETE')
+      }
+      return item.roles.some((r) => r.toUpperCase() === userRole)
+    }
     return item.roles.some((r) => r.toUpperCase() === userRole)
   })
 
@@ -71,6 +79,32 @@ export function Sidebar() {
         </div>
 
         <nav className="p-4 space-y-1">
+          {hasBothRoles && (
+            <div className="mb-4 p-2 bg-sidebar-foreground/5 rounded-md">
+              <div className="flex items-center gap-2 text-xs text-sidebar-foreground/60 mb-2">
+                <ArrowRightLeft className="h-3 w-3" />
+                <span>Vista como:</span>
+              </div>
+              <div className="flex gap-1">
+                <Button
+                  variant={viewAs === 'COACH' ? 'default' : 'ghost'}
+                  size="sm"
+                  className="flex-1 text-xs"
+                  onClick={() => setViewAs('COACH')}
+                >
+                  Entrenador
+                </Button>
+                <Button
+                  variant={viewAs === 'ATHLETE' ? 'default' : 'ghost'}
+                  size="sm"
+                  className="flex-1 text-xs"
+                  onClick={() => setViewAs('ATHLETE')}
+                >
+                  Atleta
+                </Button>
+              </div>
+            </div>
+          )}
           {filteredNavItems.map((item) => (
             <NavLink
               key={item.to}
