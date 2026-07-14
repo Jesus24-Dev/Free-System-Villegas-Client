@@ -18,7 +18,7 @@ import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Athlete } from '@/types'
 
 export function AthletesPage() {
-  const { user, gymId } = useAuthStore()
+  const { user, gymId, isGymOwner } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isCoach = userRole === 'COACH'
 
@@ -78,11 +78,11 @@ export function AthletesPage() {
   const handleDeleteConfirm = async () => {
     if (!athleteToDelete) return
     try {
-      await athleteApi.delete(athleteToDelete)
-      toast.success('Atleta eliminado correctamente')
+      await athleteApi.unassignGym(athleteToDelete)
+      toast.success('Atleta removido del gimnasio correctamente')
       loadAthletes()
     } catch {
-      toast.error('Error al eliminar atleta')
+      toast.error('Error al remover atleta del gimnasio')
     } finally {
       setShowDeleteDialog(false)
       setAthleteToDelete(null)
@@ -177,14 +177,16 @@ export function AthletesPage() {
           >
             <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDeleteClick(row.original.person_id)}
-            className="hover:opacity-80 transition-opacity"
-          >
-            Eliminar
-          </Button>
+          {isGymOwner && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleDeleteClick(row.original.person_id)}
+              className="hover:opacity-80 transition-opacity"
+            >
+              Expulsar
+            </Button>
+          )}
         </div>
       ),
     },
@@ -334,9 +336,9 @@ export function AthletesPage() {
 
       <ConfirmDialog
         open={showDeleteDialog}
-        title="Eliminar Atleta"
-        description="¿Estas seguro de eliminar este atleta? Esta accion no se puede deshacer."
-        confirmText="Eliminar"
+        title="Expulsar Atleta"
+        description="¿Estas seguro de expulsar este atleta del gimnasio? El atleta sera removido de tu gimnasio."
+        confirmText="Expulsar"
         cancelText="Cancelar"
         variant="destructive"
         onConfirm={handleDeleteConfirm}

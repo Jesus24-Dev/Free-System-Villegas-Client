@@ -69,6 +69,10 @@ export const coachApi = {
     return response.data
   },
 
+  unassignGym: async (coachId: string): Promise<void> => {
+    await api.patch(`/coach/${coachId}/unassign-gym`)
+  },
+
   delete: async (id: string): Promise<void> => {
     await api.delete(`/coach/${id}`)
   },

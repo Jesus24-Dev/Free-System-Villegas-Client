@@ -16,7 +16,7 @@ import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Coach } from '@/types'
 
 export function CoachesPage() {
-  const { user, gymId } = useAuthStore()
+  const { user, gymId, isGymOwner } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isCoach = userRole === 'COACH'
 
@@ -66,11 +66,11 @@ export function CoachesPage() {
   const handleDeleteConfirm = async () => {
     if (!coachToDelete) return
     try {
-      await coachApi.delete(coachToDelete)
-      toast.success('Entrenador eliminado correctamente')
+      await coachApi.unassignGym(coachToDelete)
+      toast.success('Entrenador removido del gimnasio correctamente')
       loadCoaches()
     } catch {
-      toast.error('Error al eliminar entrenador')
+      toast.error('Error al remover entrenador del gimnasio')
     } finally {
       setShowDeleteDialog(false)
       setCoachToDelete(null)
@@ -81,12 +81,12 @@ export function CoachesPage() {
     return user?.dni === coachDni
   }
 
-  const isGymOwner = (coachId: string) => {
+  const isCoachGymOwner = (coachId: string) => {
     return gymOwnerId === coachId
   }
 
   const getRowClassName = (coach: Coach) => {
-    if (isGymOwner(coach.id)) {
+    if (isCoachGymOwner(coach.id)) {
       return 'bg-amber-50 dark:bg-amber-950/30'
     }
     return ''
@@ -100,7 +100,7 @@ export function CoachesPage() {
       cell: ({ row }: { row: { original: Coach } }) => (
         <div className="flex items-center gap-2">
           <span>{row.original.name}</span>
-          {isGymOwner(row.original.id) && (
+          {isCoachGymOwner(row.original.id) && (
             <Badge variant="default" className="text-xs bg-amber-500 hover:bg-amber-600">Dueño</Badge>
           )}
           {isCurrentUser(row.original.dni) && (
@@ -152,14 +152,16 @@ export function CoachesPage() {
           >
             <Link to={`/coaches/${row.original.id}/edit`}>Editar</Link>
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDeleteClick(row.original.id)}
-            className="hover:opacity-80 transition-opacity"
-          >
-            Eliminar
-          </Button>
+          {isGymOwner && !isCoachGymOwner(row.original.id) && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleDeleteClick(row.original.id)}
+              className="hover:opacity-80 transition-opacity"
+            >
+              Expulsar
+            </Button>
+          )}
         </div>
       ),
     },
@@ -216,9 +218,9 @@ export function CoachesPage() {
 
       <ConfirmDialog
         open={showDeleteDialog}
-        title="Eliminar Entrenador"
-        description="¿Estas seguro de eliminar este entrenador? Esta accion no se puede deshacer."
-        confirmText="Eliminar"
+        title="Expulsar Entrenador"
+        description="¿Estas seguro de expulsar este entrenador del gimnasio? El entrenador sera removido de tu gimnasio."
+        confirmText="Expulsar"
         cancelText="Cancelar"
         variant="destructive"
         onConfirm={handleDeleteConfirm}

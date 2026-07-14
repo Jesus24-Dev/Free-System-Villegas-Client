@@ -35,6 +35,10 @@ export const athleteApi = {
     return response.data
   },
 
+  unassignGym: async (athleteId: string): Promise<void> => {
+    await api.patch(`/athlete/${athleteId}/unassign-gym`)
+  },
+
   delete: async (personId: string): Promise<void> => {
     await api.delete(`/athlete/${personId}`)
   },
