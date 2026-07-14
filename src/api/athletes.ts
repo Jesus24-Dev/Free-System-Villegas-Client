@@ -1,6 +1,18 @@
 import api from './client'
 import type { Athlete, AthleteProfile, PaginatedResponse } from '@/types'
 
+export interface HasAccountResponse {
+  hasAccount: boolean
+}
+
+export interface UpdatePersonData {
+  dni?: string
+  name?: string
+  surname?: string
+  birthday?: string
+  gender?: 'MALE' | 'FEMALE'
+}
+
 export const athleteApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<PaginatedResponse<Athlete>> => {
     const response = await api.get<PaginatedResponse<Athlete>>('/athlete', { params })
@@ -22,6 +34,16 @@ export const athleteApi = {
 
   getProfile: async (id: string): Promise<AthleteProfile> => {
     const response = await api.get<AthleteProfile>(`/athlete/profile/${id}`)
+    return response.data
+  },
+
+  hasAccount: async (personId: string): Promise<HasAccountResponse> => {
+    const response = await api.get<HasAccountResponse>(`/athlete/${personId}/has-account`)
+    return response.data
+  },
+
+  updatePerson: async (personId: string, data: UpdatePersonData): Promise<Athlete> => {
+    const response = await api.patch<Athlete>(`/athlete/${personId}/person`, data)
     return response.data
   },
 

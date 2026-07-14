@@ -7,6 +7,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { Unauthorized } from '@/pages/Unauthorized'
 import { NotFound } from '@/pages/NotFound'
 import { AthletesPage } from '@/pages/athletes'
+import { EditAthletePage } from '@/pages/athletes/edit'
 import { CoachesPage } from '@/pages/coaches'
 import { GymsPage } from '@/pages/gyms'
 import { CreateGymPage } from '@/pages/gyms/create'
@@ -71,7 +72,7 @@ export const router = createBrowserRouter([
         path: 'athletes/:id/edit',
         element: (
           <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
-            <AthletesPage />
+            <EditAthletePage />
           </ProtectedRoute>
         ),
       },
