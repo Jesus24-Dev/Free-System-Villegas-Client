@@ -159,10 +159,8 @@ export function CoachesPage() {
       header: 'Cumpleaños',
       accessorKey: 'birthday' as const,
       cell: ({ row }: { row: { original: Coach } }) => {
-        const date = new Date(row.original.birthday)
-        const day = String(date.getDate()).padStart(2, '0')
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const year = date.getFullYear()
+        const dateStr = row.original.birthday.split('T')[0]
+        const [year, month, day] = dateStr.split('-')
         return <span>{day}-{month}-{year}</span>
       },
     },

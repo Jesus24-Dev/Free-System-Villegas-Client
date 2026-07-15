@@ -35,10 +35,8 @@ export function EditAthletePage() {
         const athleteData = await athleteApi.getById(id)
         setAthlete(athleteData)
         
-        const date = new Date(athleteData.birthday)
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const day = String(date.getDate()).padStart(2, '0')
+        const dateStr = athleteData.birthday.split('T')[0]
+        const [year, month, day] = dateStr.split('-')
         
         setFormData({
           dni: athleteData.dni,
@@ -89,7 +87,7 @@ export function EditAthletePage() {
         dni: formData.dni,
         name: formData.name,
         surname: formData.surname,
-        birthday: new Date(formData.birthday).toISOString(),
+        birthday: formData.birthday,
         gender: formData.gender,
       })
       toast.success('Datos del atleta actualizados correctamente')
