@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { gymPaymentApi } from '@/api/gymPayments'
 import { athleteApi } from '@/api/athletes'
+import { adminGymPaymentApi } from '@/api/admin'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
@@ -19,6 +20,7 @@ export function PaymentsPage() {
   const { user, gymId } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isCoach = userRole === 'COACH'
+  const isAdmin = userRole === 'ADMIN'
 
   const [payments, setPayments] = useState<GymPayment[]>([])
   const [athletes, setAthletes] = useState<Athlete[]>([])
@@ -90,7 +92,11 @@ export function PaymentsPage() {
   const handleDeleteConfirm = async () => {
     if (!paymentToDelete) return
     try {
-      await gymPaymentApi.delete(paymentToDelete)
+      if (isAdmin) {
+        await adminGymPaymentApi.delete(paymentToDelete)
+      } else {
+        await gymPaymentApi.delete(paymentToDelete)
+      }
       toast.success('Pago eliminado correctamente')
       loadData()
     } catch {
@@ -157,7 +163,11 @@ export function PaymentsPage() {
         payment_reference: formData.payment_reference || undefined,
       }
       if (editingId) {
-        await gymPaymentApi.update(editingId, payload)
+        if (isAdmin) {
+          await adminGymPaymentApi.update(editingId, payload)
+        } else {
+          await gymPaymentApi.update(editingId, payload)
+        }
         toast.success('Pago actualizado correctamente')
       } else {
         await gymPaymentApi.create(payload)

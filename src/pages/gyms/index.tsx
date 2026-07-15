@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { gymApi } from '@/api/gyms'
+import { adminGymApi } from '@/api/admin'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
@@ -46,7 +47,7 @@ export function GymsPage() {
   const handleDeleteConfirm = async () => {
     if (!gymToDelete) return
     try {
-      await gymApi.delete(gymToDelete)
+      await adminGymApi.delete(gymToDelete)
       toast.success('Gimnasio eliminado correctamente')
       loadGyms()
     } catch {

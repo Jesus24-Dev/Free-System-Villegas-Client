@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { coachApi } from '@/api/coaches'
 import { athleteApi } from '@/api/athletes'
 import { gymApi } from '@/api/gyms'
+import { adminCoachApi } from '@/api/admin'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
@@ -20,6 +21,7 @@ export function CoachesPage() {
   const { user, gymId, isGymOwner } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isCoach = userRole === 'COACH'
+  const isAdmin = userRole === 'ADMIN'
 
   const [coaches, setCoaches] = useState<Coach[]>([])
   const [loading, setLoading] = useState(true)
@@ -102,11 +104,16 @@ export function CoachesPage() {
   const handleDeleteConfirm = async () => {
     if (!coachToDelete) return
     try {
-      await coachApi.unassignGym(coachToDelete)
-      toast.success('Entrenador removido del gimnasio correctamente')
+      if (isAdmin) {
+        await adminCoachApi.delete(coachToDelete)
+        toast.success('Entrenador eliminado correctamente')
+      } else {
+        await coachApi.unassignGym(coachToDelete)
+        toast.success('Entrenador removido del gimnasio correctamente')
+      }
       loadCoaches()
     } catch {
-      toast.error('Error al remover entrenador del gimnasio')
+      toast.error('Error al eliminar entrenador')
     } finally {
       setShowDeleteDialog(false)
       setCoachToDelete(null)
@@ -186,14 +193,24 @@ export function CoachesPage() {
           >
             <Link to={`/profile/coach/${row.original.id}`}>Perfil</Link>
           </Button>
-          {isGymOwner && !isCoachGymOwner(row.original.id) && (
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <Link to={`/admin-coaches/${row.original.id}/edit`}>Admin</Link>
+            </Button>
+          )}
+          {(isGymOwner || isAdmin) && !isCoachGymOwner(row.original.id) && (
             <Button
               variant="destructive"
               size="sm"
               onClick={() => handleDeleteClick(row.original.id)}
               className="hover:opacity-80 transition-opacity"
             >
-              Expulsar
+              {isAdmin ? 'Eliminar' : 'Expulsar'}
             </Button>
           )}
         </div>

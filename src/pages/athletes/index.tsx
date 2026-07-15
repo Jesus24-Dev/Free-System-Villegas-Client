@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { athleteApi } from '@/api/athletes'
 import { coachApi } from '@/api/coaches'
+import { adminAthleteApi } from '@/api/admin'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ export function AthletesPage() {
   const { user, gymId, isGymOwner } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isCoach = userRole === 'COACH'
+  const isAdmin = userRole === 'ADMIN'
 
   const [athletes, setAthletes] = useState<Athlete[]>([])
   const [loading, setLoading] = useState(true)
@@ -78,11 +80,16 @@ export function AthletesPage() {
   const handleDeleteConfirm = async () => {
     if (!athleteToDelete) return
     try {
-      await athleteApi.unassignGym(athleteToDelete)
-      toast.success('Atleta removido del gimnasio correctamente')
+      if (isAdmin) {
+        await adminAthleteApi.delete(athleteToDelete)
+        toast.success('Atleta eliminado correctamente')
+      } else {
+        await athleteApi.unassignGym(athleteToDelete)
+        toast.success('Atleta removido del gimnasio correctamente')
+      }
       loadAthletes()
     } catch {
-      toast.error('Error al remover atleta del gimnasio')
+      toast.error('Error al eliminar atleta')
     } finally {
       setShowDeleteDialog(false)
       setAthleteToDelete(null)
@@ -198,14 +205,24 @@ export function AthletesPage() {
           >
             <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
           </Button>
-          {isGymOwner && (
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <Link to={`/admin-athletes/${row.original.id}/edit`}>Admin</Link>
+            </Button>
+          )}
+          {(isGymOwner || isAdmin) && (
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => handleDeleteClick(row.original.person_id)}
+              onClick={() => handleDeleteClick(isAdmin ? row.original.id : row.original.person_id)}
               className="hover:opacity-80 transition-opacity"
             >
-              Expulsar
+              {isAdmin ? 'Eliminar' : 'Expulsar'}
             </Button>
           )}
         </div>
