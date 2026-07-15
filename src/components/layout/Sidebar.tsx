@@ -22,6 +22,7 @@ const navItems = [
   { to: '/coaches', label: 'Entrenadores', icon: Dumbbell, roles: ['ADMIN', 'COACH'] },
   { to: '/gyms', label: 'Gimnasios', icon: Building2, roles: ['ADMIN'] },
   { to: '/competitions', label: 'Competencias', icon: Trophy, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
+  { to: '/competition-divisions', label: 'Divisiones', icon: Trophy, roles: ['ADMIN'] },
   { to: '/gym-registrations', label: 'Inscripciones Gimnasio', icon: Trophy, roles: ['ADMIN', 'COACH'] },
   { to: '/payments', label: 'Pagos', icon: CreditCard, roles: ['ADMIN', 'COACH'] },
   { to: '/pago-movil', label: 'Pago Movil', icon: Smartphone, roles: ['ADMIN'] },

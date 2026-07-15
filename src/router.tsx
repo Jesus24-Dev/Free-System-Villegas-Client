@@ -13,6 +13,11 @@ import { GymsPage } from '@/pages/gyms'
 import { CreateGymPage } from '@/pages/gyms/create'
 import { EditGymPage } from '@/pages/gyms/edit'
 import { CompetitionsPage } from '@/pages/competitions'
+import { CreateCompetitionPage } from '@/pages/competitions/create'
+import { EditCompetitionPage } from '@/pages/competitions/edit'
+import { CompetitionDivisionsPage } from '@/pages/competitions/divisions'
+import { CreateCompetitionDivisionPage } from '@/pages/competitions/divisions/create'
+import { EditCompetitionDivisionPage } from '@/pages/competitions/divisions/edit'
 import { CompetitionRegistrationsPage } from '@/pages/competitions/registrations'
 import { GymRegistrationsPage } from '@/pages/competitions/registrations/gym-registrations'
 import { PaymentsPage } from '@/pages/payments'
@@ -125,7 +130,7 @@ export const router = createBrowserRouter([
         path: 'competitions/new',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <CompetitionsPage />
+            <CreateCompetitionPage />
           </ProtectedRoute>
         ),
       },
@@ -133,7 +138,31 @@ export const router = createBrowserRouter([
         path: 'competitions/:id/edit',
         element: (
           <ProtectedRoute requiredRole="ADMIN">
-            <CompetitionsPage />
+            <EditCompetitionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'competition-divisions',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <CompetitionDivisionsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'competition-divisions/new',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <CreateCompetitionDivisionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'competition-divisions/:id/edit',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <EditCompetitionDivisionPage />
           </ProtectedRoute>
         ),
       },
