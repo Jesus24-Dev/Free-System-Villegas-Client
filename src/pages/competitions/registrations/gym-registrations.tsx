@@ -86,7 +86,7 @@ export function GymRegistrationsPage() {
   const columns = [
     {
       header: 'Atleta',
-      accessorKey: 'id' as const,
+      accessorKey: 'athlete_name' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const athlete = row.original.athlete
         return athlete ? `${athlete.name} ${athlete.surname}` : 'N/A'
@@ -94,7 +94,7 @@ export function GymRegistrationsPage() {
     },
     {
       header: 'Género',
-      accessorKey: 'id' as const,
+      accessorKey: 'athlete_gender' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const athlete = row.original.athlete
         return (
@@ -106,7 +106,7 @@ export function GymRegistrationsPage() {
     },
     {
       header: 'Competencia',
-      accessorKey: 'id' as const,
+      accessorKey: 'competition_name' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const division = row.original.division
         return division?.competition?.name || 'N/A'
@@ -114,7 +114,7 @@ export function GymRegistrationsPage() {
     },
     {
       header: 'Modo',
-      accessorKey: 'id' as const,
+      accessorKey: 'division_mode' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const division = row.original.division
         return division ? combatModeLabels[division.mode] || division.mode : 'N/A'
@@ -122,7 +122,7 @@ export function GymRegistrationsPage() {
     },
     {
       header: 'Categoría',
-      accessorKey: 'id' as const,
+      accessorKey: 'division_category' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const division = row.original.division
         return division
@@ -132,7 +132,7 @@ export function GymRegistrationsPage() {
     },
     {
       header: 'Peso',
-      accessorKey: 'id' as const,
+      accessorKey: 'division_weight' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
         const division = row.original.division
         return division ? `${division.weight} kg` : 'N/A'

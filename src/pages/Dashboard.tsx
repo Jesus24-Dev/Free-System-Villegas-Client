@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { DniInput } from '@/components/ui/dni-input'
-import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2 } from 'lucide-react'
+import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
@@ -304,7 +304,17 @@ function CoachDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Mi Gimnasio</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              {isOwner && (
+                <Button variant="outline" size="sm" asChild className="hover:bg-primary hover:text-primary-foreground transition-colors">
+                  <Link to={`/gyms/${gymInfo.id}/edit`}>
+                    <Pencil className="mr-1 h-3 w-3" />
+                    Editar
+                  </Link>
+                </Button>
+              )}
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">

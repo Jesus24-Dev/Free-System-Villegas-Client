@@ -11,6 +11,7 @@ import { EditAthletePage } from '@/pages/athletes/edit'
 import { CoachesPage } from '@/pages/coaches'
 import { GymsPage } from '@/pages/gyms'
 import { CreateGymPage } from '@/pages/gyms/create'
+import { EditGymPage } from '@/pages/gyms/edit'
 import { CompetitionsPage } from '@/pages/competitions'
 import { CompetitionRegistrationsPage } from '@/pages/competitions/registrations'
 import { GymRegistrationsPage } from '@/pages/competitions/registrations/gym-registrations'
@@ -111,8 +112,8 @@ export const router = createBrowserRouter([
       {
         path: 'gyms/:id/edit',
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
-            <GymsPage />
+          <ProtectedRoute requiredRole={['ADMIN', 'COACH']}>
+            <EditGymPage />
           </ProtectedRoute>
         ),
       },
