@@ -12,6 +12,8 @@ import {
   Settings,
   X,
   ArrowRightLeft,
+  UserCog,
+  PersonStanding,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useUIStore } from '@/stores/uiStore'
@@ -26,6 +28,10 @@ const navItems = [
   { to: '/gym-registrations', label: 'Inscripciones Gimnasio', icon: Trophy, roles: ['ADMIN', 'COACH'] },
   { to: '/payments', label: 'Pagos', icon: CreditCard, roles: ['ADMIN', 'COACH'] },
   { to: '/pago-movil', label: 'Pago Movil', icon: Smartphone, roles: ['ADMIN'] },
+  { to: '/users', label: 'Usuarios', icon: UserCog, roles: ['ADMIN'] },
+  { to: '/persons', label: 'Personas', icon: PersonStanding, roles: ['ADMIN'] },
+  { to: '/admin-coaches', label: 'Entrenadores (Admin)', icon: Dumbbell, roles: ['ADMIN'] },
+  { to: '/admin-athletes', label: 'Atletas (Admin)', icon: Users, roles: ['ADMIN'] },
   { to: '/settings', label: 'Configuracion', icon: Settings, roles: ['ADMIN', 'COACH', 'ATHLETE'] },
 ]
 

@@ -24,6 +24,14 @@ import { PaymentsPage } from '@/pages/payments'
 import { PagoMovilPage } from '@/pages/pago-movil'
 import { SettingsPage } from '@/pages/settings'
 import { ProfilePage } from '@/pages/profile'
+import { UsersPage } from '@/pages/users'
+import { PersonsPage } from '@/pages/persons'
+import { AdminCoachesPage } from '@/pages/admin-coaches'
+import { CreateCoachPage } from '@/pages/admin-coaches/create'
+import { EditCoachPage } from '@/pages/admin-coaches/edit'
+import { AdminAthletesPage } from '@/pages/admin-athletes'
+import { CreateAthletePage } from '@/pages/admin-athletes/create'
+import { EditAthletePage as EditAdminAthletePage } from '@/pages/admin-athletes/edit'
 
 export const router = createBrowserRouter([
   {
@@ -195,6 +203,70 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRole="ADMIN">
             <PagoMovilPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'users',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <UsersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'persons',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <PersonsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin-coaches',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <AdminCoachesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin-coaches/new',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <CreateCoachPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin-coaches/:id/edit',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <EditCoachPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin-athletes',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <AdminAthletesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin-athletes/new',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <CreateAthletePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin-athletes/:id/edit',
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <EditAdminAthletePage />
           </ProtectedRoute>
         ),
       },
