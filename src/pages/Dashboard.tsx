@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { DniInput } from '@/components/ui/dni-input'
 import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
-import { useAuthStore, extractRole } from '@/stores/authStore'
+import { useAuthStore } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
 import { coachApi } from '@/api/coaches'
 import { gymApi } from '@/api/gyms'
@@ -18,7 +18,7 @@ import { pagoMovilApi } from '@/api/pagoMovil'
 import type { AthleteProfile, GymDetails, Gym, PagoMovil } from '@/types'
 
 export function Dashboard() {
-  const { user, getEffectiveRole, viewAs } = useAuthStore()
+  const { user, getEffectiveRole } = useAuthStore()
   const userRole = user ? getEffectiveRole() : ''
 
   if (userRole === 'ATHLETE') {
