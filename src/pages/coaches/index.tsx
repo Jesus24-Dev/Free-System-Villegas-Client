@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { coachApi } from '@/api/coaches'
+import { athleteApi } from '@/api/athletes'
 import { gymApi } from '@/api/gyms'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
@@ -10,10 +11,10 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PersonSearch } from '@/components/PersonSearch'
-import { Search, UserPlus } from 'lucide-react'
+import { Search, UserPlus, ArrowUpCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
-import type { Coach } from '@/types'
+import type { Coach, Athlete } from '@/types'
 
 export function CoachesPage() {
   const { user, gymId, isGymOwner } = useAuthStore()
@@ -30,6 +31,9 @@ export function CoachesPage() {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [coachToDelete, setCoachToDelete] = useState<string | null>(null)
+
+  const [gymAthletes, setGymAthletes] = useState<Athlete[]>([])
+  const [promoting, setPromoting] = useState<string | null>(null)
 
   const loadCoaches = async () => {
     try {
@@ -57,6 +61,38 @@ export function CoachesPage() {
   useEffect(() => {
     loadCoaches()
   }, [page, gymId])
+
+  const loadGymAthletes = async () => {
+    if (!isGymOwner || !gymId) return
+    try {
+      const data = await athleteApi.getByGym(gymId)
+      setGymAthletes(data)
+    } catch {
+      toast.error('Error al cargar atletas del gimnasio')
+    }
+  }
+
+  useEffect(() => {
+    if (isGymOwner && gymId) {
+      loadGymAthletes()
+    }
+  }, [isGymOwner, gymId])
+
+  const handlePromoteToCoach = async (athleteId: string) => {
+    try {
+      setPromoting(athleteId)
+      await athleteApi.promoteToCoach(athleteId)
+      toast.success('Atleta promovido a entrenador exitosamente')
+      loadGymAthletes()
+      loadCoaches()
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } }
+      const message = axiosError?.response?.data?.message || 'Error al promover atleta'
+      toast.error(message)
+    } finally {
+      setPromoting(null)
+    }
+  }
 
   const handleDeleteClick = (id: string) => {
     setCoachToDelete(id)
@@ -207,6 +243,39 @@ export function CoachesPage() {
             </CardHeader>
             <CardContent>
               <PersonSearch gymId={gymId} onAssignSuccess={loadCoaches} />
+            </CardContent>
+          </Card>
+        )}
+
+        {isGymOwner && gymId && gymAthletes.length > 0 && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <ArrowUpCircle className="h-4 w-4" />
+                Promover Atleta a Entrenador
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {gymAthletes.map((athlete) => (
+                  <div key={athlete.id} className="flex items-center justify-between p-2 border rounded">
+                    <div className="text-sm">
+                      <span className="font-medium">{athlete.name} {athlete.surname}</span>
+                      <span className="text-muted-foreground ml-2">({athlete.dni})</span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handlePromoteToCoach(athlete.id)}
+                      disabled={promoting === athlete.id}
+                      className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      <ArrowUpCircle className="mr-1 h-3 w-3" />
+                      {promoting === athlete.id ? 'Promoviendo...' : 'Promover'}
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}

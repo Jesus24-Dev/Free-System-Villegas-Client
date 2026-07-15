@@ -163,6 +163,14 @@ export interface AthleteProfile {
   }>
 }
 
+// Promote Athlete to Coach Response
+export interface PromoteToCoachResponse {
+  id: string
+  email: string
+  role: string[]
+  message: string
+}
+
 // Gym
 export interface Gym {
   id: string

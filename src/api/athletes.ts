@@ -1,5 +1,5 @@
 import api from './client'
-import type { Athlete, AthleteProfile, PaginatedResponse } from '@/types'
+import type { Athlete, AthleteProfile, PaginatedResponse, PromoteToCoachResponse } from '@/types'
 
 export interface HasAccountResponse {
   hasAccount: boolean
@@ -63,5 +63,10 @@ export const athleteApi = {
 
   delete: async (personId: string): Promise<void> => {
     await api.delete(`/athlete/${personId}`)
+  },
+
+  promoteToCoach: async (athleteId: string): Promise<PromoteToCoachResponse> => {
+    const response = await api.patch<PromoteToCoachResponse>(`/athlete/${athleteId}/promote-to-coach`)
+    return response.data
   },
 }
