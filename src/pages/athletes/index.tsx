@@ -197,14 +197,6 @@ export function AthletesPage() {
           >
             <Link to={`/profile/athlete/${row.original.id}`}>Perfil</Link>
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="hover:bg-primary hover:text-primary-foreground transition-colors"
-          >
-            <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
-          </Button>
           {isAdmin && (
             <Button
               variant="outline"
@@ -215,14 +207,24 @@ export function AthletesPage() {
               <Link to={`/admin-athletes/${row.original.id}/edit`}>Admin</Link>
             </Button>
           )}
-          {(isGymOwner || isAdmin) && (
+          {!isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <Link to={`/athletes/${row.original.person_id}/edit`}>Editar</Link>
+            </Button>
+          )}
+          {isGymOwner && !isAdmin && (
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => handleDeleteClick(isAdmin ? row.original.id : row.original.person_id)}
+              onClick={() => handleDeleteClick(row.original.person_id)}
               className="hover:opacity-80 transition-opacity"
             >
-              {isAdmin ? 'Eliminar' : 'Expulsar'}
+              Expulsar
             </Button>
           )}
         </div>

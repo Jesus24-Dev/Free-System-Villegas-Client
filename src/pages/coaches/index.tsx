@@ -203,14 +203,14 @@ export function CoachesPage() {
               <Link to={`/admin-coaches/${row.original.id}/edit`}>Admin</Link>
             </Button>
           )}
-          {(isGymOwner || isAdmin) && !isCoachGymOwner(row.original.id) && (
+          {isGymOwner && !isAdmin && !isCoachGymOwner(row.original.id) && (
             <Button
               variant="destructive"
               size="sm"
               onClick={() => handleDeleteClick(row.original.id)}
               className="hover:opacity-80 transition-opacity"
             >
-              {isAdmin ? 'Eliminar' : 'Expulsar'}
+              Expulsar
             </Button>
           )}
         </div>
