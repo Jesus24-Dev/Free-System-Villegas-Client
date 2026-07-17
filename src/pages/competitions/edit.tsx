@@ -26,6 +26,10 @@ export function EditCompetitionPage() {
     inscription_end_at: '',
     status: 'DRAFT',
   })
+  const [beginDate, setBeginDate] = useState('')
+  const [beginTime, setBeginTime] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [endTime, setEndTime] = useState('')
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -44,6 +48,12 @@ export function EditCompetitionPage() {
         inscription_end_at: data.inscription_end_at.slice(0, 16),
         status: data.status,
       })
+      const [bDate, bTime] = data.inscription_begin_at.split('T')
+      const [eDate, eTime] = data.inscription_end_at.split('T')
+      setBeginDate(bDate || '')
+      setBeginTime(bTime?.slice(0, 5) || '')
+      setEndDate(eDate || '')
+      setEndTime(eTime?.slice(0, 5) || '')
     } catch {
       toast.error('Error al cargar la competencia')
       navigate('/competitions')
@@ -55,6 +65,38 @@ export function EditCompetitionPage() {
   useEffect(() => {
     loadCompetition()
   }, [id])
+
+  const handleBeginDateChange = (value: string) => {
+    setBeginDate(value)
+    setFormData({
+      ...formData,
+      inscription_begin_at: value ? `${value}T${beginTime || '00:00'}` : '',
+    })
+  }
+
+  const handleBeginTimeChange = (value: string) => {
+    setBeginTime(value)
+    setFormData({
+      ...formData,
+      inscription_begin_at: beginDate ? `${beginDate}T${value}` : '',
+    })
+  }
+
+  const handleEndDateChange = (value: string) => {
+    setEndDate(value)
+    setFormData({
+      ...formData,
+      inscription_end_at: value ? `${value}T${endTime || '00:00'}` : '',
+    })
+  }
+
+  const handleEndTimeChange = (value: string) => {
+    setEndTime(value)
+    setFormData({
+      ...formData,
+      inscription_end_at: endDate ? `${endDate}T${value}` : '',
+    })
+  }
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -89,7 +131,13 @@ export function EditCompetitionPage() {
 
     try {
       setSaving(true)
-      await adminCompetitionApi.update(id, formData)
+      const payload = {
+        ...formData,
+        logo_url: formData.logo_url || null,
+        inscription_begin_at: beginDate ? `${beginDate}T${beginTime || '00:00'}` : '',
+        inscription_end_at: endDate ? `${endDate}T${endTime || '00:00'}` : '',
+      }
+      await adminCompetitionApi.update(id, payload)
       toast.success('Competencia actualizada correctamente')
       navigate('/competitions')
     } catch {
@@ -164,30 +212,46 @@ export function EditCompetitionPage() {
             <Label htmlFor="logo_url">URL del Logo</Label>
             <Input
               id="logo_url"
-              value={formData.logo_url}
+              value={formData.logo_url || ''}
               onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
               placeholder="https://ejemplo.com/logo.png"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="inscription_begin_at">Inicio Inscripciones *</Label>
-              <Input
-                id="inscription_begin_at"
-                type="datetime-local"
-                value={formData.inscription_begin_at}
-                onChange={(e) => setFormData({ ...formData, inscription_begin_at: e.target.value })}
-              />
+              <Label>Inicio Inscripciones *</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={beginDate}
+                  onChange={(e) => handleBeginDateChange(e.target.value)}
+                  className="flex-1"
+                />
+                <Input
+                  type="time"
+                  value={beginTime}
+                  onChange={(e) => handleBeginTimeChange(e.target.value)}
+                  className="w-32"
+                />
+              </div>
               {errors.inscription_begin_at && <p className="text-sm text-destructive mt-1">{errors.inscription_begin_at}</p>}
             </div>
             <div>
-              <Label htmlFor="inscription_end_at">Fin Inscripciones *</Label>
-              <Input
-                id="inscription_end_at"
-                type="datetime-local"
-                value={formData.inscription_end_at}
-                onChange={(e) => setFormData({ ...formData, inscription_end_at: e.target.value })}
-              />
+              <Label>Fin Inscripciones *</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                  className="flex-1"
+                />
+                <Input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => handleEndTimeChange(e.target.value)}
+                  className="w-32"
+                />
+              </div>
               {errors.inscription_end_at && <p className="text-sm text-destructive mt-1">{errors.inscription_end_at}</p>}
             </div>
           </div>

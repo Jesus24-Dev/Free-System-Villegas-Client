@@ -4,7 +4,7 @@ import type { Competition, CompetitionDivision, CompetitionStatus, CombatMode, W
 export interface CreateCompetitionDto {
   name: string
   description?: string
-  logo_url?: string
+  logo_url?: string | null
   location: string
   inscription_begin_at: string
   inscription_end_at: string
@@ -14,7 +14,7 @@ export interface CreateCompetitionDto {
 export interface UpdateCompetitionDto {
   name?: string
   description?: string
-  logo_url?: string
+  logo_url?: string | null
   location?: string
   inscription_begin_at?: string
   inscription_end_at?: string
