@@ -282,37 +282,39 @@ export function PaymentsPage() {
       header: 'Acciones',
       accessorKey: 'id' as const,
       cell: ({ row }: { row: { original: GymPayment } }) => (
-        <div className="flex gap-1">
-          {!row.original.isConfirmed && (
+        isCoach ? (
+          <div className="flex gap-1">
+            {!row.original.isConfirmed && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleConfirmClick(row.original.id)}
+                title="Confirmar pago"
+                className="hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors"
+              >
+                <Check className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleConfirmClick(row.original.id)}
-              title="Confirmar pago"
-              className="hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors"
+              onClick={() => handleOpenForm(row.original)}
+              title="Editar pago"
+              className="hover:bg-primary hover:text-primary-foreground transition-colors"
             >
-              <Check className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
             </Button>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleOpenForm(row.original)}
-            title="Editar pago"
-            className="hover:bg-primary hover:text-primary-foreground transition-colors"
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDeleteClick(row.original.id)}
-            title="Eliminar pago"
-            className="hover:opacity-80 transition-opacity"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleDeleteClick(row.original.id)}
+              title="Eliminar pago"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : null
       ),
     },
   ]
@@ -324,10 +326,12 @@ export function PaymentsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Pagos de Gimnasio</h1>
-        <Button onClick={() => handleOpenForm()} className="hover:opacity-90 transition-opacity">
-          <Plus className="mr-2 h-4 w-4" />
-          Nuevo Pago
-        </Button>
+        {isCoach && (
+          <Button onClick={() => handleOpenForm()} className="hover:opacity-90 transition-opacity">
+            <Plus className="mr-2 h-4 w-4" />
+            Nuevo Pago
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -370,7 +374,7 @@ export function PaymentsPage() {
         </div>
       </div>
 
-      {showForm && (
+      {showForm && isCoach && (
         <div className="border rounded-lg p-4 space-y-4 bg-muted/50">
           <h3 className="font-semibold">{editingId ? 'Editar Pago' : 'Nuevo Pago'}</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -433,33 +437,37 @@ export function PaymentsPage() {
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
-      <ConfirmDialog
-        open={showDeleteDialog}
-        title="Eliminar Pago"
-        description="¿Estas seguro de eliminar este pago? Esta accion no se puede deshacer."
-        confirmText="Eliminar"
-        cancelText="Cancelar"
-        variant="destructive"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => {
-          setShowDeleteDialog(false)
-          setPaymentToDelete(null)
-        }}
-      />
+      {isCoach && (
+        <>
+          <ConfirmDialog
+            open={showDeleteDialog}
+            title="Eliminar Pago"
+            description="¿Estas seguro de eliminar este pago? Esta accion no se puede deshacer."
+            confirmText="Eliminar"
+            cancelText="Cancelar"
+            variant="destructive"
+            onConfirm={handleDeleteConfirm}
+            onCancel={() => {
+              setShowDeleteDialog(false)
+              setPaymentToDelete(null)
+            }}
+          />
 
-      <ConfirmDialog
-        open={showConfirmDialog}
-        title="Confirmar Pago"
-        description="¿Confirmar este pago? Se marcara como confirmado."
-        confirmText="Confirmar"
-        cancelText="Cancelar"
-        variant="default"
-        onConfirm={handleConfirmPayment}
-        onCancel={() => {
-          setShowConfirmDialog(false)
-          setPaymentToConfirm(null)
-        }}
-      />
+          <ConfirmDialog
+            open={showConfirmDialog}
+            title="Confirmar Pago"
+            description="¿Confirmar este pago? Se marcara como confirmado."
+            confirmText="Confirmar"
+            cancelText="Cancelar"
+            variant="default"
+            onConfirm={handleConfirmPayment}
+            onCancel={() => {
+              setShowConfirmDialog(false)
+              setPaymentToConfirm(null)
+            }}
+          />
+        </>
+      )}
     </div>
   )
 }
