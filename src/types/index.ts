@@ -322,6 +322,12 @@ export interface GymPayment {
   isConfirmed: boolean
   created_at: string
   updated_at: string
+  athlete?: {
+    id: string
+    dni: string
+    name: string
+    surname: string
+  }
 }
 
 // Pago Movil

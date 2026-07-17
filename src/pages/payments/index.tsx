@@ -59,7 +59,7 @@ export function PaymentsPage() {
           return
         }
         const [paymentsResult, athletesResult] = await Promise.all([
-          gymPaymentApi.getAll({ gym_id: gymId }),
+          gymPaymentApi.getByGym(gymId),
           athleteApi.getByGym(gymId),
         ])
         paymentsData = paymentsResult
@@ -188,13 +188,15 @@ export function PaymentsPage() {
     return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(amount)
   }
 
-  const getAthleteName = (athleteId: string) => {
-    const athlete = athletes.find(a => a.id === athleteId)
+  const getAthleteName = (payment: GymPayment) => {
+    if (payment.athlete) return `${payment.athlete.name} ${payment.athlete.surname}`
+    const athlete = athletes.find(a => a.id === payment.athlete_id)
     return athlete ? `${athlete.name} ${athlete.surname}` : 'Atleta desconocido'
   }
 
-  const getAthleteDni = (athleteId: string) => {
-    const athlete = athletes.find(a => a.id === athleteId)
+  const getAthleteDni = (payment: GymPayment) => {
+    if (payment.athlete) return payment.athlete.dni
+    const athlete = athletes.find(a => a.id === payment.athlete_id)
     return athlete?.dni || ''
   }
 
@@ -215,7 +217,7 @@ export function PaymentsPage() {
     }
 
     return filtered.filter(payment => {
-      const athleteName = getAthleteName(payment.athlete_id).toLowerCase()
+      const athleteName = getAthleteName(payment).toLowerCase()
       const reference = (payment.payment_reference || '').toLowerCase()
       return athleteName.includes(search.toLowerCase()) || reference.includes(search.toLowerCase())
     })
@@ -228,8 +230,8 @@ export function PaymentsPage() {
       header: 'Atleta',
       accessorKey: 'athlete_id' as const,
       cell: ({ row }: { row: { original: GymPayment } }) => {
-        const athleteName = getAthleteName(row.original.athlete_id)
-        const athleteDni = getAthleteDni(row.original.athlete_id)
+        const athleteName = getAthleteName(row.original)
+        const athleteDni = getAthleteDni(row.original)
         return (
           <div className="flex flex-col">
             <span className="font-medium">{athleteName}</span>

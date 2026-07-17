@@ -10,6 +10,14 @@ export const gymPaymentApi = {
     return []
   },
 
+  getByGym: async (gymId: string): Promise<GymPayment[]> => {
+    const response = await api.get(`/gym-payment/gym/${gymId}`)
+    const data = response.data
+    if (Array.isArray(data)) return data
+    if (data?.data && Array.isArray(data.data)) return data.data
+    return []
+  },
+
   getById: async (id: string): Promise<GymPayment> => {
     const response = await api.get<GymPayment>(`/gym-payment/${id}`)
     return response.data
