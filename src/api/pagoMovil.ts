@@ -3,7 +3,7 @@ import type { PagoMovil } from '@/types'
 
 export const pagoMovilApi = {
   getByGym: async (gymId: string): Promise<PagoMovil[]> => {
-    const response = await api.get(`/pago-movil/${gymId}`)
+    const response = await api.get(`/pago-movil/gym/${gymId}`)
     const data = response.data
     if (Array.isArray(data)) return data
     if (data?.data && Array.isArray(data.data)) return data.data
