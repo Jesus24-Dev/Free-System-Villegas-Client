@@ -1,6 +1,13 @@
 import api from './client'
 import type { User } from '@/types'
 
+export interface CreateUserDto {
+  email: string
+  password: string
+  role: ('ATHLETE' | 'COACH')[]
+  person_id: string
+}
+
 export const userApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<User[]> => {
     const response = await api.get('/users', { params })
@@ -15,7 +22,7 @@ export const userApi = {
     return response.data
   },
 
-  create: async (data: Partial<User>): Promise<User> => {
+  create: async (data: CreateUserDto): Promise<User> => {
     const response = await api.post<User>('/users', data)
     return response.data
   },
