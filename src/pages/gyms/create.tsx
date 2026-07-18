@@ -36,7 +36,7 @@ export function CreateGymPage() {
       const coachMe = await coachApi.getMe()
       setCoachId(coachMe.id)
     } catch {
-      toast.error('Error al cargar datos del perfil')
+      // handled by interceptor
     }
   }
 
@@ -110,7 +110,7 @@ export function CreateGymPage() {
       toast.success('Gimnasio creado correctamente')
       navigate('/dashboard')
     } catch {
-      toast.error('Error al crear el gimnasio')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }

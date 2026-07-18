@@ -42,7 +42,7 @@ export function EditGymPage() {
           monthly_payment: String(data.monthly_payment),
         })
       } catch {
-        toast.error('Error al cargar datos del gimnasio')
+        // handled by interceptor
       } finally {
         setLoading(false)
       }
@@ -89,10 +89,8 @@ export function EditGymPage() {
       })
       toast.success('Gimnasio actualizado correctamente')
       navigate('/dashboard')
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
-      const message = axiosError?.response?.data?.message || 'Error al actualizar gimnasio'
-      toast.error(message)
+    } catch {
+      // handled by interceptor
     } finally {
       setSubmitting(false)
     }

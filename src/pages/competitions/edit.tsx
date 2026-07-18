@@ -55,7 +55,7 @@ export function EditCompetitionPage() {
       setEndDate(eDate || '')
       setEndTime(eTime?.slice(0, 5) || '')
     } catch {
-      toast.error('Error al cargar la competencia')
+      // handled by interceptor
       navigate('/competitions')
     } finally {
       setLoading(false)
@@ -141,7 +141,7 @@ export function EditCompetitionPage() {
       toast.success('Competencia actualizada correctamente')
       navigate('/competitions')
     } catch {
-      toast.error('Error al actualizar la competencia')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

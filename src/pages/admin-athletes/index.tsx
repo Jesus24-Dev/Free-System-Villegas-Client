@@ -35,7 +35,7 @@ export function AdminAthletesPage() {
       setTotalPages(athletesResponse.totalPages)
       setGyms(gymsData)
     } catch {
-      toast.error('Error al cargar atletas')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -57,7 +57,7 @@ export function AdminAthletesPage() {
       toast.success('Atleta eliminado correctamente')
       loadData()
     } catch {
-      toast.error('Error al eliminar atleta')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setAthleteToDelete(null)

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, User, Dumbbell, CreditCard, Trophy } from 'lucide-react'
-import { toast } from 'sonner'
 import type { AthleteProfile, CoachProfile, Gym } from '@/types'
 
 export function ProfilePage() {
@@ -36,7 +35,7 @@ export function ProfilePage() {
           setCoachGym(gymData)
         }
       } catch {
-        toast.error('Error al cargar el perfil')
+        // handled by interceptor
       } finally {
         setLoading(false)
       }

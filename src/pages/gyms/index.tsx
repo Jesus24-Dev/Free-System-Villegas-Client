@@ -29,7 +29,7 @@ export function GymsPage() {
       setGyms(data)
       setTotalPages(Math.ceil(data.length / limit) || 1)
     } catch {
-      toast.error('Error al cargar gimnasios')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -51,7 +51,7 @@ export function GymsPage() {
       toast.success('Gimnasio eliminado correctamente')
       loadGyms()
     } catch {
-      toast.error('Error al eliminar gimnasio')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setGymToDelete(null)

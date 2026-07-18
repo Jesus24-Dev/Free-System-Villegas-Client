@@ -33,7 +33,7 @@ export function CreateCoachPage() {
       setPersons(personsResponse.data)
       setGyms(gymsData)
     } catch {
-      toast.error('Error al cargar datos')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -66,7 +66,7 @@ export function CreateCoachPage() {
       toast.success('Entrenador creado correctamente')
       navigate('/admin-coaches')
     } catch {
-      toast.error('Error al crear entrenador')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

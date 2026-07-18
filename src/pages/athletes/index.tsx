@@ -62,7 +62,7 @@ export function AthletesPage() {
         setTotalPages(response.meta?.totalPages ?? 1)
       }
     } catch {
-      toast.error('Error al cargar atletas')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -89,7 +89,7 @@ export function AthletesPage() {
       }
       loadAthletes()
     } catch {
-      toast.error('Error al eliminar atleta')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setAthleteToDelete(null)
@@ -132,7 +132,7 @@ export function AthletesPage() {
       setFormData({ dni: '', name: '', surname: '', birthday: '', gender: 'MALE' })
       loadAthletes()
     } catch {
-      toast.error('Error al crear atleta')
+      // handled by interceptor
     } finally {
       setSubmitting(false)
     }

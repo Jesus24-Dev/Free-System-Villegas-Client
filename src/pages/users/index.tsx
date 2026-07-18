@@ -28,7 +28,7 @@ export function UsersPage() {
       setUsers(response.data)
       setTotalPages(response.totalPages)
     } catch {
-      toast.error('Error al cargar usuarios')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -50,7 +50,7 @@ export function UsersPage() {
       toast.success('Usuario eliminado correctamente')
       loadUsers()
     } catch {
-      toast.error('Error al eliminar usuario')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setUserToDelete(null)

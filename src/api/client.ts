@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { AxiosError } from 'axios'
+import { toast } from 'sonner'
 import type { ApiError } from '@/types'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -21,14 +22,38 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiError>) => {
-    if (error.response?.status === 401) {
-      const currentPath = window.location.pathname
-      // Only redirect to login if not already on login page
-      if (currentPath !== '/login' && currentPath !== '/register') {
+    const status = error.response?.status
+    const data = error.response?.data
+    const currentPath = window.location.pathname
+
+    if (status === 401) {
+      if (currentPath === '/login' || currentPath === '/register') {
+        toast.error('Email o contraseña incorrectos')
+      } else {
+        toast.error('Tu sesión ha expirado. Inicia sesión nuevamente.')
         useAuthStore.getState().logout()
         window.location.href = '/login'
       }
+    } else if (status === 400) {
+      if (Array.isArray(data?.message)) {
+        toast.error(data!.message[0])
+      } else {
+        toast.error(data?.message || 'Datos inválidos')
+      }
+    } else if (status === 403) {
+      toast.error(data?.message || 'No tienes permisos para esta acción')
+    } else if (status === 404) {
+      toast.error(data?.message || 'El registro solicitado no existe')
+    } else if (status === 409) {
+      toast.error(data?.message || 'Conflicto con datos existentes')
+    } else if (status === 429) {
+      toast.error('Has realizado demasiadas peticiones. Espera un momento.')
+    } else if (status && status >= 500) {
+      toast.error('Error interno del servidor. Intenta de nuevo más tarde.')
+    } else {
+      toast.error('Ocurrió un error inesperado')
     }
+
     return Promise.reject(error)
   }
 )

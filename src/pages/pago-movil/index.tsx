@@ -33,7 +33,7 @@ export function PagoMovilPage() {
       const data = await gymApi.getAll()
       setGyms(data)
     } catch {
-      toast.error('Error al cargar gimnasios')
+      // handled by interceptor
     }
   }
 
@@ -43,7 +43,7 @@ export function PagoMovilPage() {
       const result = await pagoMovilApi.getAll()
       setPagoMovils(result.data)
     } catch {
-      toast.error('Error al cargar pagos móviles')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -55,7 +55,7 @@ export function PagoMovilPage() {
       const data = await pagoMovilApi.getByGym(selectedGymId)
       setPagoMovils(data)
     } catch {
-      toast.error('Error al cargar pagos móviles')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -90,7 +90,7 @@ export function PagoMovilPage() {
         loadAllPagoMovils()
       }
     } catch {
-      toast.error('Error al eliminar pago móvil')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setPagoMovilToDelete(null)
@@ -113,7 +113,7 @@ export function PagoMovilPage() {
         loadAllPagoMovils()
       }
     } catch {
-      toast.error('Error al crear pago móvil')
+      // handled by interceptor
     }
   }
 

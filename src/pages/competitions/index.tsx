@@ -49,7 +49,7 @@ export function CompetitionsPage() {
       setCompetitions(data)
       setTotalPages(Math.ceil(data.length / limit) || 1)
     } catch {
-      toast.error('Error al cargar competencias')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -71,7 +71,7 @@ export function CompetitionsPage() {
       toast.success('Competencia eliminada correctamente')
       loadCompetitions()
     } catch {
-      toast.error('Error al eliminar competencia')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setCompetitionToDelete(null)
@@ -93,7 +93,7 @@ export function CompetitionsPage() {
       window.URL.revokeObjectURL(url)
       toast.success('Archivo descargado correctamente')
     } catch {
-      toast.error('Error al exportar archivo')
+      // handled by interceptor
     } finally {
       setExportingId(null)
     }

@@ -52,7 +52,7 @@ function AdminDashboard() {
         competitions: competitions.length,
       })
     } catch {
-      toast.error('Error al cargar estadisticas')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -189,7 +189,6 @@ function CoachDashboard() {
       setGymDetails(details)
       setPagoMovils(pagoMovilsData)
     } catch {
-      toast.error('Error al cargar datos del gimnasio')
       setError('Error al cargar datos')
     } finally {
       setLoading(false)
@@ -202,7 +201,7 @@ function CoachDashboard() {
       const data = await pagoMovilApi.getByGym(gymId)
       setPagoMovils(data)
     } catch {
-      toast.error('Error al cargar pagos moviles')
+      // handled by interceptor
     }
   }
 
@@ -219,7 +218,7 @@ function CoachDashboard() {
       setPagoFormData({ bank_to_pay: '', dni: '', phone: '' })
       loadPagoMovils()
     } catch {
-      toast.error('Error al crear pago movil')
+      // handled by interceptor
     }
   }
 
@@ -230,7 +229,7 @@ function CoachDashboard() {
       toast.success('Pago movil eliminado correctamente')
       loadPagoMovils()
     } catch {
-      toast.error('Error al eliminar pago movil')
+      // handled by interceptor
     } finally {
       setShowDeletePagoDialog(false)
       setPagoToDelete(null)
@@ -244,7 +243,7 @@ function CoachDashboard() {
       setUserFromProfile(updatedProfile)
       toast.success('Te has registrado como atleta exitosamente')
     } catch {
-      toast.error('Error al registrar como atleta')
+      // handled by interceptor
     } finally {
       setRegistering(false)
     }
@@ -572,7 +571,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
         }
       }
     } catch {
-      toast.error('Error al cargar perfil')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -604,7 +603,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
       })
       loadProfile()
     } catch {
-      toast.error('Error al registrar pago')
+      // handled by interceptor
     }
   }
 

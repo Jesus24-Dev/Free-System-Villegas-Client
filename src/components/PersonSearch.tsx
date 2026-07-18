@@ -43,7 +43,7 @@ export function PersonSearch({ gymId, mode, onAssignSuccess }: PersonSearchProps
         setResult(data)
       }
     } catch {
-      toast.error('Persona no encontrada')
+      // handled by interceptor
     } finally {
       setSearching(false)
     }
@@ -57,10 +57,8 @@ export function PersonSearch({ gymId, mode, onAssignSuccess }: PersonSearchProps
       setResult(null)
       setDni('')
       onAssignSuccess()
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
-      const message = axiosError?.response?.data?.message || 'Error al asignar atleta'
-      toast.error(message)
+    } catch {
+      // handled by interceptor
     } finally {
       setAssigning(false)
     }
@@ -74,10 +72,8 @@ export function PersonSearch({ gymId, mode, onAssignSuccess }: PersonSearchProps
       setResult(null)
       setDni('')
       onAssignSuccess()
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
-      const message = axiosError?.response?.data?.message || 'Error al asignar entrenador'
-      toast.error(message)
+    } catch {
+      // handled by interceptor
     } finally {
       setAssigning(false)
     }

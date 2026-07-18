@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { authApi } from '@/api/auth'
 import { personApi } from '@/api/persons'
 import { userApi } from '@/api/users'
-import { getErrorMessage, getValidationErrors } from '@/api/client'
+import { getValidationErrors } from '@/api/client'
 import { registerSchema, type RegisterFormData } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -117,8 +117,6 @@ export function Register() {
       if (Object.keys(validationErrors).length > 0) {
         setServerErrors(validationErrors)
       }
-      const message = getErrorMessage(axiosError)
-      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -142,8 +140,6 @@ export function Register() {
       if (Object.keys(validationErrors).length > 0) {
         setServerErrors(validationErrors)
       }
-      const message = getErrorMessage(axiosError)
-      toast.error(message)
     } finally {
       setIsLoading(false)
     }

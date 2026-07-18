@@ -46,7 +46,7 @@ export function EditCompetitionDivisionPage() {
         weight: divisionData.weight,
       })
     } catch {
-      toast.error('Error al cargar la division')
+      // handled by interceptor
       navigate('/competition-divisions')
     } finally {
       setLoading(false)
@@ -83,7 +83,7 @@ export function EditCompetitionDivisionPage() {
       toast.success('Division actualizada correctamente')
       navigate('/competition-divisions')
     } catch {
-      toast.error('Error al actualizar la division')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

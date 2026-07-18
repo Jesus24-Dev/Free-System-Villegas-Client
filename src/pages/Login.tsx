@@ -44,7 +44,6 @@ export function Login() {
     } catch (error) {
       const message = getErrorMessage(error as Parameters<typeof getErrorMessage>[0])
       setServerError(message)
-      toast.error(message)
     } finally {
       setIsLoading(false)
     }

@@ -34,7 +34,7 @@ export function EditCoachPage() {
         gym_id: coachData.gym_id || '',
       })
     } catch {
-      toast.error('Error al cargar datos del entrenador')
+      // handled by interceptor
       navigate('/admin-coaches')
     } finally {
       setLoading(false)
@@ -54,7 +54,7 @@ export function EditCoachPage() {
       toast.success('Entrenador eliminado correctamente')
       navigate('/admin-coaches')
     } catch {
-      toast.error('Error al eliminar entrenador')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

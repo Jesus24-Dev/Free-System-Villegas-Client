@@ -28,7 +28,7 @@ export function PersonsPage() {
       setPersons(response.data)
       setTotalPages(response.totalPages)
     } catch {
-      toast.error('Error al cargar personas')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -50,7 +50,7 @@ export function PersonsPage() {
       toast.success('Persona eliminada correctamente')
       loadPersons()
     } catch {
-      toast.error('Error al eliminar persona')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setPersonToDelete(null)

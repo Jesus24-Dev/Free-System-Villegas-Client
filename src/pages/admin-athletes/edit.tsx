@@ -26,7 +26,7 @@ export function EditAthletePage() {
       setAthlete(athleteData)
       setGyms(gymsData)
     } catch {
-      toast.error('Error al cargar datos del atleta')
+      // handled by interceptor
       navigate('/admin-athletes')
     } finally {
       setLoading(false)
@@ -46,7 +46,7 @@ export function EditAthletePage() {
       toast.success('Atleta eliminado correctamente')
       navigate('/admin-athletes')
     } catch {
-      toast.error('Error al eliminar atleta')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

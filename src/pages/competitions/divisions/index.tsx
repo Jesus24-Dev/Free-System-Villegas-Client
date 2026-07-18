@@ -5,7 +5,6 @@ import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Plus } from 'lucide-react'
-import { toast } from 'sonner'
 import type { CompetitionDivision, Competition } from '@/types'
 import { COMBAT_MODE_OPTIONS, WEIGHT_CATEGORY_OPTIONS } from '@/types'
 
@@ -24,7 +23,7 @@ export function CompetitionDivisionsPage() {
       setDivisions(divisionsData)
       setCompetitions(competitionsData)
     } catch {
-      toast.error('Error al cargar las divisiones')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }

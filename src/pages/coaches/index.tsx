@@ -54,7 +54,7 @@ export function CoachesPage() {
         setTotalPages(Math.ceil(data.length / limit) || 1)
       }
     } catch {
-      toast.error('Error al cargar entrenadores')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -70,7 +70,7 @@ export function CoachesPage() {
       const data = await athleteApi.getByGym(gymId)
       setGymAthletes(data)
     } catch {
-      toast.error('Error al cargar atletas del gimnasio')
+      // handled by interceptor
     }
   }
 
@@ -87,10 +87,8 @@ export function CoachesPage() {
       toast.success('Atleta promovido a entrenador exitosamente')
       loadGymAthletes()
       loadCoaches()
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
-      const message = axiosError?.response?.data?.message || 'Error al promover atleta'
-      toast.error(message)
+    } catch {
+      // handled by interceptor
     } finally {
       setPromoting(null)
     }
@@ -113,7 +111,7 @@ export function CoachesPage() {
       }
       loadCoaches()
     } catch {
-      toast.error('Error al eliminar entrenador')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setCoachToDelete(null)

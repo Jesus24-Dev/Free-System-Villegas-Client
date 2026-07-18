@@ -74,7 +74,7 @@ export function PaymentsPage() {
       setAthletes(athletesData)
       setTotalPages(Math.ceil(paymentsData.length / limit) || 1)
     } catch {
-      toast.error('Error al cargar datos')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -100,7 +100,7 @@ export function PaymentsPage() {
       toast.success('Pago eliminado correctamente')
       loadData()
     } catch {
-      toast.error('Error al eliminar pago')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setPaymentToDelete(null)
@@ -119,7 +119,7 @@ export function PaymentsPage() {
       toast.success('Pago confirmado correctamente')
       loadData()
     } catch {
-      toast.error('Error al confirmar pago')
+      // handled by interceptor
     } finally {
       setShowConfirmDialog(false)
       setPaymentToConfirm(null)
@@ -176,7 +176,7 @@ export function PaymentsPage() {
       setShowForm(false)
       loadData()
     } catch {
-      toast.error(editingId ? 'Error al actualizar pago' : 'Error al crear pago')
+      // handled by interceptor
     }
   }
 

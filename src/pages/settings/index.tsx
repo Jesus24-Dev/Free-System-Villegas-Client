@@ -27,7 +27,7 @@ export function SettingsPage() {
       const data = await authApi.getProfile()
       setProfile(data)
     } catch {
-      toast.error('Error al cargar perfil')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -87,10 +87,8 @@ export function SettingsPage() {
       setUserFromProfile(updatedProfile)
       setEditing(false)
       toast.success('Perfil actualizado correctamente')
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } }
-      const message = axiosError?.response?.data?.message || 'Error al actualizar perfil'
-      toast.error(message)
+    } catch {
+      // handled by interceptor
     } finally {
       setSubmitting(false)
     }

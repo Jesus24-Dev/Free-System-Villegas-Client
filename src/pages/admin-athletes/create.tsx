@@ -33,7 +33,7 @@ export function CreateAthletePage() {
       setPersons(personsResponse.data)
       setGyms(gymsData)
     } catch {
-      toast.error('Error al cargar datos')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -66,7 +66,7 @@ export function CreateAthletePage() {
       toast.success('Atleta creado correctamente')
       navigate('/admin-athletes')
     } catch {
-      toast.error('Error al crear atleta')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

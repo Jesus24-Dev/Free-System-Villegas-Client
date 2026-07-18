@@ -31,7 +31,7 @@ export function CreateCompetitionDivisionPage() {
       const data = await adminCompetitionApi.getAll()
       setCompetitions(data)
     } catch {
-      toast.error('Error al cargar las competencias')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -67,7 +67,7 @@ export function CreateCompetitionDivisionPage() {
       toast.success('Division creada correctamente')
       navigate('/competition-divisions')
     } catch {
-      toast.error('Error al crear la division')
+      // handled by interceptor
     } finally {
       setSaving(false)
     }

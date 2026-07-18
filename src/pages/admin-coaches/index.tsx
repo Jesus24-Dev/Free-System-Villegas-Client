@@ -35,7 +35,7 @@ export function AdminCoachesPage() {
       setTotalPages(coachesResponse.totalPages)
       setGyms(gymsData)
     } catch {
-      toast.error('Error al cargar entrenadores')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
@@ -57,7 +57,7 @@ export function AdminCoachesPage() {
       toast.success('Entrenador eliminado correctamente')
       loadData()
     } catch {
-      toast.error('Error al eliminar entrenador')
+      // handled by interceptor
     } finally {
       setShowDeleteDialog(false)
       setCoachToDelete(null)

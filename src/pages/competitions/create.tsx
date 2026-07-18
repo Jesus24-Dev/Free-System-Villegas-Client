@@ -104,7 +104,7 @@ export function CreateCompetitionPage() {
       toast.success('Competencia creada correctamente')
       navigate('/competitions')
     } catch {
-      toast.error('Error al crear la competencia')
+      // handled by interceptor
     } finally {
       setLoading(false)
     }
