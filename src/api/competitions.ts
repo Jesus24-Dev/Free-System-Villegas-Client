@@ -92,7 +92,11 @@ export const competitionRegistrationApi = {
     params?: { page?: number; limit?: number }
   ): Promise<{ data: CompetitionRegistration[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
     const response = await api.get(`/competition-registration/competition/${competitionId}`, { params })
-    return response.data
+    const result = response.data
+    if (Array.isArray(result)) {
+      return { data: result, meta: { total: result.length, page: params?.page || 1, limit: params?.limit || result.length, totalPages: 1 } }
+    }
+    return result
   },
 
   getByGym: async (
@@ -100,7 +104,11 @@ export const competitionRegistrationApi = {
     params?: { page?: number; limit?: number }
   ): Promise<{ data: CompetitionRegistration[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
     const response = await api.get(`/competition-registration/gym/${gymId}`, { params })
-    return response.data
+    const result = response.data
+    if (Array.isArray(result)) {
+      return { data: result, meta: { total: result.length, page: params?.page || 1, limit: params?.limit || result.length, totalPages: 1 } }
+    }
+    return result
   },
 
   getByGymAndCompetition: async (
@@ -109,7 +117,11 @@ export const competitionRegistrationApi = {
     params?: { page?: number; limit?: number }
   ): Promise<{ data: CompetitionRegistration[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
     const response = await api.get(`/competition-registration/gym/${gymId}/competition/${competitionId}`, { params })
-    return response.data
+    const result = response.data
+    if (Array.isArray(result)) {
+      return { data: result, meta: { total: result.length, page: params?.page || 1, limit: params?.limit || result.length, totalPages: 1 } }
+    }
+    return result
   },
 
   getById: async (id: string): Promise<CompetitionRegistration> => {
