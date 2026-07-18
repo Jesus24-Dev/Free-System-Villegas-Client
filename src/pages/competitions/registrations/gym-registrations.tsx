@@ -44,9 +44,27 @@ export function GymRegistrationsPage() {
   }
 
   const loadRegistrations = useCallback(async () => {
-    if (!gymId) return
     try {
       setLoading(true)
+
+      if (isAdmin) {
+        if (selectedCompetitionId) {
+          const result = await competitionRegistrationApi.getByCompetition(selectedCompetitionId, {
+            page,
+            limit,
+          })
+          setRegistrations(result.data)
+          setTotalPages(result.meta.totalPages || 1)
+        } else {
+          const data = await competitionRegistrationApi.getAll()
+          setRegistrations(data)
+          setTotalPages(1)
+        }
+        return
+      }
+
+      if (!gymId) return
+
       if (selectedCompetitionId) {
         const result = await competitionRegistrationApi.getByGymAndCompetition(gymId, selectedCompetitionId, {
           page,
@@ -67,7 +85,7 @@ export function GymRegistrationsPage() {
     } finally {
       setLoading(false)
     }
-  }, [gymId, selectedCompetitionId, page, limit])
+  }, [isAdmin, gymId, selectedCompetitionId, page, limit])
 
   useEffect(() => {
     loadCompetitions()
@@ -78,10 +96,10 @@ export function GymRegistrationsPage() {
   }, [selectedCompetitionId])
 
   useEffect(() => {
-    if (gymId) {
+    if (isAdmin || gymId) {
       loadRegistrations()
     }
-  }, [gymId, loadRegistrations])
+  }, [isAdmin, gymId, loadRegistrations])
 
   const columns = [
     {
