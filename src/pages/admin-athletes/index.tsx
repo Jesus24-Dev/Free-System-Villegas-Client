@@ -71,7 +71,13 @@ export function AdminAthletesPage() {
   }
 
   const columns = [
-    { header: 'DNI', accessorKey: 'person.dni' as const },
+    {
+      header: 'DNI',
+      accessorKey: 'person.dni' as const,
+      cell: ({ row }: { row: { original: AthleteWithPerson } }) => (
+        <span>{row.original.person.dni}</span>
+      ),
+    },
     {
       header: 'Nombre',
       accessorKey: 'person.name' as const,

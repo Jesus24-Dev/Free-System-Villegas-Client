@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, Download } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
 import type { Competition, CompetitionStatus } from '@/types'
@@ -27,7 +27,7 @@ const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destr
 }
 
 export function CompetitionsPage() {
-  const { user } = useAuthStore()
+  const { user, gymId } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isReadOnly = userRole === 'ATHLETE' || userRole === 'COACH'
 
@@ -40,6 +40,7 @@ export function CompetitionsPage() {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [competitionToDelete, setCompetitionToDelete] = useState<string | null>(null)
+  const [exportingId, setExportingId] = useState<string | null>(null)
 
   const loadCompetitions = async () => {
     try {
@@ -74,6 +75,27 @@ export function CompetitionsPage() {
     } finally {
       setShowDeleteDialog(false)
       setCompetitionToDelete(null)
+    }
+  }
+
+  const handleExport = async (competitionId: string, competitionName: string) => {
+    if (!gymId) return
+    try {
+      setExportingId(competitionId)
+      const blob = await competitionApi.exportByGym(competitionId, gymId)
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${competitionName}_atletas.xlsx`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      toast.success('Archivo descargado correctamente')
+    } catch {
+      toast.error('Error al exportar archivo')
+    } finally {
+      setExportingId(null)
     }
   }
 
@@ -126,12 +148,25 @@ export function CompetitionsPage() {
               </Button>
             </>
           )}
-          {userRole === 'COACH' && row.original.status === 'OPEN' && (
-            <Button variant="default" size="sm" asChild>
-              <Link to={`/competition-registrations?competition=${row.original.id}`}>
-                Registrar
-              </Link>
-            </Button>
+          {userRole === 'COACH' && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExport(row.original.id, row.original.name)}
+                disabled={exportingId === row.original.id}
+              >
+                <Download className="mr-1 h-3 w-3" />
+                {exportingId === row.original.id ? 'Exportando...' : 'Exportar'}
+              </Button>
+              {row.original.status === 'OPEN' && (
+                <Button variant="default" size="sm" asChild>
+                  <Link to={`/competition-registrations?competition=${row.original.id}`}>
+                    Registrar
+                  </Link>
+                </Button>
+              )}
+            </>
           )}
         </div>
       ),

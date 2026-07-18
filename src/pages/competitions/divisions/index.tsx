@@ -4,8 +4,7 @@ import { adminCompetitionDivisionApi, adminCompetitionApi } from '@/api/adminCom
 import { DataTable } from '@/components/ui/data-table'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { Plus, Trash2, Edit } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import type { CompetitionDivision, Competition } from '@/types'
 import { COMBAT_MODE_OPTIONS, WEIGHT_CATEGORY_OPTIONS } from '@/types'
@@ -14,8 +13,6 @@ export function CompetitionDivisionsPage() {
   const [divisions, setDivisions] = useState<CompetitionDivision[]>([])
   const [competitions, setCompetitions] = useState<Competition[]>([])
   const [loading, setLoading] = useState(true)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [divisionToDelete, setDivisionToDelete] = useState<string | null>(null)
 
   const loadData = async () => {
     try {
@@ -36,25 +33,6 @@ export function CompetitionDivisionsPage() {
   useEffect(() => {
     loadData()
   }, [])
-
-  const handleDeleteClick = (id: string) => {
-    setDivisionToDelete(id)
-    setShowDeleteDialog(true)
-  }
-
-  const handleDeleteConfirm = async () => {
-    if (!divisionToDelete) return
-    try {
-      await adminCompetitionDivisionApi.delete(divisionToDelete)
-      toast.success('Division eliminada correctamente')
-      loadData()
-    } catch {
-      toast.error('Error al eliminar la division')
-    } finally {
-      setShowDeleteDialog(false)
-      setDivisionToDelete(null)
-    }
-  }
 
   const getCompetitionName = (competitionId: string) => {
     const competition = competitions.find(c => c.id === competitionId)
@@ -105,26 +83,6 @@ export function CompetitionDivisionsPage() {
         <span>{row.original.weight} kg</span>
       ),
     },
-    {
-      header: 'Acciones',
-      accessorKey: 'id' as const,
-      cell: ({ row }: { row: { original: CompetitionDivision } }) => (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link to={`/competition-divisions/${row.original.id}/edit`}>
-              <Edit className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDeleteClick(row.original.id)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-    },
   ]
 
   return (
@@ -140,20 +98,6 @@ export function CompetitionDivisionsPage() {
       </div>
 
       <DataTable columns={columns} data={divisions} loading={loading} />
-
-      <ConfirmDialog
-        open={showDeleteDialog}
-        title="Eliminar Division"
-        description="¿Estas seguro de eliminar esta division? Esta accion no se puede deshacer."
-        confirmText="Eliminar"
-        cancelText="Cancelar"
-        variant="destructive"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => {
-          setShowDeleteDialog(false)
-          setDivisionToDelete(null)
-        }}
-      />
     </div>
   )
 }

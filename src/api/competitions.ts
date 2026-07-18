@@ -29,6 +29,13 @@ export const competitionApi = {
     await api.delete(`/competition/${id}`)
   },
 
+  exportByGym: async (competitionId: string, gymId: string): Promise<Blob> => {
+    const response = await api.get(`/competition/${competitionId}/export/${gymId}`, {
+      responseType: 'blob',
+    })
+    return response.data
+  },
+
   registerAthlete: async (
     competitionId: string,
     athleteId: string,

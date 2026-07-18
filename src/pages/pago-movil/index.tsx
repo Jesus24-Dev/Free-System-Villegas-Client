@@ -37,7 +37,19 @@ export function PagoMovilPage() {
     }
   }
 
-  const loadPagoMovils = async () => {
+  const loadAllPagoMovils = async () => {
+    try {
+      setLoading(true)
+      const result = await pagoMovilApi.getAll()
+      setPagoMovils(result.data)
+    } catch {
+      toast.error('Error al cargar pagos móviles')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadPagoMovilsByGym = async () => {
     try {
       setLoading(true)
       const data = await pagoMovilApi.getByGym(selectedGymId)
@@ -51,11 +63,14 @@ export function PagoMovilPage() {
 
   useEffect(() => {
     loadGyms()
+    loadAllPagoMovils()
   }, [])
 
   useEffect(() => {
     if (selectedGymId) {
-      loadPagoMovils()
+      loadPagoMovilsByGym()
+    } else {
+      loadAllPagoMovils()
     }
   }, [selectedGymId])
 
@@ -69,7 +84,11 @@ export function PagoMovilPage() {
     try {
       await pagoMovilApi.delete(pagoMovilToDelete)
       toast.success('Pago móvil eliminado correctamente')
-      loadPagoMovils()
+      if (selectedGymId) {
+        loadPagoMovilsByGym()
+      } else {
+        loadAllPagoMovils()
+      }
     } catch {
       toast.error('Error al eliminar pago móvil')
     } finally {
@@ -88,7 +107,11 @@ export function PagoMovilPage() {
       toast.success('Pago móvil creado correctamente')
       setShowForm(false)
       setFormData({ bank_to_pay: '', dni: '', phone: '' })
-      loadPagoMovils()
+      if (selectedGymId) {
+        loadPagoMovilsByGym()
+      } else {
+        loadAllPagoMovils()
+      }
     } catch {
       toast.error('Error al crear pago móvil')
     }

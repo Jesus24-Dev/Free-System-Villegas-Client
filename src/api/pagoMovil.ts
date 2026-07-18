@@ -2,6 +2,18 @@ import api from './client'
 import type { PagoMovil } from '@/types'
 
 export const pagoMovilApi = {
+  getAll: async (params?: { page?: number; limit?: number }): Promise<{ data: PagoMovil[]; total: number; totalPages: number }> => {
+    const response = await api.get('/pago-movil', { params })
+    const data = response.data
+    if (data?.data && Array.isArray(data.data)) {
+      return { data: data.data, total: data.total || 0, totalPages: data.totalPages || 1 }
+    }
+    if (Array.isArray(data)) {
+      return { data, total: data.length, totalPages: 1 }
+    }
+    return { data: [], total: 0, totalPages: 1 }
+  },
+
   getByGym: async (gymId: string): Promise<PagoMovil[]> => {
     const response = await api.get(`/pago-movil/gym/${gymId}`)
     const data = response.data
