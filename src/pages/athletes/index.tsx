@@ -278,7 +278,7 @@ export function AthletesPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <PersonSearch gymId={gymId} onAssignSuccess={loadAthletes} />
+              <PersonSearch gymId={gymId} mode="athlete" onAssignSuccess={loadAthletes} />
             </CardContent>
           </Card>
         )}

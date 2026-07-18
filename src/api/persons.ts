@@ -1,5 +1,5 @@
 import api from './client'
-import type { Person, PersonByDniResponse } from '@/types'
+import type { Person, CoachGymByDniResponse, AthleteGymByDniResponse } from '@/types'
 
 export const personApi = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<Person[]> => {
@@ -15,8 +15,13 @@ export const personApi = {
     return response.data
   },
 
-  getByDni: async (dni: string): Promise<PersonByDniResponse | null> => {
-    const response = await api.get<PersonByDniResponse | null>(`/person/dni/${dni}`)
+  getCoachGymByDni: async (dni: string): Promise<CoachGymByDniResponse> => {
+    const response = await api.get<CoachGymByDniResponse>(`/person/dni/${dni}/coach-gym`)
+    return response.data
+  },
+
+  getAthleteGymByDni: async (dni: string): Promise<AthleteGymByDniResponse> => {
+    const response = await api.get<AthleteGymByDniResponse>(`/person/dni/${dni}/athlete-gym`)
     return response.data
   },
 

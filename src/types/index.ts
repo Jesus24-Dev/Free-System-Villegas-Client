@@ -60,17 +60,37 @@ export interface Person {
   updated_at: string
 }
 
-export interface PersonByDniResponse {
+export interface CoachGymByDniResponse {
   id: string
   dni: string
   name: string
   surname: string
-  user_id: string | null
-  roles: string[] | null
-  athlete_id: string | null
-  coach_id: string | null
+  coach_id: string
   has_gym: boolean
   owns_gym: boolean
+  gym?: {
+    id: string
+    name: string
+    address: string
+    state: string
+    monthly_payment: number
+  }
+}
+
+export interface AthleteGymByDniResponse {
+  id: string
+  dni: string
+  name: string
+  surname: string
+  athlete_id: string
+  has_gym: boolean
+  gym?: {
+    id: string
+    name: string
+    address: string
+    state: string
+    monthly_payment: number
+  }
 }
 
 // Coach

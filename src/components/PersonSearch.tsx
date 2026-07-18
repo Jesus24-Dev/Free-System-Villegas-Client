@@ -2,21 +2,27 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { DniInput } from '@/components/ui/dni-input'
 import { Badge } from '@/components/ui/badge'
-import { Search, Dumbbell, Users, Building2, AlertCircle } from 'lucide-react'
+import { Search, Dumbbell, Users, Building2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { personApi } from '@/api/persons'
 import { coachApi } from '@/api/coaches'
-import type { PersonByDniResponse } from '@/types'
 
 interface PersonSearchProps {
   gymId: string
+  mode: 'athlete' | 'coach'
   onAssignSuccess: () => void
 }
 
-export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
+export function PersonSearch({ gymId, mode, onAssignSuccess }: PersonSearchProps) {
   const [dni, setDni] = useState('')
   const [searching, setSearching] = useState(false)
-  const [result, setResult] = useState<PersonByDniResponse | null>(null)
+  const [result, setResult] = useState<{
+    id: string
+    dni: string
+    name: string
+    surname: string
+    has_gym: boolean
+  } | null>(null)
   const [assigning, setAssigning] = useState(false)
 
   const handleSearch = async () => {
@@ -28,21 +34,25 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
     try {
       setSearching(true)
       setResult(null)
-      const data = await personApi.getByDni(dni.trim())
-      setResult(data)
+
+      if (mode === 'coach') {
+        const data = await personApi.getCoachGymByDni(dni.trim())
+        setResult(data)
+      } else {
+        const data = await personApi.getAthleteGymByDni(dni.trim())
+        setResult(data)
+      }
     } catch {
-      toast.error('Error al buscar persona')
+      toast.error('Persona no encontrada')
     } finally {
       setSearching(false)
     }
   }
 
-  const handleAssignAthlete = async () => {
-    if (!result?.athlete_id) return
-
+  const handleAssignAthlete = async (athleteId: string) => {
     try {
       setAssigning(true)
-      await coachApi.assignAthleteToGym(gymId, result.athlete_id)
+      await coachApi.assignAthleteToGym(gymId, athleteId)
       toast.success('Atleta asignado correctamente')
       setResult(null)
       setDni('')
@@ -56,12 +66,10 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
     }
   }
 
-  const handleAssignCoach = async () => {
-    if (!result?.coach_id) return
-
+  const handleAssignCoach = async (coachId: string) => {
     try {
       setAssigning(true)
-      await coachApi.assignCoachToGym(gymId, result.coach_id)
+      await coachApi.assignCoachToGym(gymId, coachId)
       toast.success('Entrenador asignado correctamente')
       setResult(null)
       setDni('')
@@ -78,8 +86,55 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
   const renderResult = () => {
     if (!result) return null
 
-    const isAthlete = result.roles?.includes('ATHLETE')
-    const isCoach = result.roles?.includes('COACH')
+    if (mode === 'athlete') {
+      const athleteResult = result as {
+        id: string
+        dni: string
+        name: string
+        surname: string
+        athlete_id: string
+        has_gym: boolean
+      }
+
+      return (
+        <div className="border rounded-md p-3 space-y-2 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">{result.name} {result.surname}</p>
+              <p className="text-xs text-muted-foreground">DNI: {result.dni}</p>
+            </div>
+            <Badge variant="outline" className="text-xs">Atleta</Badge>
+          </div>
+
+          {athleteResult.has_gym ? (
+            <Badge variant="default" className="bg-green-600 text-xs">
+              <Users className="mr-1 h-3 w-3" />
+              Ya tiene gimnasio asignado
+            </Badge>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => handleAssignAthlete(athleteResult.athlete_id)}
+              disabled={assigning}
+              className="hover:opacity-90 transition-opacity"
+            >
+              <Users className="mr-1 h-3 w-3" />
+              Asignar a mi gimnasio
+            </Button>
+          )}
+        </div>
+      )
+    }
+
+    const coachResult = result as {
+      id: string
+      dni: string
+      name: string
+      surname: string
+      coach_id: string
+      has_gym: boolean
+      owns_gym: boolean
+    }
 
     return (
       <div className="border rounded-md p-3 space-y-2 bg-muted/30">
@@ -88,72 +143,29 @@ export function PersonSearch({ gymId, onAssignSuccess }: PersonSearchProps) {
             <p className="text-sm font-medium">{result.name} {result.surname}</p>
             <p className="text-xs text-muted-foreground">DNI: {result.dni}</p>
           </div>
-          <div className="flex gap-1">
-            {isAthlete && <Badge variant="outline" className="text-xs">Atleta</Badge>}
-            {isCoach && <Badge variant="outline" className="text-xs">Coach</Badge>}
-            {!result.user_id && (
-              <Badge variant="secondary" className="text-xs">Sin cuenta</Badge>
-            )}
-          </div>
+          <Badge variant="outline" className="text-xs">Coach</Badge>
         </div>
 
-        {/* Sin cuenta */}
-        {!result.user_id && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <AlertCircle className="h-3 w-3" />
-            <span>Esta persona no tiene cuenta. Debe registrarse primero.</span>
-          </div>
-        )}
-
-        {/* Atleta */}
-        {result.user_id && isAthlete && (
-          <>
-            {result.has_gym ? (
-              <Badge variant="default" className="bg-green-600 text-xs">
-                <Users className="mr-1 h-3 w-3" />
-                Ya tiene gimnasio asignado
-              </Badge>
-            ) : (
-              <Button
-                size="sm"
-                onClick={handleAssignAthlete}
-                disabled={assigning}
-                className="hover:opacity-90 transition-opacity"
-              >
-                <Users className="mr-1 h-3 w-3" />
-                Asignar a mi gimnasio
-              </Button>
-            )}
-          </>
-        )}
-
-        {/* Coach */}
-        {result.user_id && isCoach && (
-          <>
-            {result.owns_gym ? (
-              <div className="flex items-center gap-2">
-                <Badge variant="default" className="bg-blue-600 text-xs">
-                  <Building2 className="mr-1 h-3 w-3" />
-                  Dueño de gimnasio
-                </Badge>
-              </div>
-            ) : result.has_gym ? (
-              <Badge variant="default" className="bg-green-600 text-xs">
-                <Dumbbell className="mr-1 h-3 w-3" />
-                Asignado a otro gimnasio
-              </Badge>
-            ) : (
-              <Button
-                size="sm"
-                onClick={handleAssignCoach}
-                disabled={assigning}
-                className="hover:opacity-90 transition-opacity"
-              >
-                <Dumbbell className="mr-1 h-3 w-3" />
-                Asignar a mi gimnasio
-              </Button>
-            )}
-          </>
+        {coachResult.owns_gym ? (
+          <Badge variant="default" className="bg-blue-600 text-xs">
+            <Building2 className="mr-1 h-3 w-3" />
+            Dueño de gimnasio
+          </Badge>
+        ) : coachResult.has_gym ? (
+          <Badge variant="default" className="bg-green-600 text-xs">
+            <Dumbbell className="mr-1 h-3 w-3" />
+            Asignado a otro gimnasio
+          </Badge>
+        ) : (
+          <Button
+            size="sm"
+            onClick={() => handleAssignCoach(coachResult.coach_id)}
+            disabled={assigning}
+            className="hover:opacity-90 transition-opacity"
+          >
+            <Dumbbell className="mr-1 h-3 w-3" />
+            Asignar a mi gimnasio
+          </Button>
         )}
       </div>
     )
