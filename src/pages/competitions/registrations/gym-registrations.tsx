@@ -92,10 +92,6 @@ export function GymRegistrationsPage() {
   }, [])
 
   useEffect(() => {
-    setPage(1)
-  }, [selectedCompetitionId])
-
-  useEffect(() => {
     if (isAdmin || gymId) {
       loadRegistrations()
     }
@@ -186,7 +182,10 @@ export function GymRegistrationsPage() {
           <Select
             id="competition"
             value={selectedCompetitionId}
-            onChange={(e) => setSelectedCompetitionId(e.target.value)}
+            onChange={(e) => {
+              setSelectedCompetitionId(e.target.value)
+              setPage(1)
+            }}
           >
             <option value="">Todas las competencias</option>
             {competitions.map((comp) => (
