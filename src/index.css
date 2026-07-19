@@ -49,6 +49,11 @@ dialog {
 }
 
 dialog::backdrop {
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.2s ease-out;
+}
+
+dialog[open]::backdrop {
   background: rgba(0, 0, 0, 0.5);
 }
 
@@ -56,13 +61,26 @@ dialog[open] {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0.95);
   max-width: 32rem;
   width: calc(100% - 2rem);
   background: var(--color-background);
   border-radius: var(--radius-lg);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   z-index: 50;
+  opacity: 0;
+  animation: dialog-enter 0.2s ease-out forwards;
+}
+
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 dialog.confirm-dialog[open] {
