@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DniInput } from '@/components/ui/dni-input'
 import { Select } from '@/components/ui/select'
-import { ArrowLeft, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Athlete } from '@/types'
 
@@ -102,8 +102,8 @@ export function EditAthletePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Cargando...</div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }

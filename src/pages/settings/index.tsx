@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { DniInput } from '@/components/ui/dni-input'
-import { User, Mail, CreditCard, Calendar, Hash, Pencil, X, Check } from 'lucide-react'
+import { User, Mail, CreditCard, Calendar, Hash, Pencil, X, Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { authApi, type UpdateProfileData } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
@@ -107,6 +107,9 @@ export function SettingsPage() {
         <div>
           <h1 className="text-3xl font-bold">Mi Perfil</h1>
           <p className="text-muted-foreground">Cargando informacion...</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
     )

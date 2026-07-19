@@ -6,7 +6,7 @@ import { gymApi } from '@/api/gyms'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, User, Dumbbell, CreditCard, Trophy } from 'lucide-react'
+import { ArrowLeft, User, Dumbbell, CreditCard, Trophy, Loader2 } from 'lucide-react'
 import type { AthleteProfile, CoachProfile, Gym } from '@/types'
 
 export function ProfilePage() {
@@ -58,8 +58,8 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Cargando perfil...</div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }

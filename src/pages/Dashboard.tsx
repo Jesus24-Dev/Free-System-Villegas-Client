@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { DniInput } from '@/components/ui/dni-input'
-import { Users, Trophy, Dumbbell, Building2, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
+import { Loader2, Users, Trophy, Dumbbell, Building2, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
@@ -260,6 +260,9 @@ function CoachDashboard() {
         <div>
           <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
           <p className="text-muted-foreground">Cargando informacion de tu gimnasio...</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
     )
@@ -603,6 +606,9 @@ function AthleteDashboard({ userId }: { userId: string }) {
         <div>
           <h1 className="text-3xl font-bold">Mi Panel</h1>
           <p className="text-muted-foreground">Cargando informacion...</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
     )
