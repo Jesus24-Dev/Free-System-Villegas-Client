@@ -66,7 +66,7 @@ function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Panel de Control</h1>
-        <p className="text-muted-foreground">Bienvenido a Free System Villegas</p>
+        <p className="text-muted-foreground">Bienvenido a Sistema Libre Villegas</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -107,7 +107,7 @@ export function Sidebar() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">FS</span>
             </div>
-            <span className="font-semibold text-lg">Free System</span>
+            <span className="font-semibold text-lg">Sistema Libre</span>
           </div>
           <Button
             variant="ghost"
