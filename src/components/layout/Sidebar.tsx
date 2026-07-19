@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -68,7 +68,16 @@ export function Sidebar() {
   const { user, hasAnyRole, viewAs, setViewAs } = useAuthStore()
   const { sidebarOpen, setSidebarOpen } = useUIStore()
   const location = useLocation()
-  const [adminOpen, setAdminOpen] = useState(false)
+
+  const adminItems = navEntries.find(e => e.type === 'collapsible' && e.label === 'Gestión Admin')
+  const isAdminRouteActive = adminItems?.type === 'collapsible'
+    ? adminItems.items.some(item => location.pathname === item.to)
+    : false
+  const [adminOpen, setAdminOpen] = useState(isAdminRouteActive)
+
+  useEffect(() => {
+    if (isAdminRouteActive) setAdminOpen(true)
+  }, [isAdminRouteActive])
 
   const userRole = user ? extractRole(user) : ''
   const hasBothRoles = hasAnyRole(['COACH']) && hasAnyRole(['ATHLETE'])
