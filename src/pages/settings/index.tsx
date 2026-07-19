@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
 import { DniInput } from '@/components/ui/dni-input'
 import { User, Mail, CreditCard, Calendar, Hash, Pencil, X, Check } from 'lucide-react'
 import { toast } from 'sonner'
@@ -189,15 +190,14 @@ export function SettingsPage() {
                 </div>
                 <div>
                   <Label htmlFor="gender">Genero *</Label>
-                  <select
+                  <Select
                     id="gender"
                     value={formData.gender || 'MALE'}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'MALE' | 'FEMALE' })}
-                    className="w-full border rounded-md px-3 py-2 text-sm"
                   >
                     <option value="MALE">Masculino</option>
                     <option value="FEMALE">Femenino</option>
-                  </select>
+                  </Select>
                 </div>
               </>
             ) : (

@@ -7,6 +7,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search, Trash2, Check, Pencil, Clock, CheckCircle2 } from 'lucide-react'
@@ -401,11 +402,10 @@ export function PaymentsPage() {
             </div>
             <div>
               <Label htmlFor="athlete">Atleta</Label>
-              <select
+              <Select
                 id="athlete"
                 value={formData.athlete_id}
                 onChange={(e) => setFormData({ ...formData, athlete_id: e.target.value })}
-                className="w-full border rounded-md px-3 py-2 text-sm"
               >
                 <option value="">Seleccionar atleta</option>
                 {athletes.map((athlete) => (
@@ -413,7 +413,7 @@ export function PaymentsPage() {
                     {athlete.name} {athlete.surname}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div className="col-span-2">
               <Label htmlFor="reference">Referencia de Pago</Label>
