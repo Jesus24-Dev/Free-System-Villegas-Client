@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { DniInput } from '@/components/ui/dni-input'
 import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
@@ -509,38 +510,19 @@ function CoachDashboard() {
         </CardContent>
       </Card>
 
-      {showDeletePagoDialog && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowDeletePagoDialog(false)
-              setPagoToDelete(null)
-            }
-          }}
-        >
-          <div className="bg-background rounded-lg p-6 space-y-4 max-w-md">
-            <h3 className="font-semibold">Eliminar Metodo de Pago Movil</h3>
-            <p className="text-sm text-muted-foreground">
-              ¿Estas seguro de eliminar este metodo de pago movil? Esta accion no se puede deshacer.
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowDeletePagoDialog(false)
-                  setPagoToDelete(null)
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button variant="destructive" onClick={handleDeletePagoMovil}>
-                Eliminar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={showDeletePagoDialog}
+        title="Eliminar Metodo de Pago Movil"
+        description="¿Estas seguro de eliminar este metodo de pago movil? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeletePagoMovil}
+        onCancel={() => {
+          setShowDeletePagoDialog(false)
+          setPagoToDelete(null)
+        }}
+      />
     </div>
   )
 }

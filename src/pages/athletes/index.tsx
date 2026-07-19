@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { Dialog } from '@/components/ui/dialog'
 import { DniInput } from '@/components/ui/dni-input'
 import { Select } from '@/components/ui/select'
 import { PersonSearch } from '@/components/PersonSearch'
@@ -289,90 +290,81 @@ export function AthletesPage() {
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
-      {showCreateModal && (
-        <dialog
-          open
-          className="confirm-dialog"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowCreateModal(false)
-          }}
-        >
-          <div className="p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Crear Nuevo Atleta</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="dni">DNI *</Label>
-                <DniInput
-                  id="dni"
-                  value={formData.dni}
-                  onChange={(value) => {
-                    setFormData({ ...formData, dni: value })
-                    if (dniError) setDniError('')
-                  }}
-                  placeholder="12345678"
-                />
-                {dniError && (
-                  <p className="text-sm text-destructive mt-1">{dniError}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="name">Nombre *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Nombre"
-                />
-              </div>
-              <div>
-                <Label htmlFor="surname">Apellido *</Label>
-                <Input
-                  id="surname"
-                  value={formData.surname}
-                  onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-                  placeholder="Apellido"
-                />
-              </div>
-              <div>
-                <Label htmlFor="birthday">Fecha de Nacimiento *</Label>
-                <Input
-                  id="birthday"
-                  type="date"
-                  value={formData.birthday}
-                  onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="gender">Genero *</Label>
-                <Select
-                  id="gender"
-                  value={formData.gender}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'MALE' | 'FEMALE' })}
-                >
-                  <option value="MALE">Masculino</option>
-                  <option value="FEMALE">Femenino</option>
-                </Select>
-              </div>
+      <Dialog open={showCreateModal} onClose={() => setShowCreateModal(false)} className="confirm-dialog">
+        <div className="p-6 space-y-4">
+          <h2 className="text-lg font-semibold">Crear Nuevo Atleta</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="dni">DNI *</Label>
+              <DniInput
+                id="dni"
+                value={formData.dni}
+                onChange={(value) => {
+                  setFormData({ ...formData, dni: value })
+                  if (dniError) setDniError('')
+                }}
+                placeholder="12345678"
+              />
+              {dniError && (
+                <p className="text-sm text-destructive mt-1">{dniError}</p>
+              )}
             </div>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowCreateModal(false)}
-                disabled={submitting}
+            <div>
+              <Label htmlFor="name">Nombre *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Nombre"
+              />
+            </div>
+            <div>
+              <Label htmlFor="surname">Apellido *</Label>
+              <Input
+                id="surname"
+                value={formData.surname}
+                onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
+                placeholder="Apellido"
+              />
+            </div>
+            <div>
+              <Label htmlFor="birthday">Fecha de Nacimiento *</Label>
+              <Input
+                id="birthday"
+                type="date"
+                value={formData.birthday}
+                onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
+              />
+            </div>
+            <div className="col-span-2">
+              <Label htmlFor="gender">Genero *</Label>
+              <Select
+                id="gender"
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'MALE' | 'FEMALE' })}
               >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleCreateAthlete}
-                disabled={submitting}
-                className="hover:opacity-90 transition-opacity"
-              >
-                {submitting ? 'Creando...' : 'Crear Atleta'}
-              </Button>
+                <option value="MALE">Masculino</option>
+                <option value="FEMALE">Femenino</option>
+              </Select>
             </div>
           </div>
-        </dialog>
-      )}
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateModal(false)}
+              disabled={submitting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCreateAthlete}
+              disabled={submitting}
+            >
+              {submitting ? 'Creando...' : 'Crear Atleta'}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
 
       <ConfirmDialog
         open={showDeleteDialog}
