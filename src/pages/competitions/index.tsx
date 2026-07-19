@@ -198,7 +198,7 @@ export function CompetitionsPage() {
         <Input
           placeholder="Buscar competencia..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="max-w-sm"
         />
       </div>

@@ -241,7 +241,7 @@ export function CoachesPage() {
             <Input
               placeholder="Buscar por nombre, apellido o DNI..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             />
           </CardContent>
         </Card>

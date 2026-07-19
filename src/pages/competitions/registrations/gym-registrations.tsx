@@ -204,7 +204,7 @@ export function GymRegistrationsPage() {
               id="search"
               placeholder="Nombre del atleta..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
               className="pl-9"
             />
           </div>

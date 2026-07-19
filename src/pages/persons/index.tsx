@@ -121,7 +121,7 @@ export function PersonsPage() {
         <Input
           placeholder="Buscar por nombre, apellido o DNI..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="max-w-sm"
         />
       </div>

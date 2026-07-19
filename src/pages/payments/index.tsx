@@ -371,7 +371,7 @@ export function PaymentsPage() {
           <Input
             placeholder="Buscar por atleta o referencia..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             className="max-w-sm"
           />
         </div>

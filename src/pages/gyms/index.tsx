@@ -131,7 +131,7 @@ export function GymsPage() {
         <Input
           placeholder="Buscar gimnasio..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="max-w-sm"
         />
       </div>
