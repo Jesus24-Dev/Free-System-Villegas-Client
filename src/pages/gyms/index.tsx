@@ -136,7 +136,7 @@ export function GymsPage() {
         />
       </div>
 
-      <DataTable columns={columns} data={filteredGyms} loading={loading} />
+      <DataTable columns={columns} data={filteredGyms} loading={loading} emptyMessage={search ? 'No se encontraron gimnasios para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

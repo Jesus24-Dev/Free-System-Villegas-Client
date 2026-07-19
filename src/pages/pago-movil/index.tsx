@@ -233,7 +233,7 @@ export function PagoMovilPage() {
         </div>
       )}
 
-      <DataTable columns={columns} data={filteredPagoMovils} loading={loading} />
+      <DataTable columns={columns} data={filteredPagoMovils} loading={loading} emptyMessage={search ? 'No se encontraron métodos de pago para tu búsqueda' : undefined} />
 
       <ConfirmDialog
         open={showDeleteDialog}

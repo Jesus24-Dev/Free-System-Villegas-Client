@@ -294,7 +294,7 @@ export function CoachesPage() {
         )}
       </div>
 
-      <DataTable columns={columns} data={filteredCoaches} loading={loading} rowClassName={getRowClassName} />
+      <DataTable columns={columns} data={filteredCoaches} loading={loading} rowClassName={getRowClassName} emptyMessage={search ? 'No se encontraron entrenadores para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

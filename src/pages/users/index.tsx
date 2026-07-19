@@ -106,7 +106,7 @@ export function UsersPage() {
         />
       </div>
 
-      <DataTable columns={columns} data={filteredUsers} loading={loading} />
+      <DataTable columns={columns} data={filteredUsers} loading={loading} emptyMessage={search ? 'No se encontraron usuarios para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

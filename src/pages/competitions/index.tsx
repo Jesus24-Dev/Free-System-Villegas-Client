@@ -203,7 +203,7 @@ export function CompetitionsPage() {
         />
       </div>
 
-      <DataTable columns={columns} data={filteredCompetitions} loading={loading} />
+      <DataTable columns={columns} data={filteredCompetitions} loading={loading} emptyMessage={search ? 'No se encontraron competencias para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

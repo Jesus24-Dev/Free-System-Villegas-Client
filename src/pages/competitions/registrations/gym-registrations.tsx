@@ -211,7 +211,7 @@ export function GymRegistrationsPage() {
         </div>
       </div>
 
-      <DataTable columns={columns} data={filteredRegistrations} loading={loading} />
+      <DataTable columns={columns} data={filteredRegistrations} loading={loading} emptyMessage={search ? 'No se encontraron inscripciones para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>

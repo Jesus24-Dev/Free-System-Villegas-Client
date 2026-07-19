@@ -435,7 +435,7 @@ export function PaymentsPage() {
         </div>
       )}
 
-      <DataTable columns={columns} data={filteredPayments} loading={loading} />
+      <DataTable columns={columns} data={filteredPayments} loading={loading} emptyMessage={search ? 'No se encontraron pagos para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

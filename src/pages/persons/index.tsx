@@ -126,7 +126,7 @@ export function PersonsPage() {
         />
       </div>
 
-      <DataTable columns={columns} data={filteredPersons} loading={loading} />
+      <DataTable columns={columns} data={filteredPersons} loading={loading} emptyMessage={search ? 'No se encontraron personas para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

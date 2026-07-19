@@ -150,7 +150,7 @@ export function AdminAthletesPage() {
         />
       </div>
 
-      <DataTable columns={columns} data={filteredAthletes} loading={loading} />
+      <DataTable columns={columns} data={filteredAthletes} loading={loading} emptyMessage={search ? 'No se encontraron atletas para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
