@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { DniInput } from '@/components/ui/dni-input'
-import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
+import { Users, Trophy, Dumbbell, Building2, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
@@ -100,7 +100,7 @@ function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Gimnasios</CardTitle>
-            <Dumbbell className="h-4 w-4 text-muted-foreground" />
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{loading ? '--' : counts.gyms}</div>
