@@ -117,7 +117,7 @@ export function GymsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Gimnasios</h1>
+        <h1 className="text-3xl font-bold">Gimnasios</h1>
         <Button asChild className="hover:opacity-90 transition-opacity">
           <Link to="/gyms/new">
             <Plus className="mr-2 h-4 w-4" />

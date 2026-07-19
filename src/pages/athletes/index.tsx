@@ -242,7 +242,7 @@ export function AthletesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Atletas</h1>
+        <h1 className="text-3xl font-bold">Atletas</h1>
         <Button
           onClick={() => setShowCreateModal(true)}
           className="hover:opacity-90 transition-opacity"

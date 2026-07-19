@@ -182,7 +182,7 @@ export function CompetitionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Competencias</h1>
+        <h1 className="text-3xl font-bold">Competencias</h1>
         {!isReadOnly && (
           <Button asChild>
             <Link to="/competitions/new">

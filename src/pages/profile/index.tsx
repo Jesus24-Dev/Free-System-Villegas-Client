@@ -71,7 +71,7 @@ export function ProfilePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Perfil del Atleta</h1>
+          <h1 className="text-3xl font-bold">Perfil del Atleta</h1>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -197,7 +197,7 @@ export function ProfilePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Perfil del Entrenador</h1>
+          <h1 className="text-3xl font-bold">Perfil del Entrenador</h1>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -279,7 +279,7 @@ export function ProfilePage() {
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">Perfil no encontrado</h1>
+        <h1 className="text-3xl font-bold">Perfil no encontrado</h1>
       </div>
       <p className="text-muted-foreground">No se pudo cargar el perfil solicitado.</p>
     </div>

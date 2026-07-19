@@ -114,7 +114,7 @@ export function EditAthletePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Editar Atleta</h1>
+          <h1 className="text-3xl font-bold">Editar Atleta</h1>
         </div>
 
         <Card>
@@ -144,7 +144,7 @@ export function EditAthletePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Atleta no encontrado</h1>
+          <h1 className="text-3xl font-bold">Atleta no encontrado</h1>
         </div>
       </div>
     )
@@ -156,7 +156,7 @@ export function EditAthletePage() {
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">Editar Atleta</h1>
+        <h1 className="text-3xl font-bold">Editar Atleta</h1>
       </div>
 
       <Card>

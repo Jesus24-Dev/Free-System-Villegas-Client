@@ -131,7 +131,7 @@ export function AdminAthletesPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Atletas (Admin)</h1>
+        <h1 className="text-3xl font-bold">Atletas (Admin)</h1>
         <Button asChild>
           <Link to="/admin-athletes/new">
             <Plus className="mr-2 h-4 w-4" />
