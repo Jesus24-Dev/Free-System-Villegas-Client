@@ -150,7 +150,7 @@ export function ProfilePage() {
                   {athleteProfile.payments.map((payment, index) => (
                     <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
                       <span className="text-sm">{formatDate(payment.date)}</span>
-                      <span className="text-sm font-medium">${payment.amount}</span>
+                      <span className="text-sm font-medium">BsD {payment.amount}</span>
                       <Badge variant={payment.confirmed ? 'default' : 'secondary'}>
                         {payment.confirmed ? 'Confirmado' : 'Pendiente'}
                       </Badge>

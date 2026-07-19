@@ -657,7 +657,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
               <div className="text-2xl font-bold">{profile.gym.name}</div>
               <p className="text-sm text-muted-foreground">{profile.gym.address}</p>
               <p className="text-sm text-muted-foreground">{profile.gym.state}</p>
-              <p className="text-sm font-medium">Mensualidad: {formatCurrency(profile.gym.monthly_payment)}</p>
+              <p className="text-sm font-medium">Mensualidad: ${profile.gym.monthly_payment}</p>
             </div>
           </CardContent>
         </Card>
