@@ -77,7 +77,7 @@ function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.athletes}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.athletes}</div>
             <Link to="/athletes">
               <Button variant="link" className="px-0 text-sm">Ver todos</Button>
             </Link>
@@ -90,7 +90,7 @@ function AdminDashboard() {
             <Dumbbell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.coaches}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.coaches}</div>
             <Link to="/coaches">
               <Button variant="link" className="px-0 text-sm">Ver todos</Button>
             </Link>
@@ -103,7 +103,7 @@ function AdminDashboard() {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.gyms}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.gyms}</div>
             <Link to="/gyms">
               <Button variant="link" className="px-0 text-sm">Ver todos</Button>
             </Link>
@@ -116,7 +116,7 @@ function AdminDashboard() {
             <Trophy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.competitions}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.competitions}</div>
             <Link to="/competitions">
               <Button variant="link" className="px-0 text-sm">Ver todas</Button>
             </Link>

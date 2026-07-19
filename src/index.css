@@ -86,3 +86,15 @@ dialog[open] {
 dialog.confirm-dialog[open] {
   max-width: 28rem;
 }
+
+/* Skeleton loading */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.skeleton {
+  background: var(--color-muted);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
