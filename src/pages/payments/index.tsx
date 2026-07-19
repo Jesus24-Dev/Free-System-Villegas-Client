@@ -268,12 +268,12 @@ export function PaymentsPage() {
       accessorKey: 'isConfirmed' as const,
       cell: ({ row }: { row: { original: GymPayment } }) => (
         row.original.isConfirmed ? (
-          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+          <Badge variant="success">
             <CheckCircle2 className="mr-1 h-3 w-3" />
             Confirmado
           </Badge>
         ) : (
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+          <Badge variant="warning">
             <Clock className="mr-1 h-3 w-3" />
             Por confirmar
           </Badge>
