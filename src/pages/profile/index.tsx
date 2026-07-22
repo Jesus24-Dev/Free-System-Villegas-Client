@@ -6,7 +6,7 @@ import { gymApi } from '@/api/gyms'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, User, Dumbbell, CreditCard, Trophy } from 'lucide-react'
+import { ArrowLeft, User, Dumbbell, CreditCard, Trophy, Loader2 } from 'lucide-react'
 import type { AthleteProfile, CoachProfile, Gym } from '@/types'
 
 export function ProfilePage() {
@@ -58,8 +58,8 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Cargando perfil...</div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -71,7 +71,7 @@ export function ProfilePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Perfil del Atleta</h1>
+          <h1 className="text-3xl font-bold">Perfil del Atleta</h1>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -150,7 +150,7 @@ export function ProfilePage() {
                   {athleteProfile.payments.map((payment, index) => (
                     <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
                       <span className="text-sm">{formatDate(payment.date)}</span>
-                      <span className="text-sm font-medium">${payment.amount}</span>
+                      <span className="text-sm font-medium">BsD {payment.amount}</span>
                       <Badge variant={payment.confirmed ? 'default' : 'secondary'}>
                         {payment.confirmed ? 'Confirmado' : 'Pendiente'}
                       </Badge>
@@ -197,7 +197,7 @@ export function ProfilePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Perfil del Entrenador</h1>
+          <h1 className="text-3xl font-bold">Perfil del Entrenador</h1>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -279,7 +279,7 @@ export function ProfilePage() {
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">Perfil no encontrado</h1>
+        <h1 className="text-3xl font-bold">Perfil no encontrado</h1>
       </div>
       <p className="text-muted-foreground">No se pudo cargar el perfil solicitado.</p>
     </div>

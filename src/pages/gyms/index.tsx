@@ -117,7 +117,7 @@ export function GymsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Gimnasios</h1>
+        <h1 className="text-3xl font-bold">Gimnasios</h1>
         <Button asChild className="hover:opacity-90 transition-opacity">
           <Link to="/gyms/new">
             <Plus className="mr-2 h-4 w-4" />
@@ -131,12 +131,12 @@ export function GymsPage() {
         <Input
           placeholder="Buscar gimnasio..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="max-w-sm"
         />
       </div>
 
-      <DataTable columns={columns} data={filteredGyms} loading={loading} />
+      <DataTable columns={columns} data={filteredGyms} loading={loading} emptyMessage={search ? 'No se encontraron gimnasios para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

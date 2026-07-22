@@ -7,6 +7,7 @@ import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Plus, Search, Trash2, Check, Pencil, Clock, CheckCircle2 } from 'lucide-react'
@@ -268,12 +269,12 @@ export function PaymentsPage() {
       accessorKey: 'isConfirmed' as const,
       cell: ({ row }: { row: { original: GymPayment } }) => (
         row.original.isConfirmed ? (
-          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+          <Badge variant="success">
             <CheckCircle2 className="mr-1 h-3 w-3" />
             Confirmado
           </Badge>
         ) : (
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+          <Badge variant="warning">
             <Clock className="mr-1 h-3 w-3" />
             Por confirmar
           </Badge>
@@ -327,7 +328,7 @@ export function PaymentsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Pagos de Gimnasio</h1>
+        <h1 className="text-3xl font-bold">Pagos de Gimnasio</h1>
         {isCoach && (
           <Button onClick={() => handleOpenForm()} className="hover:opacity-90 transition-opacity">
             <Plus className="mr-2 h-4 w-4" />
@@ -370,7 +371,7 @@ export function PaymentsPage() {
           <Input
             placeholder="Buscar por atleta o referencia..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             className="max-w-sm"
           />
         </div>
@@ -401,11 +402,10 @@ export function PaymentsPage() {
             </div>
             <div>
               <Label htmlFor="athlete">Atleta</Label>
-              <select
+              <Select
                 id="athlete"
                 value={formData.athlete_id}
                 onChange={(e) => setFormData({ ...formData, athlete_id: e.target.value })}
-                className="w-full border rounded-md px-3 py-2 text-sm"
               >
                 <option value="">Seleccionar atleta</option>
                 {athletes.map((athlete) => (
@@ -413,7 +413,7 @@ export function PaymentsPage() {
                     {athlete.name} {athlete.surname}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div className="col-span-2">
               <Label htmlFor="reference">Referencia de Pago</Label>
@@ -435,7 +435,7 @@ export function PaymentsPage() {
         </div>
       )}
 
-      <DataTable columns={columns} data={filteredPayments} loading={loading} />
+      <DataTable columns={columns} data={filteredPayments} loading={loading} emptyMessage={search ? 'No se encontraron pagos para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

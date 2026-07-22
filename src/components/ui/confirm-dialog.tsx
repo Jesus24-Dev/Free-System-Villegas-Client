@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -22,49 +22,20 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-
-    if (open) {
-      dialog.showModal()
-    } else {
-      dialog.close()
-    }
-  }, [open])
-
   return (
-    <dialog
-      ref={dialogRef}
-      className="confirm-dialog"
-      onClick={(e) => {
-        if (e.target === dialogRef.current) {
-          onCancel()
-        }
-      }}
-    >
+    <Dialog open={open} onClose={onCancel} className="confirm-dialog">
       <div className="p-6 space-y-4">
         <h2 className="text-lg font-semibold">{title}</h2>
         <p className="text-sm text-muted-foreground">{description}</p>
         <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={onCancel}
-            className="hover:bg-muted transition-colors"
-          >
+          <Button variant="outline" onClick={onCancel}>
             {cancelText}
           </Button>
-          <Button
-            variant={variant}
-            onClick={onConfirm}
-            className="hover:opacity-90 transition-opacity"
-          >
+          <Button variant={variant} onClick={onConfirm}>
             {confirmText}
           </Button>
         </div>
       </div>
-    </dialog>
+    </Dialog>
   )
 }

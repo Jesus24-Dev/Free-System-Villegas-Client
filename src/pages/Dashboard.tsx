@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { DniInput } from '@/components/ui/dni-input'
-import { Users, Trophy, Dumbbell, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
+import { Loader2, Users, Trophy, Dumbbell, Building2, CreditCard, Plus, Check, X, MapPin, Trash2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { athleteApi } from '@/api/athletes'
@@ -66,7 +67,7 @@ function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Panel de Control</h1>
-        <p className="text-muted-foreground">Bienvenido a Free System Villegas</p>
+        <p className="text-muted-foreground">Bienvenido a Sistema Libre Villegas</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -76,7 +77,7 @@ function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.athletes}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.athletes}</div>
             <Link to="/athletes">
               <Button variant="link" className="px-0 text-sm">Ver todos</Button>
             </Link>
@@ -89,7 +90,7 @@ function AdminDashboard() {
             <Dumbbell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.coaches}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.coaches}</div>
             <Link to="/coaches">
               <Button variant="link" className="px-0 text-sm">Ver todos</Button>
             </Link>
@@ -99,10 +100,10 @@ function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Gimnasios</CardTitle>
-            <Dumbbell className="h-4 w-4 text-muted-foreground" />
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.gyms}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.gyms}</div>
             <Link to="/gyms">
               <Button variant="link" className="px-0 text-sm">Ver todos</Button>
             </Link>
@@ -115,7 +116,7 @@ function AdminDashboard() {
             <Trophy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '--' : counts.competitions}</div>
+            <div className="text-2xl font-bold">{loading ? <div className="skeleton h-8 w-16" /> : counts.competitions}</div>
             <Link to="/competitions">
               <Button variant="link" className="px-0 text-sm">Ver todas</Button>
             </Link>
@@ -259,6 +260,9 @@ function CoachDashboard() {
         <div>
           <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
           <p className="text-muted-foreground">Cargando informacion de tu gimnasio...</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
     )
@@ -509,38 +513,19 @@ function CoachDashboard() {
         </CardContent>
       </Card>
 
-      {showDeletePagoDialog && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowDeletePagoDialog(false)
-              setPagoToDelete(null)
-            }
-          }}
-        >
-          <div className="bg-background rounded-lg p-6 space-y-4 max-w-md">
-            <h3 className="font-semibold">Eliminar Metodo de Pago Movil</h3>
-            <p className="text-sm text-muted-foreground">
-              ¿Estas seguro de eliminar este metodo de pago movil? Esta accion no se puede deshacer.
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowDeletePagoDialog(false)
-                  setPagoToDelete(null)
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button variant="destructive" onClick={handleDeletePagoMovil}>
-                Eliminar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={showDeletePagoDialog}
+        title="Eliminar Metodo de Pago Movil"
+        description="¿Estas seguro de eliminar este metodo de pago movil? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeletePagoMovil}
+        onCancel={() => {
+          setShowDeletePagoDialog(false)
+          setPagoToDelete(null)
+        }}
+      />
     </div>
   )
 }
@@ -622,6 +607,9 @@ function AthleteDashboard({ userId }: { userId: string }) {
           <h1 className="text-3xl font-bold">Mi Panel</h1>
           <p className="text-muted-foreground">Cargando informacion...</p>
         </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
       </div>
     )
   }
@@ -657,7 +645,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
               <div className="text-2xl font-bold">{profile.gym.name}</div>
               <p className="text-sm text-muted-foreground">{profile.gym.address}</p>
               <p className="text-sm text-muted-foreground">{profile.gym.state}</p>
-              <p className="text-sm font-medium">Mensualidad: {formatCurrency(profile.gym.monthly_payment)}</p>
+              <p className="text-sm font-medium">Mensualidad: ${profile.gym.monthly_payment}</p>
             </div>
           </CardContent>
         </Card>

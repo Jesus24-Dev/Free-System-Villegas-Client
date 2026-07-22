@@ -15,7 +15,8 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
 import { DniInput } from '@/components/ui/dni-input'
-import { Loader2, AlertCircle, UserPlus } from 'lucide-react'
+import { Loader2, AlertCircle, UserPlus, Mail, Lock } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type { AxiosError } from 'axios'
 import type { ApiError, PersonByDniResponse } from '@/types'
 
@@ -36,6 +37,7 @@ export function Register() {
     register,
     handleSubmit,
     control,
+    getValues,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -212,18 +214,22 @@ export function Register() {
           <p className="text-sm font-medium">{personData?.name} {personData?.surname}</p>
           <p className="text-xs text-muted-foreground">DNI: {personData?.dni}</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-blue-50 dark:bg-blue-950/30 p-3 rounded-md">
-          <UserPlus className="h-4 w-4 shrink-0 text-blue-600" />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/10 p-3 rounded-md">
+          <UserPlus className="h-4 w-4 shrink-0 text-secondary" />
           <span>Esta persona ya tiene un registro como atleta. Solo necesitas crear tu cuenta de acceso.</span>
         </div>
         <div className="space-y-2">
           <Label htmlFor="link-email">Correo electronico</Label>
-          <Input
-            id="link-email"
-            type="email"
-            placeholder="juan@ejemplo.com"
-            {...register('email')}
-          />
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="link-email"
+              type="email"
+              placeholder="juan@ejemplo.com"
+              className="pl-10"
+              {...register('email')}
+            />
+          </div>
           {(errors.email || serverErrors.email) && (
             <p className="text-sm text-destructive">
               {errors.email?.message || serverErrors.email}
@@ -232,12 +238,16 @@ export function Register() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="link-password">Contrasena</Label>
-          <Input
-            id="link-password"
-            type="password"
-            placeholder="Min. 8 caracteres"
-            {...register('password')}
-          />
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="link-password"
+              type="password"
+              placeholder="Min. 8 caracteres"
+              className="pl-10"
+              {...register('password')}
+            />
+          </div>
           {(errors.password || serverErrors.password) && (
             <p className="text-sm text-destructive">
               {errors.password?.message || serverErrors.password}
@@ -251,9 +261,8 @@ export function Register() {
           className="w-full"
           disabled={isLoading}
           onClick={() => {
-            const email = document.getElementById('link-email') as HTMLInputElement
-            const password = document.getElementById('link-password') as HTMLInputElement
-            onLinkAccountSubmit({ email: email.value, password: password.value })
+            const values = getValues()
+            onLinkAccountSubmit({ email: values.email, password: values.password })
           }}
         >
           {isLoading ? (
@@ -302,7 +311,10 @@ export function Register() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Correo electronico</Label>
-          <Input id="email" type="email" placeholder="juan@ejemplo.com" {...register('email')} />
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input id="email" type="email" placeholder="juan@ejemplo.com" className="pl-10" {...register('email')} />
+          </div>
           {(errors.email || serverErrors.email) && (
             <p className="text-sm text-destructive">
               {errors.email?.message || serverErrors.email}
@@ -368,7 +380,10 @@ export function Register() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Contrasena</Label>
-          <Input id="password" type="password" placeholder="Min. 8 caracteres" {...register('password')} />
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input id="password" type="password" placeholder="Min. 8 caracteres" className="pl-10" {...register('password')} />
+          </div>
           {(errors.password || serverErrors.password) && (
             <p className="text-sm text-destructive">
               {errors.password?.message || serverErrors.password}
@@ -428,6 +443,24 @@ export function Register() {
             {step === 'full-register' && 'Registrate para crear una nueva cuenta'}
           </CardDescription>
         </CardHeader>
+        <div className="px-6 pb-2">
+          <div className="flex items-center gap-2">
+            <div className={cn('flex items-center gap-2', step === 'dni' ? 'text-primary' : 'text-muted-foreground')}>
+              <div className={cn('w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium', step === 'dni' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>1</div>
+              <span className="text-xs hidden sm:inline">Verificar</span>
+            </div>
+            <div className={cn('flex-1 h-px', step !== 'dni' ? 'bg-primary' : 'bg-muted')} />
+            <div className={cn('flex items-center gap-2', step === 'link-account' ? 'text-primary' : 'text-muted-foreground')}>
+              <div className={cn('w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium', step === 'link-account' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>2</div>
+              <span className="text-xs hidden sm:inline">Vincular</span>
+            </div>
+            <div className={cn('flex-1 h-px', step === 'full-register' ? 'bg-primary' : 'bg-muted')} />
+            <div className={cn('flex items-center gap-2', step === 'full-register' ? 'text-primary' : 'text-muted-foreground')}>
+              <div className={cn('w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium', step === 'full-register' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>3</div>
+              <span className="text-xs hidden sm:inline">Registro</span>
+            </div>
+          </div>
+        </div>
         {step === 'dni' && renderDniStep()}
         {step === 'link-account' && renderLinkAccountStep()}
         {step === 'full-register' && renderFullRegisterStep()}

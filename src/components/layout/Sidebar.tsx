@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useAuthStore, extractRole } from '@/stores/authStore'
@@ -68,7 +68,16 @@ export function Sidebar() {
   const { user, hasAnyRole, viewAs, setViewAs } = useAuthStore()
   const { sidebarOpen, setSidebarOpen } = useUIStore()
   const location = useLocation()
-  const [adminOpen, setAdminOpen] = useState(false)
+
+  const adminItems = navEntries.find(e => e.type === 'collapsible' && e.label === 'Gestión Admin')
+  const isAdminRouteActive = adminItems?.type === 'collapsible'
+    ? adminItems.items.some(item => location.pathname === item.to)
+    : false
+  const [adminOpen, setAdminOpen] = useState(isAdminRouteActive)
+
+  useEffect(() => {
+    if (isAdminRouteActive) setAdminOpen(true)
+  }, [isAdminRouteActive])
 
   const userRole = user ? extractRole(user) : ''
   const hasBothRoles = hasAnyRole(['COACH']) && hasAnyRole(['ATHLETE'])
@@ -91,7 +100,7 @@ export function Sidebar() {
     <>
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-200"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -107,7 +116,7 @@ export function Sidebar() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">FS</span>
             </div>
-            <span className="font-semibold text-lg">Free System</span>
+            <span className="font-semibold text-lg">Sistema Libre</span>
           </div>
           <Button
             variant="ghost"

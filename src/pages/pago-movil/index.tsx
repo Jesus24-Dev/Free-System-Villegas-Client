@@ -155,7 +155,7 @@ export function PagoMovilPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Pago Móvil</h1>
+        <h1 className="text-3xl font-bold">Pago Móvil</h1>
         <Button onClick={() => setShowForm(true)} disabled={!selectedGymId} className="hover:opacity-90 transition-opacity">
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Pago Móvil
@@ -233,7 +233,7 @@ export function PagoMovilPage() {
         </div>
       )}
 
-      <DataTable columns={columns} data={filteredPagoMovils} loading={loading} />
+      <DataTable columns={columns} data={filteredPagoMovils} loading={loading} emptyMessage={search ? 'No se encontraron métodos de pago para tu búsqueda' : undefined} />
 
       <ConfirmDialog
         open={showDeleteDialog}
