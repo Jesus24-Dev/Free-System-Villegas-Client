@@ -164,7 +164,7 @@ export function GymRegistrationsPage() {
   if (!isAdmin && !gymId) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Inscripciones del Gimnasio</h1>
+        <h1 className="text-3xl font-bold">Inscripciones del Gimnasio</h1>
         <p className="text-muted-foreground">No tienes un gimnasio asignado.</p>
       </div>
     )
@@ -173,7 +173,7 @@ export function GymRegistrationsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Inscripciones del Gimnasio</h1>
+        <h1 className="text-3xl font-bold">Inscripciones del Gimnasio</h1>
       </div>
 
       <div className="flex items-center gap-4">
@@ -204,14 +204,14 @@ export function GymRegistrationsPage() {
               id="search"
               placeholder="Nombre del atleta..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
               className="pl-9"
             />
           </div>
         </div>
       </div>
 
-      <DataTable columns={columns} data={filteredRegistrations} loading={loading} />
+      <DataTable columns={columns} data={filteredRegistrations} loading={loading} emptyMessage={search ? 'No se encontraron inscripciones para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>

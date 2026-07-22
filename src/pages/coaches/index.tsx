@@ -226,7 +226,7 @@ export function CoachesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Entrenadores</h1>
+        <h1 className="text-3xl font-bold">Entrenadores</h1>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -241,7 +241,7 @@ export function CoachesPage() {
             <Input
               placeholder="Buscar por nombre, apellido o DNI..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             />
           </CardContent>
         </Card>
@@ -294,7 +294,7 @@ export function CoachesPage() {
         )}
       </div>
 
-      <DataTable columns={columns} data={filteredCoaches} loading={loading} rowClassName={getRowClassName} />
+      <DataTable columns={columns} data={filteredCoaches} loading={loading} rowClassName={getRowClassName} emptyMessage={search ? 'No se encontraron entrenadores para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

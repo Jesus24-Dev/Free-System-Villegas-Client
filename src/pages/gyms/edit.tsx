@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { VENEZUELAN_STATES } from '@/types'
@@ -103,8 +103,8 @@ export function EditGymPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Cargando...</div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -116,7 +116,7 @@ export function EditGymPage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Gimnasio no encontrado</h1>
+          <h1 className="text-3xl font-bold">Gimnasio no encontrado</h1>
         </div>
       </div>
     )
@@ -129,7 +129,7 @@ export function EditGymPage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Sin permisos</h1>
+          <h1 className="text-3xl font-bold">Sin permisos</h1>
         </div>
         <Card>
           <CardContent className="pt-6">
@@ -149,7 +149,7 @@ export function EditGymPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Editar Gimnasio</h1>
+          <h1 className="text-3xl font-bold">Editar Gimnasio</h1>
           <p className="text-muted-foreground">{gym.name}</p>
         </div>
       </div>

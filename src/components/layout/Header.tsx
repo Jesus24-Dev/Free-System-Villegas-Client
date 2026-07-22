@@ -15,7 +15,7 @@ export function Header() {
         <Button variant="ghost" size="icon" onClick={toggleSidebar} className="lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
-        <h1 className="text-lg font-semibold hidden sm:block">Free System Villegas</h1>
+        <h1 className="text-lg font-semibold hidden sm:block">Sistema Libre Villegas</h1>
       </div>
 
       <div className="flex items-center gap-4">

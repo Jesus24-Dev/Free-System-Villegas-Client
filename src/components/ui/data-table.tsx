@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { Loader2 } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -18,19 +18,23 @@ interface DataTableProps<T> {
   columns: Column<T>[]
   data: T[]
   loading?: boolean
+  onRowClick?: (row: T) => void
   rowClassName?: (row: T, index: number) => string
+  emptyMessage?: string
 }
 
 export function DataTable<T extends object>({
   columns,
   data,
   loading,
+  onRowClick,
   rowClassName,
+  emptyMessage = 'No hay datos disponibles',
 }: DataTableProps<T>) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Cargando...</div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -38,7 +42,7 @@ export function DataTable<T extends object>({
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">No hay datos disponibles</div>
+        <div className="text-muted-foreground">{emptyMessage}</div>
       </div>
     )
   }
@@ -55,9 +59,10 @@ export function DataTable<T extends object>({
         </TableHeader>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow 
+            <TableRow
               key={index}
-              className={rowClassName ? rowClassName(row, index) : undefined}
+              onClick={() => onRowClick?.(row)}
+              className={onRowClick ? 'cursor-pointer' : rowClassName ? rowClassName(row, index) : undefined}
             >
               {columns.map((column) => (
                 <TableCell key={column.accessorKey}>

@@ -364,7 +364,7 @@ export function CompetitionRegistrationsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Inscripciones a Competencias</h1>
+        <h1 className="text-3xl font-bold">Inscripciones a Competencias</h1>
         {isCoach && (
           <Button onClick={handleOpenForm} disabled={!selectedCompetitionId}>
             <Plus className="mr-2 h-4 w-4" />
@@ -406,7 +406,7 @@ export function CompetitionRegistrationsPage() {
               id="search"
               placeholder="Nombre del atleta..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
               className="pl-9"
             />
           </div>
@@ -533,7 +533,7 @@ export function CompetitionRegistrationsPage() {
         </div>
       )}
 
-      <DataTable columns={columns} data={filteredRegistrations} loading={loading} />
+      <DataTable columns={columns} data={filteredRegistrations} loading={loading} emptyMessage={search ? 'No se encontraron inscripciones para tu búsqueda' : undefined} />
 
       {selectedCompetitionId && (
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

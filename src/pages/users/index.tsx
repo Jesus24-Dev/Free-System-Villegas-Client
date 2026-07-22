@@ -93,7 +93,7 @@ export function UsersPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Usuarios</h1>
+        <h1 className="text-3xl font-bold">Usuarios</h1>
       </div>
 
       <div className="flex items-center gap-2">
@@ -101,12 +101,12 @@ export function UsersPage() {
         <Input
           placeholder="Buscar por email..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="max-w-sm"
         />
       </div>
 
-      <DataTable columns={columns} data={filteredUsers} loading={loading} />
+      <DataTable columns={columns} data={filteredUsers} loading={loading} emptyMessage={search ? 'No se encontraron usuarios para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

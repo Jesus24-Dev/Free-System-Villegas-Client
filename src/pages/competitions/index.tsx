@@ -182,7 +182,7 @@ export function CompetitionsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Competencias</h1>
+        <h1 className="text-3xl font-bold">Competencias</h1>
         {!isReadOnly && (
           <Button asChild>
             <Link to="/competitions/new">
@@ -198,12 +198,12 @@ export function CompetitionsPage() {
         <Input
           placeholder="Buscar competencia..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="max-w-sm"
         />
       </div>
 
-      <DataTable columns={columns} data={filteredCompetitions} loading={loading} />
+      <DataTable columns={columns} data={filteredCompetitions} loading={loading} emptyMessage={search ? 'No se encontraron competencias para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 

@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DniInput } from '@/components/ui/dni-input'
-import { ArrowLeft, AlertTriangle } from 'lucide-react'
+import { Select } from '@/components/ui/select'
+import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Athlete } from '@/types'
 
@@ -101,8 +102,8 @@ export function EditAthletePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Cargando...</div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -114,7 +115,7 @@ export function EditAthletePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Editar Atleta</h1>
+          <h1 className="text-3xl font-bold">Editar Atleta</h1>
         </div>
 
         <Card>
@@ -144,7 +145,7 @@ export function EditAthletePage() {
           <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Atleta no encontrado</h1>
+          <h1 className="text-3xl font-bold">Atleta no encontrado</h1>
         </div>
       </div>
     )
@@ -156,7 +157,7 @@ export function EditAthletePage() {
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">Editar Atleta</h1>
+        <h1 className="text-3xl font-bold">Editar Atleta</h1>
       </div>
 
       <Card>
@@ -209,15 +210,14 @@ export function EditAthletePage() {
             </div>
             <div className="col-span-2">
               <Label htmlFor="gender">Genero *</Label>
-              <select
+              <Select
                 id="gender"
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'MALE' | 'FEMALE' })}
-                className="w-full border rounded-md px-3 py-2 text-sm"
               >
                 <option value="MALE">Masculino</option>
                 <option value="FEMALE">Femenino</option>
-              </select>
+              </Select>
             </div>
           </div>
 
