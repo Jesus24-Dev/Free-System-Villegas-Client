@@ -289,7 +289,7 @@ export function Register() {
   const renderFullRegisterStep = () => (
     <>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nombre</Label>
             <Input id="name" placeholder="Juan" {...register('name')} />
@@ -341,7 +341,7 @@ export function Register() {
             </p>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="birthday">Fecha de nacimiento</Label>
             <Input id="birthday" type="date" {...register('birthday')} />

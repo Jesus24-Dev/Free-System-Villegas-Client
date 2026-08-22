@@ -327,7 +327,7 @@ export function PaymentsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Pagos de Gimnasio</h1>
         {isCoach && (
           <Button onClick={() => handleOpenForm()} className="hover:opacity-90 transition-opacity">
@@ -337,7 +337,7 @@ export function PaymentsPage() {
         )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex gap-2">
           <Button
             variant={filter === 'pending' ? 'default' : 'outline'}
@@ -366,13 +366,13 @@ export function PaymentsPage() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-2 sm:ml-auto">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por atleta o referencia..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-            className="max-w-sm"
+            className="w-full sm:max-w-sm"
           />
         </div>
       </div>
@@ -380,7 +380,7 @@ export function PaymentsPage() {
       {showForm && isCoach && (
         <div className="border rounded-lg p-4 space-y-4 bg-muted/50">
           <h3 className="font-semibold">{editingId ? 'Editar Pago' : 'Nuevo Pago'}</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
               <Label htmlFor="day_payed">Fecha de Pago</Label>
               <Input
@@ -415,7 +415,7 @@ export function PaymentsPage() {
                 ))}
               </Select>
             </div>
-            <div className="col-span-2">
+            <div>
               <Label htmlFor="reference">Referencia de Pago</Label>
               <Input
                 id="reference"
@@ -424,7 +424,7 @@ export function PaymentsPage() {
               />
             </div>
           </div>
-          <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
             <Button onClick={handleSubmit} className="hover:opacity-90 transition-opacity">
               {editingId ? 'Actualizar' : 'Crear'}
             </Button>

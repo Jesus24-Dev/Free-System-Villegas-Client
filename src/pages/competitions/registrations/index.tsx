@@ -363,7 +363,7 @@ export function CompetitionRegistrationsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Inscripciones a Competencias</h1>
         {isCoach && (
           <Button onClick={handleOpenForm} disabled={!selectedCompetitionId}>
@@ -429,7 +429,7 @@ export function CompetitionRegistrationsPage() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="athlete">Atleta</Label>
               <Select

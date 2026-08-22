@@ -154,7 +154,7 @@ export function PagoMovilPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Pago Móvil</h1>
         <Button onClick={() => setShowForm(true)} disabled={!selectedGymId} className="hover:opacity-90 transition-opacity">
           <Plus className="mr-2 h-4 w-4" />
@@ -162,7 +162,7 @@ export function PagoMovilPage() {
         </Button>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 max-w-sm">
           <Label htmlFor="gym">Gimnasio</Label>
           <Select
@@ -197,7 +197,7 @@ export function PagoMovilPage() {
       {showForm && (
         <div className="border rounded-lg p-4 space-y-4 bg-muted/50">
           <h3 className="font-semibold">Nuevo Pago Móvil</h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="bank">Banco</Label>
               <Input

@@ -130,7 +130,7 @@ export function AdminCoachesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Entrenadores (Admin)</h1>
         <Button asChild>
           <Link to="/admin-coaches/new">
@@ -146,7 +146,7 @@ export function AdminCoachesPage() {
           placeholder="Buscar por nombre, apellido o DNI..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
       </div>
 

@@ -435,7 +435,7 @@ function CoachDashboard() {
           {showPagoForm && (
             <div className="border rounded-lg p-4 space-y-4 bg-muted/50 mb-4">
               <h4 className="font-semibold text-sm">Nuevo Metodo de Pago Movil</h4>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="bank">Banco</Label>
                   <Input
@@ -689,7 +689,7 @@ function AthleteDashboard({ userId }: { userId: string }) {
               </Button>
             ) : (
               <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="day_payed">Fecha</Label>
                     <Input

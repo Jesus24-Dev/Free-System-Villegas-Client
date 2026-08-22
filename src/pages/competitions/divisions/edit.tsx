@@ -135,7 +135,7 @@ export function EditCompetitionDivisionPage() {
             </Select>
             {errors.competition_id && <p className="text-sm text-destructive mt-1">{errors.competition_id}</p>}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="mode">Modo de Combate *</Label>
               <Select
@@ -165,7 +165,7 @@ export function EditCompetitionDivisionPage() {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="gender">Genero *</Label>
               <Select
