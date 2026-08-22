@@ -166,4 +166,8 @@ export const competitionRegistrationApi = {
   delete: async (id: string): Promise<void> => {
     await api.delete(`/competition-registration/${id}`)
   },
+
+  removeByAthleteAndCompetition: async (athleteId: string, competitionId: string, divisionId: string): Promise<void> => {
+    await api.delete(`/competition-registration/athlete/${athleteId}/competition/${competitionId}/division/${divisionId}`)
+  },
 }

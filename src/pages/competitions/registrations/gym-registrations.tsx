@@ -2,14 +2,16 @@ import { useState, useEffect, useCallback } from 'react'
 import { competitionApi, competitionRegistrationApi } from '@/api/competitions'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Search } from 'lucide-react'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore, extractRole } from '@/stores/authStore'
-import type { Competition, CompetitionRegistration, CombatMode, WeightCategory } from '@/types'
+import type { Competition, CompetitionRegistration, CompetitionStatus, CombatMode, WeightCategory } from '@/types'
 import { COMBAT_MODE_OPTIONS, WEIGHT_CATEGORY_OPTIONS } from '@/types'
 
 const combatModeLabels: Record<CombatMode, string> = Object.fromEntries(
@@ -20,10 +22,18 @@ const weightCategoryLabels: Record<WeightCategory, string> = Object.fromEntries(
   WEIGHT_CATEGORY_OPTIONS.map((opt) => [opt.value, opt.label])
 ) as Record<WeightCategory, string>
 
+const competitionStatusLabels: Record<CompetitionStatus, string> = {
+  DRAFT: 'Borrador',
+  OPEN: 'Abierta',
+  CLOSED: 'Cerrada',
+  FINISHED: 'Finalizada',
+}
+
 export function GymRegistrationsPage() {
   const { user, gymId } = useAuthStore()
   const userRole = user ? extractRole(user) : ''
   const isAdmin = userRole === 'ADMIN'
+  const isAthlete = userRole === 'ATHLETE'
 
   const [registrations, setRegistrations] = useState<CompetitionRegistration[]>([])
   const [competitions, setCompetitions] = useState<Competition[]>([])
@@ -33,6 +43,9 @@ export function GymRegistrationsPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 10
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [registrationToDelete, setRegistrationToDelete] = useState<{ athleteId: string; competitionId: string; divisionId: string } | null>(null)
 
   const loadCompetitions = async () => {
     try {
@@ -97,6 +110,35 @@ export function GymRegistrationsPage() {
     }
   }, [isAdmin, gymId, loadRegistrations])
 
+  const handleDeleteClick = (registration: CompetitionRegistration) => {
+    const competitionId = registration.division?.competition_id || registration.division?.competition?.id
+    if (!competitionId || !registration.athlete?.id || !registration.division?.id) return
+    setRegistrationToDelete({
+      athleteId: registration.athlete.id,
+      competitionId,
+      divisionId: registration.division.id,
+    })
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!registrationToDelete) return
+    try {
+      await competitionRegistrationApi.removeByAthleteAndCompetition(
+        registrationToDelete.athleteId,
+        registrationToDelete.competitionId,
+        registrationToDelete.divisionId
+      )
+      toast.success('Inscripción eliminada correctamente')
+      loadRegistrations()
+    } catch {
+      toast.error('Error al eliminar inscripción')
+    } finally {
+      setShowDeleteDialog(false)
+      setRegistrationToDelete(null)
+    }
+  }
+
   const columns = [
     {
       header: 'Atleta',
@@ -127,6 +169,19 @@ export function GymRegistrationsPage() {
       },
     },
     {
+      header: 'Estado',
+      accessorKey: 'competition_status' as const,
+      cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
+        const status = row.original.division?.competition?.status
+        if (!status) return 'N/A'
+        return (
+          <Badge variant={status === 'OPEN' ? 'default' : status === 'CLOSED' ? 'destructive' : 'secondary'}>
+            {competitionStatusLabels[status]}
+          </Badge>
+        )
+      },
+    },
+    {
       header: 'Modo',
       accessorKey: 'division_mode' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
@@ -152,6 +207,28 @@ export function GymRegistrationsPage() {
         return division ? `${division.weight} kg` : 'N/A'
       },
     },
+    ...(!isAthlete
+      ? [
+          {
+            header: 'Acciones',
+            accessorKey: 'id' as const,
+            cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
+              const isOpen = row.original.division?.competition?.status === 'OPEN'
+              return (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={!isOpen}
+                  title={isOpen ? 'Eliminar inscripción' : 'Solo se pueden eliminar inscripciones de competencias abiertas'}
+                  onClick={() => handleDeleteClick(row.original)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )
+            },
+          },
+        ]
+      : []),
   ]
 
   const filteredRegistrations = registrations.filter((reg) => {
@@ -214,6 +291,20 @@ export function GymRegistrationsPage() {
       <DataTable columns={columns} data={filteredRegistrations} loading={loading} emptyMessage={search ? 'No se encontraron inscripciones para tu búsqueda' : undefined} />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Inscripción"
+        description="¿Estás seguro de eliminar esta inscripción? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => {
+          setShowDeleteDialog(false)
+          setRegistrationToDelete(null)
+        }}
+      />
     </div>
   )
 }
