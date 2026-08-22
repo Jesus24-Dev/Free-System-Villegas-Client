@@ -100,38 +100,39 @@ export function Sidebar() {
     <>
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-200"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar text-sidebar-foreground transition-transform lg:translate-x-0 lg:static lg:z-auto',
+          'fixed left-0 top-0 z-40 h-screen w-64 text-sidebar-foreground transition-all duration-300 lg:translate-x-0 lg:static lg:z-auto',
+          'bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-foreground/10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg shadow-red-500/30">
               <span className="text-white font-bold text-sm">FS</span>
             </div>
-            <span className="font-semibold text-lg">Sistema Libre</span>
+            <span className="font-semibold text-lg tracking-tight">Sistema Libre</span>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-sidebar-foreground hover:bg-sidebar-foreground/10"
+            className="lg:hidden text-sidebar-foreground hover:bg-white/10"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="h-5 w-5" />
           </Button>
         </div>
 
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100%-65px)]">
+        <nav className="p-3 space-y-1 overflow-y-auto h-[calc(100%-65px)]">
           {hasBothRoles && (
-            <div className="mb-4 p-2 bg-sidebar-foreground/5 rounded-md">
-              <div className="flex items-center gap-2 text-xs text-sidebar-foreground/60 mb-2">
+            <div className="mb-4 p-3 bg-white/5 rounded-lg border border-white/10">
+              <div className="flex items-center gap-2 text-xs text-white/50 mb-2">
                 <ArrowRightLeft className="h-3 w-3" />
                 <span>Vista como:</span>
               </div>
@@ -139,7 +140,12 @@ export function Sidebar() {
                 <Button
                   variant={viewAs === 'COACH' ? 'default' : 'ghost'}
                   size="sm"
-                  className="flex-1 text-xs"
+                  className={cn(
+                    'flex-1 text-xs',
+                    viewAs === 'COACH'
+                      ? 'bg-primary shadow-lg shadow-primary/30'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  )}
                   onClick={() => setViewAs('COACH')}
                 >
                   Entrenador
@@ -147,7 +153,12 @@ export function Sidebar() {
                 <Button
                   variant={viewAs === 'ATHLETE' ? 'default' : 'ghost'}
                   size="sm"
-                  className="flex-1 text-xs"
+                  className={cn(
+                    'flex-1 text-xs',
+                    viewAs === 'ATHLETE'
+                      ? 'bg-primary shadow-lg shadow-primary/30'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  )}
                   onClick={() => setViewAs('ATHLETE')}
                 >
                   Atleta
@@ -164,10 +175,10 @@ export function Sidebar() {
                   <button
                     onClick={() => setAdminOpen(!adminOpen)}
                     className={cn(
-                      'flex items-center justify-between w-full px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                      'flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                       isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-sidebar-foreground/80 hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground'
+                        ? 'bg-primary/15 text-white border-l-2 border-primary ml-0 pl-[10px]'
+                        : 'text-white/60 hover:bg-white/10 hover:text-white'
                     )}
                   >
                     <div className="flex items-center gap-3">
@@ -182,7 +193,7 @@ export function Sidebar() {
                     />
                   </button>
                   {adminOpen && (
-                    <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-foreground/10 pl-3">
+                    <div className="ml-4 mt-1 space-y-1 border-l border-white/10 pl-3">
                       {entry.items
                         .filter((item) => filterByRole(item.roles))
                         .map((item) => (
@@ -191,10 +202,10 @@ export function Sidebar() {
                             to={item.to}
                             className={({ isActive }) =>
                               cn(
-                                'flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-colors',
+                                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200',
                                 isActive
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'text-sidebar-foreground/70 hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground'
+                                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                  : 'text-white/50 hover:bg-white/10 hover:text-white'
                               )
                             }
                             onClick={() => setSidebarOpen(false)}
@@ -215,10 +226,10 @@ export function Sidebar() {
                 to={entry.to}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-sidebar-foreground/80 hover:bg-sidebar-foreground/10 hover:text-sidebar-foreground'
+                      ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                      : 'text-white/60 hover:bg-white/10 hover:text-white'
                   )
                 }
                 onClick={() => setSidebarOpen(false)}
