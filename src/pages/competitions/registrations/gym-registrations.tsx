@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { competitionApi, competitionRegistrationApi } from '@/api/competitions'
+import { athleteApi } from '@/api/athletes'
 import { DataTable } from '@/components/ui/data-table'
 import { Pagination } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
@@ -40,9 +41,13 @@ export function GymRegistrationsPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedCompetitionId, setSelectedCompetitionId] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const limit = 10
+  const [athleteGymMap, setAthleteGymMap] = useState<Record<string, string>>({})
+
+  const competitionMap = Object.fromEntries(competitions.map((c) => [c.id, c]))
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [registrationToDelete, setRegistrationToDelete] = useState<{ athleteId: string; competitionId: string; divisionId: string } | null>(null)
@@ -100,6 +105,23 @@ export function GymRegistrationsPage() {
     }
   }, [isAdmin, gymId, selectedCompetitionId, page, limit])
 
+  const loadAthleteGyms = useCallback(async (regs: CompetitionRegistration[]) => {
+    if (!isAdmin) return
+    const uniqueAthleteIds = [...new Set(regs.map((r) => r.athlete?.id).filter(Boolean))] as string[]
+    const gymMap: Record<string, string> = {}
+    await Promise.all(
+      uniqueAthleteIds.map(async (athleteId) => {
+        try {
+          const profile = await athleteApi.getProfile(athleteId)
+          gymMap[athleteId] = profile.gym?.name || 'Sin gimnasio'
+        } catch {
+          gymMap[athleteId] = 'Error al cargar'
+        }
+      })
+    )
+    setAthleteGymMap(gymMap)
+  }, [isAdmin])
+
   useEffect(() => {
     loadCompetitions()
   }, [])
@@ -109,6 +131,12 @@ export function GymRegistrationsPage() {
       loadRegistrations()
     }
   }, [isAdmin, gymId, loadRegistrations])
+
+  useEffect(() => {
+    if (isAdmin && registrations.length > 0) {
+      loadAthleteGyms(registrations)
+    }
+  }, [isAdmin, registrations, loadAthleteGyms])
 
   const handleDeleteClick = (registration: CompetitionRegistration) => {
     const competitionId = registration.division?.competition_id || registration.division?.competition?.id
@@ -160,19 +188,34 @@ export function GymRegistrationsPage() {
         )
       },
     },
+    ...(isAdmin
+      ? [
+          {
+            header: 'Gimnasio',
+            accessorKey: 'athlete_gym' as const,
+            cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
+              const athleteId = row.original.athlete?.id
+              return athleteId ? athleteGymMap[athleteId] || 'Cargando...' : 'N/A'
+            },
+          },
+        ]
+      : []),
     {
       header: 'Competencia',
       accessorKey: 'competition_name' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
-        const division = row.original.division
-        return division?.competition?.name || 'N/A'
+        const compId = row.original.division?.competition_id
+        const comp = compId ? competitionMap[compId] : row.original.division?.competition
+        return comp?.name || 'N/A'
       },
     },
     {
       header: 'Estado',
       accessorKey: 'competition_status' as const,
       cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
-        const status = row.original.division?.competition?.status
+        const compId = row.original.division?.competition_id
+        const comp = compId ? competitionMap[compId] : row.original.division?.competition
+        const status = comp?.status
         if (!status) return 'N/A'
         return (
           <Badge variant={status === 'OPEN' ? 'default' : status === 'CLOSED' ? 'destructive' : 'secondary'}>
@@ -213,7 +256,9 @@ export function GymRegistrationsPage() {
             header: 'Acciones',
             accessorKey: 'id' as const,
             cell: ({ row }: { row: { original: CompetitionRegistration } }) => {
-              const isOpen = row.original.division?.competition?.status === 'OPEN'
+              const compId = row.original.division?.competition_id
+              const comp = compId ? competitionMap[compId] : row.original.division?.competition
+              const isOpen = comp?.status === 'OPEN'
               return (
                 <Button
                   variant="destructive"
@@ -235,7 +280,11 @@ export function GymRegistrationsPage() {
     const athleteName = reg.athlete
       ? `${reg.athlete.name} ${reg.athlete.surname}`.toLowerCase()
       : ''
-    return athleteName.includes(search.toLowerCase())
+    const matchesSearch = athleteName.includes(search.toLowerCase())
+    if (!selectedStatus) return matchesSearch
+    const compId = reg.division?.competition_id
+    const comp = compId ? competitionMap[compId] : reg.division?.competition
+    return matchesSearch && comp?.status === selectedStatus
   })
 
   if (!isAdmin && !gymId) {
@@ -270,6 +319,24 @@ export function GymRegistrationsPage() {
                 {comp.name}
               </option>
             ))}
+          </Select>
+        </div>
+
+        <div className="flex-1 max-w-sm">
+          <Label htmlFor="status">Filtrar por Estado</Label>
+          <Select
+            id="status"
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value)
+              setPage(1)
+            }}
+          >
+            <option value="">Todos los estados</option>
+            <option value="OPEN">Abierta</option>
+            <option value="CLOSED">Cerrada</option>
+            <option value="FINISHED">Finalizada</option>
+            <option value="DRAFT">Borrador</option>
           </Select>
         </div>
 
