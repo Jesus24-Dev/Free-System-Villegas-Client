@@ -19,11 +19,11 @@ const statusLabels: Record<CompetitionStatus, string> = {
   FINISHED: 'Finalizada',
 }
 
-const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  DRAFT: 'secondary',
-  OPEN: 'default',
+const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning'> = {
+  DRAFT: 'outline',
+  OPEN: 'success',
   CLOSED: 'destructive',
-  FINISHED: 'outline',
+  FINISHED: 'warning',
 }
 
 export function CompetitionsPage() {

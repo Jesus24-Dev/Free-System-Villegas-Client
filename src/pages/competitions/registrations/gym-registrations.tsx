@@ -218,7 +218,7 @@ export function GymRegistrationsPage() {
         const status = comp?.status
         if (!status) return 'N/A'
         return (
-          <Badge variant={status === 'OPEN' ? 'default' : status === 'CLOSED' ? 'destructive' : 'secondary'}>
+          <Badge variant={status === 'OPEN' ? 'success' : status === 'CLOSED' ? 'destructive' : status === 'FINISHED' ? 'warning' : 'outline'}>
             {competitionStatusLabels[status]}
           </Badge>
         )
