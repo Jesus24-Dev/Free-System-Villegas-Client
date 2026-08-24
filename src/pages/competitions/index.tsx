@@ -19,11 +19,11 @@ const statusLabels: Record<CompetitionStatus, string> = {
   FINISHED: 'Finalizada',
 }
 
-const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  DRAFT: 'secondary',
-  OPEN: 'default',
+const statusVariants: Record<CompetitionStatus, 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning'> = {
+  DRAFT: 'outline',
+  OPEN: 'success',
   CLOSED: 'destructive',
-  FINISHED: 'outline',
+  FINISHED: 'warning',
 }
 
 export function CompetitionsPage() {
@@ -181,7 +181,7 @@ export function CompetitionsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Competencias</h1>
         {!isReadOnly && (
           <Button asChild>
@@ -199,7 +199,7 @@ export function CompetitionsPage() {
           placeholder="Buscar competencia..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
       </div>
 

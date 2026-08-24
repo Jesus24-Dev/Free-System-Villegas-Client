@@ -177,7 +177,7 @@ export function EditCompetitionPage() {
           <CardTitle>Datos de la Competencia</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name">Nombre *</Label>
               <Input
@@ -217,7 +217,7 @@ export function EditCompetitionPage() {
               placeholder="https://ejemplo.com/logo.png"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label>Inicio Inscripciones *</Label>
               <div className="flex gap-2">

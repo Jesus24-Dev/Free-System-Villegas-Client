@@ -96,7 +96,15 @@ export const competitionRegistrationApi = {
     if (Array.isArray(result)) {
       return { data: result, meta: { total: result.length, page: params?.page || 1, limit: params?.limit || result.length, totalPages: 1 } }
     }
-    return result
+    return {
+      data: result.data || [],
+      meta: {
+        total: result.total || 0,
+        page: result.page || params?.page || 1,
+        limit: result.limit || params?.limit || 10,
+        totalPages: result.totalPages || 1,
+      },
+    }
   },
 
   getByGym: async (
@@ -108,7 +116,15 @@ export const competitionRegistrationApi = {
     if (Array.isArray(result)) {
       return { data: result, meta: { total: result.length, page: params?.page || 1, limit: params?.limit || result.length, totalPages: 1 } }
     }
-    return result
+    return {
+      data: result.data || [],
+      meta: {
+        total: result.total || 0,
+        page: result.page || params?.page || 1,
+        limit: result.limit || params?.limit || 10,
+        totalPages: result.totalPages || 1,
+      },
+    }
   },
 
   getByGymAndCompetition: async (
@@ -121,7 +137,15 @@ export const competitionRegistrationApi = {
     if (Array.isArray(result)) {
       return { data: result, meta: { total: result.length, page: params?.page || 1, limit: params?.limit || result.length, totalPages: 1 } }
     }
-    return result
+    return {
+      data: result.data || [],
+      meta: {
+        total: result.total || 0,
+        page: result.page || params?.page || 1,
+        limit: result.limit || params?.limit || 10,
+        totalPages: result.totalPages || 1,
+      },
+    }
   },
 
   getById: async (id: string): Promise<CompetitionRegistration> => {
@@ -141,5 +165,9 @@ export const competitionRegistrationApi = {
 
   delete: async (id: string): Promise<void> => {
     await api.delete(`/competition-registration/${id}`)
+  },
+
+  removeByAthleteAndCompetition: async (athleteId: string, competitionId: string, divisionId: string): Promise<void> => {
+    await api.delete(`/competition-registration/athlete/${athleteId}/competition/${competitionId}/division/${divisionId}`)
   },
 }

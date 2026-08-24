@@ -86,7 +86,7 @@ export function CompetitionDivisionsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Divisiones de Competencia</h1>
         <Button asChild>
           <Link to="/competition-divisions/new">

@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #ffffff;
-  --color-foreground: #0a0a0a;
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
   --color-card: #ffffff;
-  --color-card-foreground: #0a0a0a;
+  --color-card-foreground: #0f172a;
   --color-popover: #ffffff;
-  --color-popover-foreground: #0a0a0a;
-  --color-primary: #dc2626;
+  --color-popover-foreground: #0f172a;
+  --color-primary: #ef4444;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #2563eb;
+  --color-secondary: #3b82f6;
   --color-secondary-foreground: #ffffff;
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #737373;
-  --color-accent: #f5f5f5;
-  --color-accent-foreground: #0a0a0a;
-  --color-destructive: #b91c1c;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+  --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
-  --color-border: #e5e5e5;
-  --color-input: #e5e5e5;
-  --color-ring: #dc2626;
-  --color-sidebar: #1e3a5f;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #ef4444;
+  --color-sidebar: #0f172a;
   --color-sidebar-foreground: #ffffff;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
 }
 
 body {
@@ -50,11 +50,12 @@ dialog {
 
 dialog::backdrop {
   background: rgba(0, 0, 0, 0);
-  transition: background 0.2s ease-out;
+  transition: background 0.3s ease-out;
 }
 
 dialog[open]::backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
 }
 
 dialog[open] {
@@ -65,11 +66,11 @@ dialog[open] {
   max-width: 32rem;
   width: calc(100% - 2rem);
   background: var(--color-background);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
   z-index: 50;
   opacity: 0;
-  animation: dialog-enter 0.2s ease-out forwards;
+  animation: dialog-enter 0.3s ease-out forwards;
 }
 
 @keyframes dialog-enter {
@@ -97,4 +98,23 @@ dialog.confirm-dialog[open] {
   background: var(--color-muted);
   border-radius: var(--radius-sm);
   animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }

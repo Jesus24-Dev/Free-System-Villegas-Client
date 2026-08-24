@@ -112,7 +112,7 @@ export function PersonsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Personas</h1>
       </div>
 
@@ -122,7 +122,7 @@ export function PersonsPage() {
           placeholder="Buscar por nombre, apellido o DNI..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
       </div>
 

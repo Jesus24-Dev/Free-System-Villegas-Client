@@ -89,7 +89,7 @@ export function CompetitionRegistrationsPage() {
   const limit = 10
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [registrationToDelete, setRegistrationToDelete] = useState<string | null>(null)
+  const [registrationToDelete, setRegistrationToDelete] = useState<{ athleteId: string; competitionId: string; divisionId: string } | null>(null)
 
   const selectedAthlete = athletes.find((a) => a.id === selectedAthleteId)
   const selectedCompetition = competitions.find((c) => c.id === selectedCompetitionId)
@@ -182,15 +182,24 @@ export function CompetitionRegistrationsPage() {
     }
   }, [selectedAthlete, loadWeights])
 
-  const handleDeleteClick = (id: string) => {
-    setRegistrationToDelete(id)
+  const handleDeleteClick = (registration: CompetitionRegistration) => {
+    if (!selectedCompetitionId || !registration.athlete?.id || !registration.division?.id) return
+    setRegistrationToDelete({
+      athleteId: registration.athlete.id,
+      competitionId: selectedCompetitionId,
+      divisionId: registration.division.id,
+    })
     setShowDeleteDialog(true)
   }
 
   const handleDeleteConfirm = async () => {
     if (!registrationToDelete) return
     try {
-      await competitionRegistrationApi.delete(registrationToDelete)
+      await competitionRegistrationApi.removeByAthleteAndCompetition(
+        registrationToDelete.athleteId,
+        registrationToDelete.competitionId,
+        registrationToDelete.divisionId
+      )
       toast.success('Inscripción eliminada correctamente')
       loadRegistrations()
     } catch {
@@ -344,7 +353,7 @@ export function CompetitionRegistrationsPage() {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => handleDeleteClick(row.original.id)}
+                onClick={() => handleDeleteClick(row.original)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -363,7 +372,7 @@ export function CompetitionRegistrationsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Inscripciones a Competencias</h1>
         {isCoach && (
           <Button onClick={handleOpenForm} disabled={!selectedCompetitionId}>
@@ -429,7 +438,7 @@ export function CompetitionRegistrationsPage() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="athlete">Atleta</Label>
               <Select
@@ -492,7 +501,7 @@ export function CompetitionRegistrationsPage() {
           {pendingRegistrations.length > 0 && (
             <div className="space-y-2">
               <Label>Inscripciones Pendientes</Label>
-              <div className="border rounded-md divide-y">
+              <div className="border rounded-md divide-y overflow-x-auto">
                 {pendingRegistrations.map((pending, index) => (
                   <div
                     key={`${pending.athleteId}-${pending.mode}-${pending.category}`}

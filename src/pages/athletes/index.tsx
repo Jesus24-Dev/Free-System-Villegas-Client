@@ -243,7 +243,7 @@ export function AthletesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold">Atletas</h1>
         <Button
           onClick={() => setShowCreateModal(true)}
@@ -293,7 +293,7 @@ export function AthletesPage() {
       <Dialog open={showCreateModal} onClose={() => setShowCreateModal(false)} className="confirm-dialog">
         <div className="p-6 space-y-4">
           <h2 className="text-lg font-semibold">Crear Nuevo Atleta</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
               <Label htmlFor="dni">DNI *</Label>
               <DniInput
@@ -336,7 +336,7 @@ export function AthletesPage() {
                 onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
               />
             </div>
-            <div className="col-span-2">
+            <div>
               <Label htmlFor="gender">Genero *</Label>
               <Select
                 id="gender"
